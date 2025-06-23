@@ -405,8 +405,34 @@ public class BillJDialog extends javax.swing.JDialog implements BillController {
     }//GEN-LAST:event_btnTinhTienActionPerformed
 
     private void btnCheckout1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckout1ActionPerformed
-        // TODO add your handling code here:
-
+        // Kiểm tra xem có phiếu nào được chọn không
+        if (bill == null) {
+            XDialog.alert("Vui lòng chọn phiếu bán hàng!");
+            return;
+        }
+        
+        // Debug: Kiểm tra bill ID
+        System.out.println("Debug - Bill object ID: " + bill.getId());
+        System.out.println("Debug - Bill ID type: " + (bill.getId() != null ? bill.getId().getClass().getSimpleName() : "null"));
+        
+        // Tính tổng thành tiền từ billDetails
+        double tongThanhTien = 0;
+        for (BillDetail d : billDetails) {
+            double amount = d.getUnitPrice() * d.getQuantity() * (1 - d.getDiscount() / 100);
+            tongThanhTien += amount;
+        }
+        
+        if (tongThanhTien <= 0) {
+            XDialog.alert("Phiếu này chưa có đồ uống nào!");
+            return;
+        }
+        
+        // Mở dialog thanh toán chuyển khoản
+        BankingJdialog bankingDialog = new BankingJdialog((Frame) this.getOwner(), true);
+        String billIdStr = String.valueOf(bill.getId());
+        System.out.println("Debug - Bill ID string: " + billIdStr);
+        bankingDialog.setPaymentInfo(billIdStr, tongThanhTien);
+        bankingDialog.setVisible(true);
     }//GEN-LAST:event_btnCheckout1ActionPerformed
 
     /**

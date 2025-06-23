@@ -4,6 +4,9 @@
  */
 package poly.cafe.ui;
 
+import poly.cafe.util.QRHelper;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Phu Pham
@@ -18,6 +21,7 @@ public class BankingJdialog extends javax.swing.JDialog {
     public BankingJdialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        init();
     }
 
     /**
@@ -29,31 +33,138 @@ public class BankingJdialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        txtBillId = new javax.swing.JTextField();
+        txtAmount = new javax.swing.JTextField();
+        txtBankInfo = new javax.swing.JTextField();
+        qrCodeLabel = new javax.swing.JLabel();
+        btnClose = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Thanh toán chuyển khoản");
 
-        jLabel1.setText("jLabel1");
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Thông tin thanh toán"));
+
+        jLabel1.setFont(new java.awt.Font("Helvetica Neue", 1, 16)); // NOI18N
+        jLabel1.setText("THANH TOÁN CHUYỂN KHOẢN");
+
+        jLabel2.setFont(new java.awt.Font("Helvetica Neue", 0, 12)); // NOI18N
+        jLabel2.setText("Mã phiếu:");
+
+        jLabel3.setFont(new java.awt.Font("Helvetica Neue", 0, 12)); // NOI18N
+        jLabel3.setText("Số tiền:");
+
+        jLabel4.setFont(new java.awt.Font("Helvetica Neue", 0, 12)); // NOI18N
+        jLabel4.setText("Thông tin ngân hàng:");
+
+        txtBillId.setEnabled(false);
+
+        txtAmount.setEnabled(false);
+
+        txtBankInfo.setEnabled(false);
+        txtBankInfo.setText("Ngân hàng: Vietcombank | STK: 1234567890 | Chủ TK: PolyCafe");
+
+        qrCodeLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        qrCodeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        qrCodeLabel.setText("QR Code sẽ hiển thị ở đây");
+
+        btnClose.setFont(new java.awt.Font("Helvetica Neue", 0, 12)); // NOI18N
+        btnClose.setText("Đóng");
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Helvetica Neue", 0, 12)); // NOI18N
+        jLabel5.setText("Quét mã QR để thanh toán:");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtBillId, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(txtAmount, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(txtBankInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel5))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(qrCodeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel1)
+                .addGap(20, 20, 20)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtBillId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(txtAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(txtBankInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20)
+                .addComponent(jLabel5)
+                .addGap(10, 10, 10)
+                .addComponent(qrCodeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(btnClose)
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(39, 39, 39)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(90, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCloseActionPerformed
 
     /**
      * @param args the command line arguments
@@ -93,6 +204,46 @@ public class BankingJdialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnClose;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel qrCodeLabel;
+    private javax.swing.JTextField txtAmount;
+    private javax.swing.JTextField txtBankInfo;
+    private javax.swing.JTextField txtBillId;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * Nhận dữ liệu từ BillJDialog và hiển thị thông tin thanh toán
+     * @param billId Mã phiếu
+     * @param amount Số tiền cần thanh toán
+     */
+public void setPaymentInfo(String billId, double amount) {
+    System.out.println("Debug - Bill ID: " + billId);
+    System.out.println("Debug - Amount: " + amount);
+
+    txtBillId.setText(billId);
+    txtAmount.setText(String.format("%.0f VNĐ", amount));
+
+    // Tạo dữ liệu QR đúng định dạng VietQR/ZaloPay
+    String qrData = "00020101021238540010A00000072701240006970436011093954732230208QRIBFTTA53037045405"
+            + amount
+            + "5802VN62140810"
+            + "MD" + billId
+            + "80320112com.vng.zalo0212ZAPAYMENTHUB6304898C";
+
+    System.out.println("QR Data:\n" + qrData);
+
+    // Gọi helper để hiển thị QR
+    QRHelper.setQRCodeToLabel(qrCodeLabel, qrData);
+}
+
+    
+    private void init() {
+        // Khởi tạo các thành phần nếu cần
+    }
 }
