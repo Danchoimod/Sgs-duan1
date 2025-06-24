@@ -428,10 +428,11 @@ public class BillJDialog extends javax.swing.JDialog implements BillController {
         }
         
         // Mở dialog thanh toán chuyển khoản
-        BankingJdialog bankingDialog = new BankingJdialog((Frame) this.getOwner(), true);
+        BankingJdialog bankingDialog = new BankingJdialog((Frame) this.getOwner(), this);
         String billIdStr = String.valueOf(bill.getId());
         System.out.println("Debug - Bill ID string: " + billIdStr);
         bankingDialog.setPaymentInfo(billIdStr, tongThanhTien);
+        bankingDialog.setBill(bill);
         bankingDialog.setVisible(true);
     }//GEN-LAST:event_btnCheckout1ActionPerformed
 

@@ -552,7 +552,8 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillContr
 
     private void btnDeleteCheckedItemsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteCheckedItemsActionPerformed
         // TODO add your handling code here:
-        this.deleteCheckedItems();
+//        this.deleteCheckedItems();
+        this.noPermission();
     }//GEN-LAST:event_btnDeleteCheckedItemsActionPerformed
 
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
