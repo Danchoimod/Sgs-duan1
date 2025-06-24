@@ -55,6 +55,7 @@ poly\cafe\entity\Drink.class
 poly\cafe\ui\manager\BillManagerJDialog$12.class
 poly\cafe\ui\manager\DrinkManagerJDialog$10.class
 poly\cafe\ui\manager\CardManagerJDialog$1.class
+poly\cafe\ui\BankingJdialog$3$1.class
 poly\cafe\ui\ChangePasswordJDialog$8$1.class
 poly\cafe\ui\BillJDialog$1.class
 poly\cafe\ui\manager\DrinkManagerJDialog$20.class
@@ -118,6 +119,7 @@ poly\cafe\ui\manager\CardManagerJDialog.class
 poly\cafe\ui\BillJDialog$11.class
 poly\cafe\ui\LoginController.class
 poly\cafe\ui\BillJDialog$8.class
+poly\cafe\ui\BankingJdialog$3.class
 poly\cafe\ui\manager\CategoryManagerJDialog$10.class
 poly\cafe\ui\PolyCafeJFrame$4.class
 poly\cafe\ui\manager\BillManagerJDialog$11.class
@@ -142,6 +144,7 @@ poly\cafe\ui\HistoryJDialog$8.class
 poly\cafe\ui\manager\UserManagerJDialog$4.class
 poly\cafe\ui\manager\RevenueManagerJDialog$2.class
 poly\cafe\ui\manager\DrinkManagerJDialog$15.class
+poly\cafe\ui\BankingJdialog$2.class
 poly\cafe\ui\BillJDialog$3.class
 poly\cafe\ui\manager\CardManagerJDialog$12.class
 poly\cafe\entity\Bill.class

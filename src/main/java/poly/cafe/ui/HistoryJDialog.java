@@ -263,8 +263,8 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
     System.out.println("filled");
     
     String username = XAuth.user.getUsername();
-    Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
-    Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
+    Date begin = XDate.parse(txtBegin.getText(), "dd/MM/yyyy");
+    Date end = XDate.parse(txtEnd.getText(), "dd/MM/yyyy");
 
     bills = billDao.findByUserAndTimeRange(username, begin, end);
     
@@ -326,8 +326,8 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
             case 4 ->
                 range = TimeRange.thisYear();
         }
-        txtBegin.setText(XDate.format(range.getBegin()));
-        txtEnd.setText(XDate.format(range.getEnd()));
+        txtBegin.setText(XDate.format(range.getBegin(), "dd/MM/yyyy"));
+        txtEnd.setText(XDate.format(range.getEnd(), "dd/MM/yyyy"));
         this.fillBills();
     }
 }
