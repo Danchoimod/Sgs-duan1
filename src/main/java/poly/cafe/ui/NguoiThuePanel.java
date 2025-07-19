@@ -50,6 +50,8 @@ public class NguoiThuePanel extends javax.swing.JPanel {
         setLayout(new java.awt.BorderLayout());
 
         jPanel1.setMinimumSize(new java.awt.Dimension(110, 205));
+        jPanel1.setName(""); // NOI18N
+        jPanel1.setPreferredSize(new java.awt.Dimension(212, 412));
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
 
         jLabel4.setText("Họ và tên");
@@ -138,11 +140,11 @@ public class NguoiThuePanel extends javax.swing.JPanel {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 253, Short.MAX_VALUE)
+            .addGap(0, 212, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 124, Short.MAX_VALUE)
+            .addGap(0, 93, Short.MAX_VALUE)
         );
 
         jPanel1.add(jPanel3);
@@ -249,7 +251,7 @@ public class NguoiThuePanel extends javax.swing.JPanel {
                 .maNguoiThue(selectedId)
                 .hoTen(txtHoTen.getText())
                 .soDienThoai(txtSoDienThoai.getText())
-                .cmndCccd(txtHoTen.getText())
+                .cmndCccd(txtCmndCccd.getText())
                 .build();
         nguoiThueDAO.update(nguoiThue);
         loadNguoiThueToTable();
