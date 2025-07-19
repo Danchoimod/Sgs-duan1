@@ -46,10 +46,10 @@ public class NguoiThuePanel extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         txtMatKhau = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btnAdd = new javax.swing.JButton();
+        btnUpdate = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        btnNew = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
@@ -144,39 +144,39 @@ public class NguoiThuePanel extends javax.swing.JPanel {
         txtMatKhau.setMaximumSize(new java.awt.Dimension(200, 200));
         jPanel1.add(txtMatKhau);
 
-        jButton1.setText("Thêm");
-        jButton1.setMaximumSize(new java.awt.Dimension(76, 57));
-        jButton1.setMinimumSize(new java.awt.Dimension(76, 57));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnAdd.setText("Thêm");
+        btnAdd.setMaximumSize(new java.awt.Dimension(76, 57));
+        btnAdd.setMinimumSize(new java.awt.Dimension(76, 57));
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnAddActionPerformed(evt);
             }
         });
-        jPanel4.add(jButton1);
+        jPanel4.add(btnAdd);
 
-        jButton2.setText("Cập nhật");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnUpdate.setText("Cập nhật");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnUpdateActionPerformed(evt);
             }
         });
-        jPanel4.add(jButton2);
+        jPanel4.add(btnUpdate);
 
-        jButton3.setText("Xóa");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnDelete.setText("Xóa");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnDeleteActionPerformed(evt);
             }
         });
-        jPanel4.add(jButton3);
+        jPanel4.add(btnDelete);
 
-        jButton4.setText("Làm mới");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnNew.setText("Làm mới");
+        btnNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btnNewActionPerformed(evt);
             }
         });
-        jPanel4.add(jButton4);
+        jPanel4.add(btnNew);
 
         jPanel1.add(jPanel4);
 
@@ -213,6 +213,7 @@ public class NguoiThuePanel extends javax.swing.JPanel {
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
+        btnAdd.setEnabled(false);
         int row = jTable1.getSelectedRow();
         if (row != -1) {
             Object hoTen = jTable1.getValueAt(row, 1);
@@ -232,26 +233,26 @@ public class NguoiThuePanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jTable1MouseClicked
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         // TODO add your handling code here:
         createNguoiThue();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnAddActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
         deleteNguoiThue();
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         // TODO add your handling code here:
         updateNguoiThue();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnUpdateActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         // TODO add your handling code here:
         LamMoi();
         
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_btnNewActionPerformed
 
     private void createNguoiThue() {
         String hoTen = txtHoTen.getText();
@@ -273,6 +274,7 @@ public class NguoiThuePanel extends javax.swing.JPanel {
         clearInput();
     }
     private void LamMoi(){
+        btnAdd.setEnabled(true);
         txtCmndCccd.setText("");
         txtEmail.setText("");
         txtHoTen.setText("");
@@ -339,10 +341,10 @@ public class NguoiThuePanel extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnNew;
+    private javax.swing.JButton btnUpdate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
