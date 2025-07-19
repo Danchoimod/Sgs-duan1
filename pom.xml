@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.mycompany</groupId>
-    <artifactId>PolyCafe</artifactId>
+    <groupId>com.sgs</groupId>
+    <artifactId>SgsManager</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
-        <exec.mainClass>poly.cafe.ui.PolyCafeJFrame</exec.mainClass>
+        <exec.mainClass>poly.nhatro.ui.MainFrame</exec.mainClass>
         <maven.compiler.source>17</maven.compiler.source>  <!-- hoặc 14 -->
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
@@ -36,7 +36,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>poly.cafe.ui.MainFrame</mainClass>
+                            <mainClass>poly.nhatro.ui.MainFrame</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -73,7 +73,7 @@
                     <dontWrapJar>false</dontWrapJar>
                     <headerType>gui</headerType>
                     <classPath>
-                        <mainClass>poly.cafe.ui.MainFrame</mainClass>
+                        <mainClass>poly.nhatro.ui.MainFrame</mainClass>
                     </classPath>
                     <icon>${project.basedir}/src/main/resources/fpt.ico</icon>
                     <jre>
@@ -82,7 +82,7 @@
                     <versionInfo>
                         <fileVersion>1.0.0.0</fileVersion>
                         <txtFileVersion>1.0.0.0</txtFileVersion>
-                        <fileDescription>PolyCafe Application</fileDescription>
+                        <fileDescription>PolyNhatro Application</fileDescription>
                         <copyright>FPT Polytechnic</copyright>
                         <productVersion>1.0.0.0</productVersion>
                         <txtProductVersion>1.0.0.0</txtProductVersion>
