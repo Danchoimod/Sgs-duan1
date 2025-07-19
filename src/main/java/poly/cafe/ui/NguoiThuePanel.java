@@ -4,13 +4,14 @@ package poly.cafe.ui;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-
 /**
  *
  * @author Phu Pham
  */
 public class NguoiThuePanel extends javax.swing.JPanel {
-private String selectedId = null;
+
+    private String selectedId = null;
+
     /**
      * Creates new form NguoiThuePanel
      */
@@ -28,15 +29,125 @@ private String selectedId = null;
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        txtHoTen = new javax.swing.JTextField();
+        jPanel9 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        txtSoDienThoai = new javax.swing.JTextField();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        txtCmndCccd = new javax.swing.JTextField();
+        jPanel4 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        txtHoTen = new javax.swing.JTextField();
-        txtSoDienThoai = new javax.swing.JTextField();
-        txtCCCD = new javax.swing.JTextField();
-        txtCmndCccd = new javax.swing.JTextField();
-        txtCreate = new javax.swing.JButton();
-        txtUpdate = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+
+        setLayout(new java.awt.BorderLayout());
+
+        jPanel1.setMinimumSize(new java.awt.Dimension(110, 205));
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+
+        jLabel4.setText("Họ và tên");
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel4)
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel4)
+        );
+
+        jPanel1.add(jPanel8);
+
+        txtHoTen.setMaximumSize(new java.awt.Dimension(200, 200));
+        jPanel1.add(txtHoTen);
+
+        jLabel5.setText("Số điện thoại");
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel5)
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel5)
+        );
+
+        jPanel1.add(jPanel9);
+
+        txtSoDienThoai.setMaximumSize(new java.awt.Dimension(200, 200));
+        jPanel1.add(txtSoDienThoai);
+
+        jLabel3.setText("CCCD");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel3)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel3)
+        );
+
+        jPanel1.add(jPanel5);
+
+        txtCmndCccd.setMaximumSize(new java.awt.Dimension(200, 200));
+        jPanel1.add(txtCmndCccd);
+
+        jButton1.setText("Thêm");
+        jButton1.setMaximumSize(new java.awt.Dimension(76, 57));
+        jButton1.setMinimumSize(new java.awt.Dimension(76, 57));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel4.add(jButton1);
+
+        jButton2.setText("Cập nhật");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jPanel4.add(jButton2);
+
+        jButton3.setText("Xóa");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        jPanel4.add(jButton3);
+
+        jPanel1.add(jPanel4);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 253, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 124, Short.MAX_VALUE)
+        );
+
+        jPanel1.add(jPanel3);
+
+        add(jPanel1, java.awt.BorderLayout.LINE_END);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -48,7 +159,15 @@ private String selectedId = null;
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable1MouseClicked(evt);
@@ -56,79 +175,7 @@ private String selectedId = null;
         });
         jScrollPane1.setViewportView(jTable1);
 
-        txtHoTen.setText("jTextField1");
-
-        txtSoDienThoai.setText("jTextField1");
-
-        txtCCCD.setText("jTextField1");
-
-        txtCmndCccd.setText("jTextField1");
-
-        txtCreate.setText("jButton1");
-        txtCreate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCreateActionPerformed(evt);
-            }
-        });
-
-        txtUpdate.setText("Cập nhật");
-        txtUpdate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtUpdateActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("jButton2");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtHoTen, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtSoDienThoai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCCCD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCmndCccd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtCreate)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtUpdate)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtHoTen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSoDienThoai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtCCCD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtCmndCccd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtCreate)
-                    .addComponent(txtUpdate)
-                    .addComponent(jButton2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -144,32 +191,32 @@ private String selectedId = null;
         }
     }//GEN-LAST:event_jTable1MouseClicked
 
-    private void txtCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCreateActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         createNguoiThue();
-    }//GEN-LAST:event_txtCreateActionPerformed
+    }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void txtUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUpdateActionPerformed
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        updateNguoiThue();
-    }//GEN-LAST:event_txtUpdateActionPerformed
+        deleteNguoiThue();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        deleteNguoiThue();
+        updateNguoiThue();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void createNguoiThue() {
         String hoTen = txtHoTen.getText();
         String soDienThoai = txtSoDienThoai.getText();
-        String cmndCccd = txtCmndCccd.getText();
+        String cmndCccd = txtHoTen.getText();
         poly.cafe.dao.NguoiThueDAO nguoiThueDAO = new poly.cafe.dao.impl.NguoiThueDAOImpl();
         poly.cafe.entity.NguoiThue nguoiThue = poly.cafe.entity.NguoiThue.builder()
-            .maNguoiThue(java.util.UUID.randomUUID().toString())
-            .hoTen(hoTen)
-            .soDienThoai(soDienThoai)
-            .cmndCccd(cmndCccd)
-            .build();
+                .maNguoiThue(java.util.UUID.randomUUID().toString())
+                .hoTen(hoTen)
+                .soDienThoai(soDienThoai)
+                .cmndCccd(cmndCccd)
+                .build();
         nguoiThueDAO.insert(nguoiThue);
         loadNguoiThueToTable();
         clearInput();
@@ -193,22 +240,26 @@ private String selectedId = null;
     }
 
     private void updateNguoiThue() {
-        if (selectedId == null) return;
+        if (selectedId == null) {
+            return;
+        }
         System.out.println("[DEBUG] Updating NguoiThue with ID: " + selectedId);
         poly.cafe.dao.NguoiThueDAO nguoiThueDAO = new poly.cafe.dao.impl.NguoiThueDAOImpl();
         poly.cafe.entity.NguoiThue nguoiThue = poly.cafe.entity.NguoiThue.builder()
-            .maNguoiThue(selectedId)
-            .hoTen(txtHoTen.getText())
-            .soDienThoai(txtSoDienThoai.getText())
-            .cmndCccd(txtCmndCccd.getText())
-            .build();
+                .maNguoiThue(selectedId)
+                .hoTen(txtHoTen.getText())
+                .soDienThoai(txtSoDienThoai.getText())
+                .cmndCccd(txtHoTen.getText())
+                .build();
         nguoiThueDAO.update(nguoiThue);
         loadNguoiThueToTable();
         clearInput();
     }
 
     private void deleteNguoiThue() {
-        if (selectedId == null) return;
+        if (selectedId == null) {
+            return;
+        }
         System.out.println("[DEBUG] Deleting NguoiThue with ID: " + selectedId);
         poly.cafe.dao.NguoiThueDAO nguoiThueDAO = new poly.cafe.dao.impl.NguoiThueDAOImpl();
         nguoiThueDAO.delete(java.util.UUID.fromString(selectedId));
@@ -219,19 +270,27 @@ private String selectedId = null;
     private void clearInput() {
         txtHoTen.setText("");
         txtSoDienThoai.setText("");
-        txtCmndCccd.setText("");
+        txtHoTen.setText("");
         selectedId = null;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField txtCCCD;
     private javax.swing.JTextField txtCmndCccd;
-    private javax.swing.JButton txtCreate;
     private javax.swing.JTextField txtHoTen;
     private javax.swing.JTextField txtSoDienThoai;
-    private javax.swing.JButton txtUpdate;
     // End of variables declaration//GEN-END:variables
 }

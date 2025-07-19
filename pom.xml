@@ -36,7 +36,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>poly.cafe.ui.PolyCafeJFrame</mainClass>
+                            <mainClass>poly.cafe.ui.MainFrame</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -68,12 +68,12 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <outfile>target/PolyCafeApp.exe</outfile>
+                    <outfile>target/SGSManager.exe</outfile>
                     <jar>target/${project.artifactId}-${project.version}.jar</jar>
                     <dontWrapJar>false</dontWrapJar>
                     <headerType>gui</headerType>
                     <classPath>
-                        <mainClass>poly.cafe.ui.PolyCafeJFrame</mainClass>
+                        <mainClass>poly.cafe.ui.MainFrame</mainClass>
                     </classPath>
                     <icon>${project.basedir}/src/main/resources/fpt.ico</icon>
                     <jre>
@@ -86,9 +86,9 @@
                         <copyright>FPT Polytechnic</copyright>
                         <productVersion>1.0.0.0</productVersion>
                         <txtProductVersion>1.0.0.0</txtProductVersion>
-                        <productName>PolyCafe</productName>
-                        <internalName>PolyCafe</internalName>
-                        <originalFilename>PolyCafeApp.exe</originalFilename>
+                        <productName>SGSManager</productName>
+                        <internalName>SGSManager</internalName>
+                        <originalFilename>SGSManager.exe</originalFilename>
                     </versionInfo>
                 </configuration>
             </plugin>

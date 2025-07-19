@@ -16,6 +16,7 @@ import poly.cafe.util.XIcon;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -42,6 +43,7 @@ public class MainFrame extends javax.swing.JFrame {
      * Creates new form MainFrame
      */
     public MainFrame() {
+        init();
         initComponents();
         ToolTipManager.sharedInstance().setInitialDelay(0);
 
@@ -81,6 +83,7 @@ public class MainFrame extends javax.swing.JFrame {
         mainPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("GSG Manager - màn hình chính");
 
         pnlNav.setBackground(new java.awt.Color(249, 249, 249));
         pnlNav.setForeground(new java.awt.Color(255, 255, 255));
@@ -390,7 +393,7 @@ public class MainFrame extends javax.swing.JFrame {
             lblDienNuoc3.setToolTipText(null);
             lblHoaDon.setToolTipText(null);
             expandSidebar();
-            
+
             lblSideBar.setIcon(new FlatSVGIcon("icons/closeSideBar.svg", 24, 24));
             navOpen = true;
         } else {
@@ -596,7 +599,7 @@ public class MainFrame extends javax.swing.JFrame {
         HoaDonPanel hoaDonPanel = new HoaDonPanel();
         HopDongPanel hopDongPanel = new HopDongPanel();
         PhongPanel phongPanel = new PhongPanel();
-        
+
         this.mainPanel.add(Constrants.HOME_PANEL, homePanel);
         this.mainPanel.add(Constrants.NGUOITHUE_PANEL, NguoithuePanel);
         this.mainPanel.add(Constrants.CHINHANH_PANEL, chiNhanhPanel);
@@ -605,10 +608,16 @@ public class MainFrame extends javax.swing.JFrame {
         this.mainPanel.add(Constrants.HOADON_PANEL, hoaDonPanel);
         this.mainPanel.add(Constrants.HOPDONG_PANEL, hopDongPanel);
         this.mainPanel.add(Constrants.PHONG_PANEL, phongPanel);
-        
-         this.cardLayout.show(this.mainPanel, Constrants.HOME_PANEL);
-        
+
+        this.cardLayout.show(this.mainPanel, Constrants.HOME_PANEL);
+
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+    }
+
+    private void init() {
+        setIconImage(Toolkit.getDefaultToolkit().getImage(
+                getClass().getResource("/fpt.png")
+        ));
     }
 
 }
