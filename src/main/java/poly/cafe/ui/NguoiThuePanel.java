@@ -39,11 +39,17 @@ public class NguoiThuePanel extends javax.swing.JPanel {
         jPanel5 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         txtCmndCccd = new javax.swing.JTextField();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        txtEmail = new javax.swing.JTextField();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        txtMatKhau = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
+        jButton4 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
@@ -108,6 +114,36 @@ public class NguoiThuePanel extends javax.swing.JPanel {
         txtCmndCccd.setMaximumSize(new java.awt.Dimension(200, 200));
         jPanel1.add(txtCmndCccd);
 
+        jPanel2.setMaximumSize(new java.awt.Dimension(200, 200));
+        jPanel2.setMinimumSize(new java.awt.Dimension(0, 0));
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        jLabel1.setText("Email");
+        jPanel2.add(jLabel1, new java.awt.GridBagConstraints());
+
+        jPanel1.add(jPanel2);
+
+        txtEmail.setMaximumSize(new java.awt.Dimension(200, 200));
+        jPanel1.add(txtEmail);
+
+        jLabel6.setText("Mật khẩu");
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel6)
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel6)
+        );
+
+        jPanel1.add(jPanel6);
+
+        txtMatKhau.setMaximumSize(new java.awt.Dimension(200, 200));
+        jPanel1.add(txtMatKhau);
+
         jButton1.setText("Thêm");
         jButton1.setMaximumSize(new java.awt.Dimension(76, 57));
         jButton1.setMinimumSize(new java.awt.Dimension(76, 57));
@@ -134,36 +170,31 @@ public class NguoiThuePanel extends javax.swing.JPanel {
         });
         jPanel4.add(jButton3);
 
+        jButton4.setText("Làm mới");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+        jPanel4.add(jButton4);
+
         jPanel1.add(jPanel4);
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 212, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 93, Short.MAX_VALUE)
-        );
-
-        jPanel1.add(jPanel3);
 
         add(jPanel1, java.awt.BorderLayout.LINE_END);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2", "Title 3", "Title 4", "null", "null"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -184,11 +215,19 @@ public class NguoiThuePanel extends javax.swing.JPanel {
         // TODO add your handling code here:
         int row = jTable1.getSelectedRow();
         if (row != -1) {
-            txtHoTen.setText(jTable1.getValueAt(row, 1).toString());
-            txtSoDienThoai.setText(jTable1.getValueAt(row, 2).toString());
-            txtCmndCccd.setText(jTable1.getValueAt(row, 3).toString());
+            Object hoTen = jTable1.getValueAt(row, 1);
+            Object sdt = jTable1.getValueAt(row, 2);
+            Object cmnd = jTable1.getValueAt(row, 3);
+            Object email = jTable1.getValueAt(row, 4);
+            Object matKhau = jTable1.getValueAt(row, 5);
+            txtHoTen.setText(hoTen != null ? hoTen.toString() : "");
+            txtSoDienThoai.setText(sdt != null ? sdt.toString() : "");
+            txtCmndCccd.setText(cmnd != null ? cmnd.toString() : "");
+            txtEmail.setText(email != null ? email.toString() : "");
+            txtMatKhau.setText(matKhau != null ? matKhau.toString() : "");
             // Lưu lại ID để cập nhật/xóa
-            selectedId = jTable1.getValueAt(row, 0).toString();
+            Object id = jTable1.getValueAt(row, 0);
+            selectedId = (id != null) ? id.toString() : null;
             System.out.println("[DEBUG] Selected row " + row + " with ID: " + selectedId);
         }
     }//GEN-LAST:event_jTable1MouseClicked
@@ -208,34 +247,53 @@ public class NguoiThuePanel extends javax.swing.JPanel {
         updateNguoiThue();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        LamMoi();
+        
+    }//GEN-LAST:event_jButton4ActionPerformed
+
     private void createNguoiThue() {
         String hoTen = txtHoTen.getText();
         String soDienThoai = txtSoDienThoai.getText();
-        String cmndCccd = txtHoTen.getText();
+        String cmndCccd = txtCmndCccd.getText();
+        String email = txtEmail.getText();
+        String matKhau = txtMatKhau.getText();
         poly.cafe.dao.NguoiThueDAO nguoiThueDAO = new poly.cafe.dao.impl.NguoiThueDAOImpl();
         poly.cafe.entity.NguoiThue nguoiThue = poly.cafe.entity.NguoiThue.builder()
                 .maNguoiThue(java.util.UUID.randomUUID().toString())
                 .hoTen(hoTen)
                 .soDienThoai(soDienThoai)
                 .cmndCccd(cmndCccd)
+                .email(email)
+                .matKhau(matKhau)
                 .build();
         nguoiThueDAO.insert(nguoiThue);
         loadNguoiThueToTable();
         clearInput();
+    }
+    private void LamMoi(){
+        txtCmndCccd.setText("");
+        txtEmail.setText("");
+        txtHoTen.setText("");
+        txtMatKhau.setText("");
+        txtSoDienThoai.setText("");
     }
 
     private void loadNguoiThueToTable() {
         poly.cafe.dao.NguoiThueDAO nguoiThueDAO = new poly.cafe.dao.impl.NguoiThueDAOImpl();
         java.util.List<poly.cafe.entity.NguoiThue> danhSach = nguoiThueDAO.findAll();
         System.out.println("[DEBUG] Loaded " + danhSach.size() + " NguoiThue records");
-        String[] columnNames = {"ID", "Họ tên", "SĐT", "CMND/CCCD"};
-        Object[][] data = new Object[danhSach.size()][4];
+        String[] columnNames = {"ID", "Họ tên", "SĐT", "CMND/CCCD", "Email", "Mật khẩu"};
+        Object[][] data = new Object[danhSach.size()][6];
         for (int i = 0; i < danhSach.size(); i++) {
             poly.cafe.entity.NguoiThue nt = danhSach.get(i);
             data[i][0] = nt.getMaNguoiThue();
             data[i][1] = nt.getHoTen();
             data[i][2] = nt.getSoDienThoai();
             data[i][3] = nt.getCmndCccd();
+            data[i][4] = nt.getEmail();
+            data[i][5] = nt.getMatKhau();
             System.out.println("[DEBUG] Record " + i + ": ID=" + nt.getMaNguoiThue() + ", Name=" + nt.getHoTen());
         }
         jTable1.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
@@ -252,6 +310,8 @@ public class NguoiThuePanel extends javax.swing.JPanel {
                 .hoTen(txtHoTen.getText())
                 .soDienThoai(txtSoDienThoai.getText())
                 .cmndCccd(txtCmndCccd.getText())
+                .email(txtEmail.getText())
+                .matKhau(txtMatKhau.getText())
                 .build();
         nguoiThueDAO.update(nguoiThue);
         loadNguoiThueToTable();
@@ -272,7 +332,9 @@ public class NguoiThuePanel extends javax.swing.JPanel {
     private void clearInput() {
         txtHoTen.setText("");
         txtSoDienThoai.setText("");
-        txtHoTen.setText("");
+        txtCmndCccd.setText("");
+        txtEmail.setText("");
+        txtMatKhau.setText("");
         selectedId = null;
     }
 
@@ -280,19 +342,25 @@ public class NguoiThuePanel extends javax.swing.JPanel {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField txtCmndCccd;
+    private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtHoTen;
+    private javax.swing.JTextField txtMatKhau;
     private javax.swing.JTextField txtSoDienThoai;
     // End of variables declaration//GEN-END:variables
 }

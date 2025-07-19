@@ -18,6 +18,8 @@ public class NguoiThue {
     private String hoTen;
     private String soDienThoai;
     private String cmndCccd;
+    private String email;
+    private String matKhau;
     private LocalDateTime ngayTao;
 }
 

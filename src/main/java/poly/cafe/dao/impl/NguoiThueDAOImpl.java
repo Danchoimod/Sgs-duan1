@@ -32,7 +32,15 @@ public class NguoiThueDAOImpl implements NguoiThueDAO {
     }
     @Override
     public void insert(NguoiThue nguoiThue) {
-        HttpUtils.sendPost(SupabaseConfig.BASE_URL + "/nguoi_thue", gson.toJson(nguoiThue), SupabaseConfig.API_KEY);
+        java.util.Map<String, Object> insertFields = new java.util.HashMap<>();
+        insertFields.put("ma_nguoi_thue", nguoiThue.getMaNguoiThue());
+        insertFields.put("ho_ten", nguoiThue.getHoTen());
+        insertFields.put("so_dien_thoai", nguoiThue.getSoDienThoai());
+        insertFields.put("cmnd_cccd", nguoiThue.getCmndCccd());
+        insertFields.put("email", nguoiThue.getEmail());
+        insertFields.put("mat_khau", nguoiThue.getMatKhau());
+        String insertJson = gson.toJson(insertFields);
+        HttpUtils.sendPost(SupabaseConfig.BASE_URL + "/nguoi_thue", insertJson, SupabaseConfig.API_KEY);
     }
     @Override
     public void update(NguoiThue nguoiThue) {
@@ -52,6 +60,8 @@ public class NguoiThueDAOImpl implements NguoiThueDAO {
         insertFields.put("ho_ten", nguoiThue.getHoTen());
         insertFields.put("so_dien_thoai", nguoiThue.getSoDienThoai());
         insertFields.put("cmnd_cccd", nguoiThue.getCmndCccd());
+        insertFields.put("email", nguoiThue.getEmail());
+        insertFields.put("mat_khau", nguoiThue.getMatKhau());
         String insertJson = gson.toJson(insertFields);
         
         System.out.println("[DEBUG] INSERT URL: " + insertUrl);
