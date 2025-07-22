@@ -4,17 +4,280 @@
  */
 package poly.nhatro.ui;
 
+import poly.nhatro.entity.HopDong;
+import poly.nhatro.dao.HopDongDAO;
+import poly.nhatro.dao.impl.HopDongImpl;
+import poly.nhatro.util.XDate;
+import poly.nhatro.util.XDialog;
+import javax.swing.table.DefaultTableModel;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 /**
  *
  * @author Phu Pham
  */
 public class HopDongPanel extends javax.swing.JPanel {
 
+    private HopDongDAO hopDongDAO;
+    private DefaultTableModel tblModel;
+
+    private final String DATE_FORMAT = "dd/MM/yyyy";
+
     /**
      * Creates new form HopDongPanel
      */
     public HopDongPanel() {
         initComponents();
+        init();
+   
+    }
+
+    private void init() {
+        hopDongDAO = new HopDongImpl();
+        tblModel = (DefaultTableModel) jTable2.getModel();
+        String[] columnNames = {"Mã hợp đồng", "Ngày bắt đầu", "Ngày kết thúc", "Tiền cọc", "Mã người dùng", "Phòng", "Chi nhánh"};
+        tblModel.setColumnIdentifiers(columnNames);
+
+        fillTable();
+        updateStatus();
+        clearForm();
+    }
+
+    private void fillTable() {
+        tblModel.setRowCount(0);
+        try {
+            List<HopDong> list = hopDongDAO.getAll();
+            for (HopDong hd : list) {
+                Object[] row = {
+                    hd.getID_HopDong(),
+                    XDate.format(hd.getNgayBatDau(), DATE_FORMAT),
+                    XDate.format(hd.getNgayKetThuc(), DATE_FORMAT),
+                    hd.getSoTienCoc(),
+                    hd.getID_NguoiDung(),
+                    hd.getID_Phong(),
+                    hd.getID_ChiNhanh()
+                };
+                tblModel.addRow(row);
+            }
+        } catch (RuntimeException e) {
+            XDialog.alert("Lỗi tải dữ liệu hợp đồng: ");
+            e.printStackTrace();
+        }
+    }
+
+    private void clearForm() {
+        jTextField1.setText("");
+        jTextField4.setText("");
+        jTextField5.setText("");
+        jTextField6.setText("");
+        jTextField7.setText("");
+
+        Date currentDate = XDate.now();
+        jTextField2.setText(XDate.format(currentDate, DATE_FORMAT));
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(currentDate);
+        cal.add(Calendar.MONTH, 6);
+        Date endDate = cal.getTime();
+        jTextField3.setText(XDate.format(endDate, DATE_FORMAT));
+
+        jTable2.clearSelection();
+        updateStatus();
+    }
+
+    private HopDong readForm() {
+        try {
+            HopDong hd = new HopDong();
+
+            if (!jTextField1.getText().isEmpty()) {
+                try {
+                    hd.setID_HopDong(Integer.parseInt(jTextField1.getText()));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Mã hợp đồng phải là một số nguyên hợp lệ.");
+                }
+            } else {
+                hd.setID_HopDong(0);
+            }
+
+            System.out.println("DEBUG (readForm): Giá trị jTextField2 (Ngày bắt đầu) trước khi parse: '" + jTextField2.getText() + "'");
+            System.out.println("DEBUG (readForm): Giá trị jTextField3 (Ngày kết thúc) trước khi parse: '" + jTextField3.getText() + "'");
+
+            Date ngayBatDau = XDate.parse(jTextField2.getText(), DATE_FORMAT);
+            Date ngayKetThuc = XDate.parse(jTextField3.getText(), DATE_FORMAT);
+
+            if (ngayBatDau == null) {
+                System.out.println("DEBUG: XDate.parse() trả về null cho Ngày bắt đầu với chuỗi: '" + jTextField2.getText() + "'");
+                throw new IllegalArgumentException("Ngày bắt đầu không đúng định dạng " + DATE_FORMAT);
+            }
+            if (ngayKetThuc == null) {
+                System.out.println("DEBUG: XDate.parse() trả về null cho Ngày kết thúc với chuỗi: '" + jTextField3.getText() + "'");
+                throw new IllegalArgumentException("Ngày kết thúc không đúng định dạng " + DATE_FORMAT);
+            }
+
+            hd.setNgayBatDau(ngayBatDau);
+            hd.setNgayKetThuc(ngayKetThuc);
+
+            hd.setSoTienCoc(Double.parseDouble(jTextField4.getText()));
+
+            try {
+                hd.setID_NguoiDung(Integer.parseInt(jTextField5.getText()));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Mã người dùng phải là một số nguyên hợp lệ.");
+            }
+            try {
+                hd.setID_Phong(Integer.parseInt(jTextField6.getText()));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Mã phòng phải là một số nguyên hợp lệ.");
+            }
+            try {
+                hd.setID_ChiNhanh(Integer.parseInt(jTextField7.getText()));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Mã chi nhánh phải là một số nguyên hợp lệ.");
+            }
+
+            return hd;
+        } catch (NumberFormatException e) {
+            XDialog.alert("Vui lòng nhập số hợp lệ cho Tiền cọc, Mã người dùng, Mã phòng hoặc Mã chi nhánh.");
+            throw new RuntimeException("Dữ liệu nhập không hợp lệ.", e);
+        } catch (IllegalArgumentException e) {
+            XDialog.alert("Lỗi định dạng ngày hoặc dữ liệu: ");
+            throw new RuntimeException("Dữ liệu nhập không hợp lệ.", e);
+        }
+    }
+
+    private void writeForm(HopDong hd) {
+        jTextField1.setText(String.valueOf(hd.getID_HopDong()));
+        jTextField2.setText(XDate.format(hd.getNgayBatDau(), DATE_FORMAT));
+        jTextField3.setText(XDate.format(hd.getNgayKetThuc(), DATE_FORMAT));
+        jTextField4.setText(String.valueOf(hd.getSoTienCoc()));
+        jTextField5.setText(String.valueOf(hd.getID_NguoiDung()));
+        jTextField6.setText(String.valueOf(hd.getID_Phong()));
+        jTextField7.setText(String.valueOf(hd.getID_ChiNhanh()));
+        jTextField1.setEditable(false);
+    }
+
+    private void updateStatus() {
+        int selectedRow = jTable2.getSelectedRow();
+        boolean edit = (selectedRow >= 0);
+
+        jTextField1.setEditable(false);
+        jButton1.setEnabled(!edit);
+        jButton3.setEnabled(edit);
+        jButton2.setEnabled(edit);
+    }
+
+    private void edit() {
+        int selectedRow = jTable2.getSelectedRow();
+        if (selectedRow < 0) {
+            return;
+        }
+        try {
+            String maHD = jTable2.getValueAt(selectedRow, 0).toString();
+            HopDong hd = hopDongDAO.getById(maHD);
+            if (hd != null) {
+                writeForm(hd);
+                updateStatus();
+            }
+        } catch (RuntimeException e) {
+            XDialog.alert("Lỗi khi tải thông tin hợp đồng để chỉnh sửa: ");
+            e.printStackTrace();
+        }
+    }
+
+    private void insert() {
+        try {
+            HopDong hd = readForm();
+
+            if (hd.getSoTienCoc() < 0) {
+                XDialog.alert("Số tiền cọc không được âm.");
+                return;
+            }
+            if (hd.getNgayBatDau().after(hd.getNgayKetThuc())) {
+                XDialog.alert("Ngày bắt đầu không được sau ngày kết thúc.");
+                return;
+            }
+
+            hopDongDAO.add(hd);
+            fillTable();
+            clearForm();
+            XDialog.alert("Thêm mới thành công!");
+        } catch (RuntimeException e) {
+            String errorMessage = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+            if (errorMessage != null) {
+                if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("NGUOI_DUNG")) {
+                    XDialog.alert("Thêm mới thất bại: Mã người dùng không tồn tại. Vui lòng kiểm tra lại Mã người dùng.");
+                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("PHONG")) {
+                    XDialog.alert("Thêm mới thất bại: Mã phòng không tồn tại. Vui lòng kiểm tra lại Mã phòng.");
+                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("CHI_NHANH")) {
+                    XDialog.alert("Thêm mới thất bại: Mã chi nhánh không tồn tại. Vui lòng kiểm tra lại Mã chi nhánh.");
+                } else {
+                    XDialog.alert("Thêm mới thất bại: " + errorMessage);
+                }
+            } else {
+                XDialog.alert("Thêm mới thất bại: Đã xảy ra lỗi không xác định.");
+            }
+            e.printStackTrace();
+        }
+    }
+
+    private void update() {
+        try {
+            HopDong hd = readForm();
+            if (hd.getSoTienCoc() < 0) {
+                XDialog.alert("Số tiền cọc không được âm.");
+                return;
+            }
+            if (hd.getNgayBatDau().after(hd.getNgayKetThuc())) {
+                XDialog.alert("Ngày bắt đầu không được sau ngày kết thúc.");
+                return;
+            }
+
+            hopDongDAO.update(hd);
+            fillTable();
+            clearForm();
+            XDialog.alert("Cập nhật thành công!");
+        } catch (RuntimeException e) {
+            String errorMessage = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+            if (errorMessage != null) {
+                if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("NGUOI_DUNG")) {
+                    XDialog.alert("Cập nhật thất bại: Mã người dùng không tồn tại. Vui lòng kiểm tra lại Mã người dùng.");
+                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("PHONG")) {
+                    XDialog.alert("Cập nhật thất bại: Mã phòng không tồn tại. Vui lòng kiểm tra lại Mã phòng.");
+                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("CHI_NHANH")) {
+                    XDialog.alert("Cập nhật thất bại: Mã chi nhánh không tồn tại. Vui lòng kiểm tra lại Mã chi nhánh.");
+                } else {
+                    XDialog.alert("Cập nhật thất bại: ");
+                }
+            } else {
+                XDialog.alert("Cập nhật thất bại: Đã xảy ra lỗi không xác định.");
+            }
+            e.printStackTrace();
+        }
+    }
+
+    private void delete() {
+        if (!XDialog.confirm("Bạn có chắc chắn muốn xóa hợp đồng này không?")) {
+            return;
+        }
+        try {
+            String maHD = jTextField1.getText();
+            hopDongDAO.delete(maHD);
+            fillTable();
+            clearForm();
+            XDialog.alert("Xóa thành công!");
+        } catch (RuntimeException e) {
+            String errorMessage = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+            if (errorMessage != null && errorMessage.contains("REFERENCE constraint") && errorMessage.contains("HOA_DON")) {
+                XDialog.alert("Xóa thất bại: Hợp đồng này đang có hóa đơn liên quan. Vui lòng xóa các hóa đơn của hợp đồng này trước.");
+            } else if (errorMessage != null) {
+                XDialog.alert("Xóa thất bại: ");
+            } else {
+                XDialog.alert("Xóa thất bại: Đã xảy ra lỗi không xác định.");
+            }
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -26,6 +289,7 @@ public class HopDongPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jCalendar1 = new com.toedter.calendar.JCalendar();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
@@ -62,6 +326,11 @@ public class HopDongPanel extends javax.swing.JPanel {
                 "Mã hợp đồng", "Ngày bắt đầu", "Ngày kết thúc", "Tiền cọc", "Mã người dùng", "Phòng", "Chi nhánh"
             }
         ));
+        jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable2MouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTable2);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -88,10 +357,25 @@ public class HopDongPanel extends javax.swing.JPanel {
         });
 
         jButton2.setText("Xóa");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Sửa");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Làm mới");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -191,7 +475,31 @@ public class HopDongPanel extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        this.insert();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 1) {
+            edit();
+        }
+
+    }//GEN-LAST:event_jTable2MouseClicked
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        this.update();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        this.delete();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        this.clearForm();
+    }//GEN-LAST:event_jButton4ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -199,6 +507,7 @@ public class HopDongPanel extends javax.swing.JPanel {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private com.toedter.calendar.JCalendar jCalendar1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
