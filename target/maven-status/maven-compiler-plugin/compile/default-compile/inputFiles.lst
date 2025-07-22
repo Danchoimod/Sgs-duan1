@@ -1,7 +1,11 @@
 C:\Users\Gia Bao\OneDrive\Documents\NetBeansProjects\Sgs-duan1\src\main\java\poly\nhatro\controller\MainController.java
+C:\Users\Gia Bao\OneDrive\Documents\NetBeansProjects\Sgs-duan1\src\main\java\poly\nhatro\dao\HopDongDAO.java
+C:\Users\Gia Bao\OneDrive\Documents\NetBeansProjects\Sgs-duan1\src\main\java\poly\nhatro\dao\impl\HopDongImpl.java
 C:\Users\Gia Bao\OneDrive\Documents\NetBeansProjects\Sgs-duan1\src\main\java\poly\nhatro\dao\impl\NguoiThueDaoImpl.java
 C:\Users\Gia Bao\OneDrive\Documents\NetBeansProjects\Sgs-duan1\src\main\java\poly\nhatro\dao\NguoiThueDAO.java
+C:\Users\Gia Bao\OneDrive\Documents\NetBeansProjects\Sgs-duan1\src\main\java\poly\nhatro\entity\HopDong.java
 C:\Users\Gia Bao\OneDrive\Documents\NetBeansProjects\Sgs-duan1\src\main\java\poly\nhatro\entity\NguoiThue.java
+C:\Users\Gia Bao\OneDrive\Documents\NetBeansProjects\Sgs-duan1\src\main\java\poly\nhatro\service\HopDongService.java
 C:\Users\Gia Bao\OneDrive\Documents\NetBeansProjects\Sgs-duan1\src\main\java\poly\nhatro\service\NguoiThueService.java
 C:\Users\Gia Bao\OneDrive\Documents\NetBeansProjects\Sgs-duan1\src\main\java\poly\nhatro\ui\ChiNhanhPanel.java
 C:\Users\Gia Bao\OneDrive\Documents\NetBeansProjects\Sgs-duan1\src\main\java\poly\nhatro\ui\DangNhapDialog.java
