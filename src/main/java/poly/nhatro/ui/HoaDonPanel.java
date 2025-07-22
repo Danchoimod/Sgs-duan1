@@ -11,7 +11,6 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
     public HoaDonPanel() {
         initComponents();
     }
-///aaa
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -241,6 +240,9 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
         // TODO add your handling code here:
     }//GEN-LAST:event_btnCreateActionPerformed
 
+    public static void main(String[] args) {
+        System.out.println("hello world");
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnDelete;
