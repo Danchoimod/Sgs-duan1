@@ -4,22 +4,10 @@
  */
 package poly.nhatro.entity;
 
-
-import lombok.*;
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+/**
+ *
+ * @author Phu Pham
+ */
 public class NguoiThue {
-    private String maNguoiThue;
-    private String hoTen;
-    private String soDienThoai;
-    private String cmndCccd;
-    private String email;
-    private String matKhau;
-    private LocalDateTime ngayTao;
+    
 }
-

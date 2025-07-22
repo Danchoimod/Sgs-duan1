@@ -1,13 +1,13 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package poly.nhatro.service;
 
-import poly.nhatro.dao.NguoiThueDAO;
-import poly.nhatro.dao.impl.NguoiThueDAOImpl;
-import poly.nhatro.entity.NguoiThue;
-import java.util.List;
-
+/**
+ *
+ * @author Phu Pham
+ */
 public class NguoiThueService {
-    private final NguoiThueDAO dao = new NguoiThueDAOImpl();
-    public List<NguoiThue> findAll() {
-        return dao.findAll();
-    }
-} 
+    
+}

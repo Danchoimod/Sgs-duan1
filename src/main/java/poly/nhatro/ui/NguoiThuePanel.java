@@ -17,7 +17,6 @@ public class NguoiThuePanel extends javax.swing.JPanel {
      */
     public NguoiThuePanel() {
         initComponents();
-        loadNguoiThueToTable();
     }
 
     /**
@@ -235,110 +234,21 @@ public class NguoiThuePanel extends javax.swing.JPanel {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         // TODO add your handling code here:
-        createNguoiThue();
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
-        deleteNguoiThue();
+
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         // TODO add your handling code here:
-        updateNguoiThue();
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         // TODO add your handling code here:
-        LamMoi();
         
     }//GEN-LAST:event_btnNewActionPerformed
-
-    private void createNguoiThue() {
-        String hoTen = txtHoTen.getText();
-        String soDienThoai = txtSoDienThoai.getText();
-        String cmndCccd = txtCmndCccd.getText();
-        String email = txtEmail.getText();
-        String matKhau = txtMatKhau.getText();
-        poly.nhatro.dao.NguoiThueDAO nguoiThueDAO = new poly.nhatro.dao.impl.NguoiThueDAOImpl();
-        poly.nhatro.entity.NguoiThue nguoiThue = poly.nhatro.entity.NguoiThue.builder()
-                .maNguoiThue(java.util.UUID.randomUUID().toString())
-                .hoTen(hoTen)
-                .soDienThoai(soDienThoai)
-                .cmndCccd(cmndCccd)
-                .email(email)
-                .matKhau(matKhau)
-                .build();
-        nguoiThueDAO.insert(nguoiThue);
-        loadNguoiThueToTable();
-        clearInput();
-    }
-    private void LamMoi(){
-        btnAdd.setEnabled(true);
-        txtCmndCccd.setText("");
-        txtEmail.setText("");
-        txtHoTen.setText("");
-        txtMatKhau.setText("");
-        txtSoDienThoai.setText("");
-    }
-
-    private void loadNguoiThueToTable() {
-        poly.nhatro.dao.NguoiThueDAO nguoiThueDAO = new poly.nhatro.dao.impl.NguoiThueDAOImpl();
-        java.util.List<poly.nhatro.entity.NguoiThue> danhSach = nguoiThueDAO.findAll();
-        System.out.println("[DEBUG] Loaded " + danhSach.size() + " NguoiThue records");
-        String[] columnNames = {"ID", "Họ tên", "SĐT", "CMND/CCCD", "Email", "Mật khẩu"};
-        Object[][] data = new Object[danhSach.size()][6];
-        for (int i = 0; i < danhSach.size(); i++) {
-            poly.nhatro.entity.NguoiThue nt = danhSach.get(i);
-            data[i][0] = nt.getMaNguoiThue();
-            data[i][1] = nt.getHoTen();
-            data[i][2] = nt.getSoDienThoai();
-            data[i][3] = nt.getCmndCccd();
-            data[i][4] = nt.getEmail();
-            data[i][5] = nt.getMatKhau();
-            System.out.println("[DEBUG] Record " + i + ": ID=" + nt.getMaNguoiThue() + ", Name=" + nt.getHoTen());
-        }
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
-    }
-
-    private void updateNguoiThue() {
-        if (selectedId == null) {
-            return;
-        }
-        System.out.println("[DEBUG] Updating NguoiThue with ID: " + selectedId);
-        poly.nhatro.dao.NguoiThueDAO nguoiThueDAO = new poly.nhatro.dao.impl.NguoiThueDAOImpl();
-        poly.nhatro.entity.NguoiThue nguoiThue = poly.nhatro.entity.NguoiThue.builder()
-                .maNguoiThue(selectedId)
-                .hoTen(txtHoTen.getText())
-                .soDienThoai(txtSoDienThoai.getText())
-                .cmndCccd(txtCmndCccd.getText())
-                .email(txtEmail.getText())
-                .matKhau(txtMatKhau.getText())
-                .build();
-        nguoiThueDAO.update(nguoiThue);
-        loadNguoiThueToTable();
-        clearInput();
-    }
-
-    private void deleteNguoiThue() {
-        if (selectedId == null) {
-            return;
-        }
-        System.out.println("[DEBUG] Deleting NguoiThue with ID: " + selectedId);
-        poly.nhatro.dao.NguoiThueDAO nguoiThueDAO = new poly.nhatro.dao.impl.NguoiThueDAOImpl();
-        nguoiThueDAO.delete(java.util.UUID.fromString(selectedId));
-        loadNguoiThueToTable();
-        clearInput();
-    }
-
-    private void clearInput() {
-        txtHoTen.setText("");
-        txtSoDienThoai.setText("");
-        txtCmndCccd.setText("");
-        txtEmail.setText("");
-        txtMatKhau.setText("");
-        selectedId = null;
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
