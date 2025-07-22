@@ -57,7 +57,7 @@ public class HopDongPanel extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã hợp đồng", "Mã người thuê", "Mã phòng", "Ngày bắt đầu", "Ngày kết thúc", "Tiền cọc", "Trạng thái"
+                "Mã hợp đồng", "Ngày bắt đầu", "Ngày kết thúc", "Tiền cọc", "Mã người dùng", "Phòng", "Chi nhánh"
             }
         ));
         jScrollPane2.setViewportView(jTable2);
