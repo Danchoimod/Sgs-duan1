@@ -14,6 +14,7 @@ poly\nhatro\ui\DangNhapDialog$1$1.class
 poly\nhatro\ui\NguoiThuePanel$5.class
 poly\nhatro\ui\MainFrame$3.class
 poly\nhatro\ui\NguoiThuePanel$4.class
+poly\cafe\ui\HopDongPanel.class
 poly\nhatro\ui\MainFrame$11.class
 poly\nhatro\ui\ChiNhanhPanel.class
 poly\nhatro\ui\PhongPanel.class
@@ -22,6 +23,7 @@ poly\nhatro\util\XStr.class
 poly\nhatro\util\HoverUtil.class
 poly\nhatro\util\HoverUtil$1.class
 poly\nhatro\util\RoundedComboBox.class
+poly\nhatro\ui\HopDongPanel$1.class
 poly\nhatro\ui\DienNuocPanel.class
 poly\nhatro\ui\DoanhthuPanel.class
 poly\nhatro\util\RoundedPanel.class
