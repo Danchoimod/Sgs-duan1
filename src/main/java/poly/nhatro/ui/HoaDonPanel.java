@@ -241,7 +241,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
     }//GEN-LAST:event_btnCreateActionPerformed
 
     public static void main(String[] args) {
-        System.out.println("hello world");
+        System.out.println("hello hehe");
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCreate;
