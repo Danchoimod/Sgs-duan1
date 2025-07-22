@@ -15,6 +15,7 @@ public class HopDongPanel extends javax.swing.JPanel {
      */
     public HopDongPanel() {
         initComponents();
+        init();
     }
 
     /**
@@ -52,4 +53,8 @@ public class HopDongPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
+
+    private void init() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
