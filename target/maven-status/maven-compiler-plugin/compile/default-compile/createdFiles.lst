@@ -22,6 +22,7 @@ poly\nhatro\util\XStr.class
 poly\nhatro\util\HoverUtil.class
 poly\nhatro\util\HoverUtil$1.class
 poly\nhatro\util\RoundedComboBox.class
+poly\nhatro\ui\HopDongPanel$1.class
 poly\nhatro\ui\DienNuocPanel.class
 poly\nhatro\ui\DoanhthuPanel.class
 poly\nhatro\util\RoundedPanel.class
