@@ -25,9 +25,4 @@ public class HoaDon {
     private String ngayThanhToan;
     private int ID_HopDong;
     
-    
-            
-
-
-    
 }
