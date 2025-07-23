@@ -16,12 +16,12 @@ public interface HoaDonDAO {
     
     List<HoaDon> selectAll();
     
-    HoaDon selectById(int id);
+    HoaDon findById(int id);
     void insert(HoaDon hoaDon);
     void update(HoaDon hoaDon);
     void delete(int id);
-    List<HoaDon> selectByTrangThai(boolean daThanhToan);
-    List<Object[]> selectWithDetals();
+    List<HoaDon> findByTrangThai(boolean daThanhToan);
+    List<Object[]> findWithDetals();
             
     
     
