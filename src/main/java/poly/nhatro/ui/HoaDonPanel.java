@@ -14,6 +14,7 @@ import poly.nhatro.dao.impl.NguoiThueDaoImpl;
 import poly.nhatro.dao.impl.hoaDonDAOImpl;
 import poly.nhatro.entity.HoaDon;
 import poly.nhatro.util.XDialog;
+import poly.nhatro.util.ExcelOutput;
 
 /**
  * Panel quản lý hóa đơn
@@ -641,8 +642,22 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
     }//GEN-LAST:event_txtNgayThanhToanActionPerformed
 
     private void btnXuatHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXuatHoaDonActionPerformed
-        // TODO add your handling code here:
-        
+        try {
+            if (tblHoaDon.getRowCount() == 0) {
+                XDialog.alert("Không có dữ liệu hóa đơn để xuất!");
+                return;
+            }
+            
+            ExcelOutput.exportJTableToExcel(
+                tblHoaDon,
+                "DANH SÁCH HÓA ĐƠN",
+                "DanhSachHoaDon"
+            );
+            
+        } catch (Exception e) {
+            XDialog.alert("Lỗi khi xuất hóa đơn: " + e.getMessage());
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_btnXuatHoaDonActionPerformed
 
     private void tblHoaDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblHoaDonMouseClicked
@@ -658,12 +673,9 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
     }//GEN-LAST:event_btnTaoHoaDonActionPerformed
 
     private void btnSuaHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaHoaDonActionPerformed
-        // TODO add your handling code here:
         if (currentHoaDon != null) {
-            // Nếu đang ở chế độ edit, thì thực hiện update
             this.update();
         } else {
-            // Nếu chưa edit, thì bắt đầu edit
             this.edit();
         }
     }//GEN-LAST:event_btnSuaHoaDonActionPerformed
@@ -701,7 +713,6 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
     }//GEN-LAST:event_txtSoNuocCuKeyReleased
 
     private void txtSoNuocMoiKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSoNuocMoiKeyReleased
-        // TODO add your handling code here:
         calculateTienNuoc();
         calculateTongTien();
     }//GEN-LAST:event_txtSoNuocMoiKeyReleased
@@ -840,7 +851,6 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
      */
     private boolean validateForm() {
         try {
-            // Kiểm tra họ tên khách hàng
             String hoTenStr = txtHoten.getText().trim();
             if (hoTenStr.isEmpty()) {
                 XDialog.alert("Vui lòng nhập họ tên khách hàng!");
@@ -848,12 +858,11 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                 return false;
             }
             if (hoTenStr.length() < 2) {
-                XDialog.alert("Họ tên phải có ít nhất 2 ký tự!");
+                XDialog.alert("Họ tên phải có ít nhất 2 ký tự!\nVí dụ: Nguyễn Văn A, Trần B");
                 txtHoten.requestFocus();
                 return false;
             }
             
-            // Kiểm tra tên phòng
             String tenPhongStr = txtTenPhong.getText().trim();
             if (tenPhongStr.isEmpty()) {
                 XDialog.alert("Vui lòng nhập tên phòng!");
@@ -861,7 +870,6 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                 return false;
             }
             
-            // Kiểm tra chi nhánh
             if (cboTenChiNhanh.getSelectedIndex() <= 0 || cboTenChiNhanh.getSelectedItem() == null || cboTenChiNhanh.getSelectedItem().toString().trim().isEmpty()) {
                 XDialog.alert("Vui lòng chọn chi nhánh!");
                 cboTenChiNhanh.requestFocus();
@@ -878,7 +886,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                 try {
                     Integer.parseInt(maHopDongStr);
                 } catch (NumberFormatException e) {
-                    XDialog.alert("Mã hợp đồng phải là số nguyên!");
+                    XDialog.alert("Mã hợp đồng phải là số nguyên!\nVí dụ: 1, 2, 3");
                     txtMaHopDong.requestFocus();
                     return false;
                 }
@@ -899,7 +907,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                     return false;
                 }
             } catch (NumberFormatException e) {
-                XDialog.alert("Số điện cũ phải là số nguyên!");
+                XDialog.alert("Số điện cũ phải là số nguyên!\nVí dụ: 100, 250, 1500");
                 txtSoDienCu.requestFocus();
                 return false;
             }
@@ -919,7 +927,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                     return false;
                 }
             } catch (NumberFormatException e) {
-                XDialog.alert("Số điện mới phải là số nguyên!");
+                XDialog.alert("Số điện mới phải là số nguyên!\nVí dụ: 100, 250, 1500");
                 txtSoDienMoi.requestFocus();
                 return false;
             }
@@ -945,7 +953,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                     return false;
                 }
             } catch (NumberFormatException e) {
-                XDialog.alert("Số nước cũ phải là số nguyên!");
+                XDialog.alert("Số nước cũ phải là số nguyên!\nVí dụ: 50, 80, 120");
                 txtSoNuocCu.requestFocus();
                 return false;
             }
@@ -965,7 +973,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                     return false;
                 }
             } catch (NumberFormatException e) {
-                XDialog.alert("Số nước mới phải là số nguyên!");
+                XDialog.alert("Số nước mới phải là số nguyên!\nVí dụ: 50, 80, 120");
                 txtSoNuocMoi.requestFocus();
                 return false;
             }
@@ -1002,7 +1010,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                 try {
                     sdf.parse(ngayStr);
                 } catch (ParseException e) {
-                    XDialog.alert("Định dạng ngày không đúng! Vui lòng nhập theo định dạng yyyy-MM-dd");
+                    XDialog.alert("Định dạng ngày không đúng! Vui lòng nhập theo định dạng yyyy-MM-dd\nVí dụ: 2024-01-15, 2024-12-31");
                     txtNgayThanhToan.requestFocus();
                     return false;
                 }
