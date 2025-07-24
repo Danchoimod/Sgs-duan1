@@ -5,6 +5,7 @@
 package poly.nhatro.dao.impl;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,16 +20,20 @@ import poly.nhatro.util.XJdbc;
  * @author Admin
  */
 public class DoanhThuImpl implements DoanhThuDao {
-
-    private DoanhThu mapResult(ResultSet rs) throws Exception {
+ private DoanhThu mapResult(ResultSet rs) throws Exception {
         DoanhThu dt = new DoanhThu();
-        dt.setIdHoaDon(rs.getInt("ID_HoaDon")); // Kiểm tra tên cột
+        dt.setIdHoaDon(rs.getInt("ID_HoaDon"));
+        dt.setSoDienMoi(rs.getInt("soDienMoi"));   // Thêm các trường này
+        dt.setSoNuocMoi(rs.getInt("soNuocMoi"));   // Thêm các trường này
+        dt.setSoDienCu(rs.getInt("soDienCu"));     // Thêm các trường này
+        dt.setSoNuocCu(rs.getInt("soNuocCu"));     // Thêm các trường này
         dt.setTienDien(rs.getBigDecimal("tienDien"));
         dt.setTienNuoc(rs.getBigDecimal("tienNuoc"));
         dt.setTienPhong(rs.getBigDecimal("tienPhong"));
         dt.setTongTien(rs.getBigDecimal("tongTien"));
-        dt.setNgayThanhToan(rs.getDate("ngayThanhToan")); // Đảm bảo viết thường
+        dt.setNgayThanhToan(rs.getDate("ngayThanhToan"));
         dt.setTrangThai(rs.getBoolean("trangThaiThanhToan"));
+        dt.setIdHopDong(rs.getInt("ID_HopDong")); // Thêm trường này
         return dt;
     }
 
@@ -53,7 +58,6 @@ public class DoanhThuImpl implements DoanhThuDao {
         try {
             String sql = "SELECT * FROM HOA_DON WHERE ngayThanhToan BETWEEN ? AND ? ORDER BY ngayThanhToan DESC";
 
-            // Chuyển đổi Date sang Timestamp
             java.sql.Timestamp start = new java.sql.Timestamp(tuNgay.getTime());
             java.sql.Timestamp end = new java.sql.Timestamp(denNgay.getTime());
 
@@ -72,5 +76,46 @@ public class DoanhThuImpl implements DoanhThuDao {
             throw new RuntimeException("Lỗi truy vấn theo ngày: " + e.getMessage(), e);
         }
         return list;
+    }
+
+    @Override
+    public DoanhThu getById(int idHoaDon) {
+        String sql = "SELECT * FROM HOA_DON WHERE ID_HoaDon = ?";
+        try {
+            ResultSet rs = XJdbc.executeQuery(sql, idHoaDon);
+            if (rs.next()) {
+                return mapResult(rs);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Lỗi khi lấy doanh thu theo ID: " + e.getMessage(), e);
+        }
+        return null; // Trả về null nếu không tìm thấy
+    }
+
+    public boolean update(DoanhThu dt) {
+        String sql = """
+        UPDATE HOA_DON
+        SET soDienMoi = ?, soNuocMoi = ?, soDienCu = ?, soNuocCu = ?,
+            TienDien = ?, TienNuoc = ?, TienPhong = ?, TongTien = ?, NgayThanhToan = ?, trangThaiThanhToan = ?, ID_HopDong = ?
+        WHERE ID_HoaDon = ?
+        """;
+
+        int rows = XJdbc.executeUpdate(sql,
+                dt.getSoDienMoi(),
+                dt.getSoNuocMoi(),
+                dt.getSoDienCu(),
+                dt.getSoNuocCu(),
+                dt.getTienDien(),
+                dt.getTienNuoc(),
+                dt.getTienPhong(),
+                dt.getTongTien(),
+                new java.sql.Date(dt.getNgayThanhToan().getTime()), // Chuyển đổi từ java.util.Date sang java.sql.Date
+                dt.isTrangThai(),
+                dt.getIdHopDong(),
+                dt.getIdHoaDon()
+        );
+
+        return rows > 0;
     }
 }
