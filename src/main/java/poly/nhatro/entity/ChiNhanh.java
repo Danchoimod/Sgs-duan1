@@ -8,7 +8,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ChiNhanh {
     private int ID_ChiNhanh;
-    private String TenChiNhanh;
+    private String tenChiNhanh;
+    private String diaChi;
     private BigDecimal giaDien;
     private BigDecimal giaNuoc;
 }
