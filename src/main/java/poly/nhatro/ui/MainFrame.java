@@ -81,11 +81,13 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
         space7 = new javax.swing.JPanel();
         lblHoaDon = new javax.swing.JLabel(new com.formdev.flatlaf.extras.FlatSVGIcon("icons/bill.svg", 24, 24));
         space9 = new javax.swing.JPanel();
+        space8 = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        lblDangXuat = new javax.swing.JLabel(new com.formdev.flatlaf.extras.FlatSVGIcon("icons/logout.svg", 24, 24));
         mainPanel = new javax.swing.JPanel();
         pnlHeaderNav = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lblBell = new javax.swing.JLabel(new com.formdev.flatlaf.extras.FlatSVGIcon("icons/bell.svg", 24, 24));
-        lblDangXuat1 = new javax.swing.JLabel(new com.formdev.flatlaf.extras.FlatSVGIcon("icons/logout.svg", 24, 24));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GSG Manager - màn hình chính");
@@ -135,7 +137,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
         );
         space2Layout.setVerticalGroup(
             space2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 35, Short.MAX_VALUE)
+            .addGap(0, 42, Short.MAX_VALUE)
         );
 
         pnlNav.add(space2);
@@ -170,7 +172,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
         );
         space3Layout.setVerticalGroup(
             space3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 28, Short.MAX_VALUE)
         );
 
         pnlNav.add(space3);
@@ -202,7 +204,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
         );
         space1Layout.setVerticalGroup(
             space1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 28, Short.MAX_VALUE)
         );
 
         pnlNav.add(space1);
@@ -234,7 +236,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
         );
         space4Layout.setVerticalGroup(
             space4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 28, Short.MAX_VALUE)
         );
 
         pnlNav.add(space4);
@@ -266,7 +268,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
         );
         space5Layout.setVerticalGroup(
             space5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 28, Short.MAX_VALUE)
         );
 
         pnlNav.add(space5);
@@ -298,7 +300,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
         );
         space6Layout.setVerticalGroup(
             space6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 28, Short.MAX_VALUE)
         );
 
         pnlNav.add(space6);
@@ -330,7 +332,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
         );
         space7Layout.setVerticalGroup(
             space7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 28, Short.MAX_VALUE)
         );
 
         pnlNav.add(space7);
@@ -366,11 +368,57 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
 
         pnlNav.add(space9);
 
+        space8.setBackground(new java.awt.Color(249, 249, 249));
+        space8.setForeground(new java.awt.Color(255, 255, 255));
+        space8.setMaximumSize(new java.awt.Dimension(35, 35));
+
+        javax.swing.GroupLayout space8Layout = new javax.swing.GroupLayout(space8);
+        space8.setLayout(space8Layout);
+        space8Layout.setHorizontalGroup(
+            space8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 18, Short.MAX_VALUE)
+        );
+        space8Layout.setVerticalGroup(
+            space8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 3, Short.MAX_VALUE)
+        );
+
+        pnlNav.add(space8);
+
+        jPanel1.setBackground(new java.awt.Color(249, 249, 249));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 11, Short.MAX_VALUE)
+        );
+
+        pnlNav.add(jPanel1);
+
+        lblDangXuat.setForeground(new java.awt.Color(51, 51, 51));
+        lblDangXuat.setText("item 3");
+        lblDangXuat.setToolTipText("Đăng xuất");
+        lblDangXuat.setIconTextGap(10);
+        lblDangXuat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblDangXuatMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblDangXuatMouseEntered(evt);
+            }
+        });
+        pnlNav.add(lblDangXuat);
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 599, Short.MAX_VALUE)
+            .addGap(0, 543, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -389,18 +437,6 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
             }
         });
 
-        lblDangXuat1.setForeground(new java.awt.Color(51, 51, 51));
-        lblDangXuat1.setToolTipText("Đăng xuất");
-        lblDangXuat1.setIconTextGap(10);
-        lblDangXuat1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lblDangXuat1MouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lblDangXuat1MouseEntered(evt);
-            }
-        });
-
         javax.swing.GroupLayout pnlHeaderNavLayout = new javax.swing.GroupLayout(pnlHeaderNav);
         pnlHeaderNav.setLayout(pnlHeaderNavLayout);
         pnlHeaderNavLayout.setHorizontalGroup(
@@ -410,8 +446,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
                 .addComponent(lblBell, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblDangXuat1))
+                .addContainerGap())
         );
         pnlHeaderNavLayout.setVerticalGroup(
             pnlHeaderNavLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -419,8 +454,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
                 .addContainerGap()
                 .addGroup(pnlHeaderNavLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(lblBell)
-                    .addComponent(lblDangXuat1))
+                    .addComponent(lblBell))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
@@ -442,7 +476,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlNav, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+                    .addComponent(pnlNav, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(pnlHeaderNav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -450,7 +484,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
                 .addContainerGap())
         );
 
-        setBounds(0, 0, 674, 446);
+        setBounds(0, 0, 674, 389);
     }// </editor-fold>//GEN-END:initComponents
 
     private void pnlNavMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlNavMouseEntered
@@ -487,6 +521,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
             lblHopDong.setToolTipText("Hợp đồng");
             lblDienNuoc3.setToolTipText("Điện nước");
             lblHoaDon.setToolTipText("Hóa đơn");
+            lblDangXuat.setToolTipText("Đăng xuất");
             collapseSidebar();
             lblSideBar.setIcon(new FlatSVGIcon("icons/sidebar.svg", 24, 24));
             navOpen = false;
@@ -577,19 +612,19 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
         this.cardLayout.show(this.mainPanel, Constrants.HOADON_PANEL);
     }//GEN-LAST:event_lblHoaDonMouseClicked
 
+    private void lblDangXuatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblDangXuatMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lblDangXuatMouseClicked
+
+    private void lblDangXuatMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblDangXuatMouseEntered
+        // TODO add your handling code here:
+        HoverUtil.setHoverEffect(lblDangXuat);
+    }//GEN-LAST:event_lblDangXuatMouseEntered
+
     private void lblBellMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblBellMouseEntered
         // TODO add your handling code here:
         HoverUtil.setHoverEffect(lblBell);
     }//GEN-LAST:event_lblBellMouseEntered
-
-    private void lblDangXuat1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblDangXuat1MouseEntered
-        // TODO add your handling code here:
-        HoverUtil.setHoverEffect(lblDangXuat1);
-    }//GEN-LAST:event_lblDangXuat1MouseEntered
-
-    private void lblDangXuat1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblDangXuat1MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_lblDangXuat1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -634,6 +669,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
                 lblHopDong.setText("Hợp đồng");
                 lblHoaDon.setText("Hóa đơn");
                 lblDienNuoc3.setText("Điện nước");
+                lblDangXuat.setText("Đăng xuất");
             }
         });
         expandTimer.start();
@@ -658,6 +694,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
                 lblHopDong.setText("");
                 lblHoaDon.setText("");
                 lblDienNuoc3.setText("");
+                lblDangXuat.setText("");
             }
         });
         collapseTimer.start();
@@ -666,9 +703,10 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lblBell;
     private javax.swing.JLabel lblChiNhanh;
-    private javax.swing.JLabel lblDangXuat1;
+    private javax.swing.JLabel lblDangXuat;
     private javax.swing.JLabel lblDienNuoc3;
     private javax.swing.JLabel lblDoanhThu;
     private javax.swing.JLabel lblHoaDon;
@@ -686,6 +724,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
     private javax.swing.JPanel space5;
     private javax.swing.JPanel space6;
     private javax.swing.JPanel space7;
+    private javax.swing.JPanel space8;
     private javax.swing.JPanel space9;
     // End of variables declaration//GEN-END:variables
     private CardLayout cardLayout = new CardLayout();
@@ -722,7 +761,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
                 getClass().getResource("/fpt.png")
         ));
 
-
+        this.setLocationRelativeTo(null);
         this.showLoginJDialog(this);
                 collapseSidebar();
     }
