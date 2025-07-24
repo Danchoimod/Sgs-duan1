@@ -1,5 +1,10 @@
 package poly.nhatro.ui;
 
+import poly.nhatro.entity.NguoiThue;
+import java.util.List;
+import java.text.SimpleDateFormat;
+import javax.swing.table.DefaultTableModel;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
@@ -228,7 +233,6 @@ public class NguoiThuePanel extends javax.swing.JPanel {
             // Lưu lại ID để cập nhật/xóa
             Object id = jTable1.getValueAt(row, 0);
             selectedId = (id != null) ? id.toString() : null;
-            System.out.println("[DEBUG] Selected row " + row + " with ID: " + selectedId);
         }
     }//GEN-LAST:event_jTable1MouseClicked
 
@@ -275,4 +279,306 @@ public class NguoiThuePanel extends javax.swing.JPanel {
     private javax.swing.JTextField txtMatKhau;
     private javax.swing.JTextField txtSoDienThoai;
     // End of variables declaration//GEN-END:variables
+    
+    /**
+     * Đặt dữ liệu từ entity NguoiThue vào form
+     * @param nguoiThue Entity NguoiThue cần hiển thị, null để clear form
+     */
+    public void setForm(NguoiThue nguoiThue) {
+        if (nguoiThue == null) {
+            clearForm();
+            return;
+        }
+        
+        try {
+            // Đặt các trường text
+            txtHoTen.setText(nguoiThue.getHoVaTen() != null ? nguoiThue.getHoVaTen() : "");
+            txtSoDienThoai.setText(nguoiThue.getSdt() != null ? nguoiThue.getSdt() : "");
+            txtCmndCccd.setText(nguoiThue.getSoCCCD() != null ? nguoiThue.getSoCCCD() : "");
+            txtEmail.setText(nguoiThue.getEmail() != null ? nguoiThue.getEmail() : "");
+            txtMatKhau.setText(nguoiThue.getMatKhau() != null ? nguoiThue.getMatKhau() : "");
+            
+            // Lưu ID để sử dụng cho update/delete
+            selectedId = String.valueOf(nguoiThue.getID_NguoiDung());
+            
+            // Disable nút Add, enable các nút khác khi có dữ liệu
+            btnAdd.setEnabled(false);
+            btnUpdate.setEnabled(true);
+            btnDelete.setEnabled(true);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Lấy dữ liệu từ form để tạo entity NguoiThue
+     * @return NguoiThue entity hoặc null nếu có lỗi
+     */
+    public NguoiThue getForm() {
+        try {
+            NguoiThue nguoiThue = new NguoiThue();
+            
+            // Lấy dữ liệu từ các text field
+            nguoiThue.setHoVaTen(txtHoTen.getText().trim());
+            nguoiThue.setSdt(txtSoDienThoai.getText().trim());
+            nguoiThue.setSoCCCD(txtCmndCccd.getText().trim());
+            nguoiThue.setEmail(txtEmail.getText().trim());
+            nguoiThue.setMatKhau(txtMatKhau.getText().trim());
+            
+            // Đặt ID nếu đang edit (có selectedId)
+            if (selectedId != null && !selectedId.isEmpty()) {
+                nguoiThue.setID_NguoiDung(Integer.parseInt(selectedId));
+            }
+            
+            // Đặt các giá trị mặc định
+            nguoiThue.setTrangThai(true); // Mặc định là active
+            nguoiThue.setGioiTinh(true);  // Mặc định là nam (có thể thêm UI cho này sau)
+            
+            return nguoiThue;
+            
+        } catch (NumberFormatException e) {
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    /**
+     * Xóa tất cả dữ liệu trên form
+     */
+    public void clearForm() {
+        txtHoTen.setText("");
+        txtSoDienThoai.setText("");
+        txtCmndCccd.setText("");
+        txtEmail.setText("");
+        txtMatKhau.setText("");
+        
+        // Reset selected ID
+        selectedId = null;
+        
+        // Enable nút Add, disable các nút khác
+        btnAdd.setEnabled(true);
+        btnUpdate.setEnabled(false);
+        btnDelete.setEnabled(false);
+    }
+    
+    /**
+     * Validate dữ liệu form trước khi submit
+     * @return true nếu dữ liệu hợp lệ
+     */
+    public boolean validateForm() {
+        // Kiểm tra họ tên không được rỗng
+        if (txtHoTen.getText().trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Họ và tên không được để trống!", 
+                "Lỗi validation", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            txtHoTen.requestFocus();
+            return false;
+        }
+        
+        // Kiểm tra số điện thoại
+        String sdt = txtSoDienThoai.getText().trim();
+        if (sdt.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Số điện thoại không được để trống!", 
+                "Lỗi validation", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            txtSoDienThoai.requestFocus();
+            return false;
+        }
+        
+        // Kiểm tra định dạng số điện thoại (10-11 số)
+        if (!sdt.matches("^[0-9]{10,11}$")) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Số điện thoại phải có 10-11 chữ số!", 
+                "Lỗi validation", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            txtSoDienThoai.requestFocus();
+            return false;
+        }
+        
+        // Kiểm tra CCCD
+        String cccd = txtCmndCccd.getText().trim();
+        if (cccd.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Số CCCD không được để trống!", 
+                "Lỗi validation", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            txtCmndCccd.requestFocus();
+            return false;
+        }
+        
+        // Kiểm tra định dạng CCCD (12 số)
+        if (!cccd.matches("^[0-9]{12}$")) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Số CCCD phải có 12 chữ số!", 
+                "Lỗi validation", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            txtCmndCccd.requestFocus();
+            return false;
+        }
+        
+        // Kiểm tra email
+        String email = txtEmail.getText().trim();
+        if (!email.isEmpty() && !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Định dạng email không hợp lệ!", 
+                "Lỗi validation", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            txtEmail.requestFocus();
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Hiển thị danh sách NguoiThue lên bảng
+     * @param danhSachNguoiThue Danh sách người thuê cần hiển thị
+     */
+    public void setFormToTable(List<NguoiThue> danhSachNguoiThue) {
+        try {
+            // Tạo model cho bảng với các cột phù hợp
+            DefaultTableModel model = new DefaultTableModel();
+            
+            // Định nghĩa các cột
+            String[] columnNames = {
+                "ID", "Họ và Tên", "SĐT", "CCCD", "Email", "Mật Khẩu", 
+                "Giới Tính", "Quê Quán", "Ngày Sinh", "Trạng Thái", "ID Phòng"
+            };
+            model.setColumnIdentifiers(columnNames);
+            
+            // Thêm dữ liệu vào bảng
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            
+            for (NguoiThue nguoiThue : danhSachNguoiThue) {
+                Object[] row = {
+                    nguoiThue.getID_NguoiDung(),
+                    nguoiThue.getHoVaTen() != null ? nguoiThue.getHoVaTen() : "",
+                    nguoiThue.getSdt() != null ? nguoiThue.getSdt() : "",
+                    nguoiThue.getSoCCCD() != null ? nguoiThue.getSoCCCD() : "",
+                    nguoiThue.getEmail() != null ? nguoiThue.getEmail() : "",
+                    nguoiThue.getMatKhau() != null ? "****" : "", // Ẩn mật khẩu
+                    nguoiThue.isGioiTinh() ? "Nam" : "Nữ",
+                    nguoiThue.getQueQuan() != null ? nguoiThue.getQueQuan() : "",
+                    nguoiThue.getNgaySinh() != null ? dateFormat.format(nguoiThue.getNgaySinh()) : "",
+                    nguoiThue.isTrangThai() ? "Hoạt động" : "Không hoạt động",
+                    nguoiThue.getID_Phong() != null ? nguoiThue.getID_Phong() : "Chưa gán"
+                };
+                model.addRow(row);
+            }
+            
+            // Áp dụng model vào bảng
+            jTable1.setModel(model);
+            
+            // Tùy chỉnh độ rộng cột
+            if (jTable1.getColumnModel().getColumnCount() > 0) {
+                jTable1.getColumnModel().getColumn(0).setPreferredWidth(50);  // ID
+                jTable1.getColumnModel().getColumn(1).setPreferredWidth(150); // Họ tên
+                jTable1.getColumnModel().getColumn(2).setPreferredWidth(100); // SĐT
+                jTable1.getColumnModel().getColumn(3).setPreferredWidth(120); // CCCD
+                jTable1.getColumnModel().getColumn(4).setPreferredWidth(150); // Email
+                jTable1.getColumnModel().getColumn(5).setPreferredWidth(80);  // Mật khẩu
+                jTable1.getColumnModel().getColumn(6).setPreferredWidth(80);  // Giới tính
+                jTable1.getColumnModel().getColumn(7).setPreferredWidth(120); // Quê quán
+                jTable1.getColumnModel().getColumn(8).setPreferredWidth(100); // Ngày sinh
+                jTable1.getColumnModel().getColumn(9).setPreferredWidth(100); // Trạng thái
+                jTable1.getColumnModel().getColumn(10).setPreferredWidth(80); // ID Phòng
+            }
+            
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Hiển thị danh sách NguoiThue lên bảng với cột đơn giản (chỉ các trường có UI)
+     * @param danhSachNguoiThue Danh sách người thuê cần hiển thị
+     */
+    public void setFormToTableBasic(List<NguoiThue> danhSachNguoiThue) {
+        try {
+            // Tạo model cho bảng với các cột cơ bản
+            DefaultTableModel model = new DefaultTableModel();
+            
+            // Định nghĩa các cột cơ bản (chỉ những trường có trong UI form)
+            String[] columnNames = {
+                "ID", "Họ và Tên", "SĐT", "CCCD", "Email", "Trạng Thái"
+            };
+            model.setColumnIdentifiers(columnNames);
+            
+            // Thêm dữ liệu vào bảng
+            for (NguoiThue nguoiThue : danhSachNguoiThue) {
+                Object[] row = {
+                    nguoiThue.getID_NguoiDung(),
+                    nguoiThue.getHoVaTen() != null ? nguoiThue.getHoVaTen() : "",
+                    nguoiThue.getSdt() != null ? nguoiThue.getSdt() : "",
+                    nguoiThue.getSoCCCD() != null ? nguoiThue.getSoCCCD() : "",
+                    nguoiThue.getEmail() != null ? nguoiThue.getEmail() : "",
+                    nguoiThue.isTrangThai() ? "Hoạt động" : "Không hoạt động"
+                };
+                model.addRow(row);
+            }
+            
+            // Áp dụng model vào bảng
+            jTable1.setModel(model);
+            
+            // Tùy chỉnh độ rộng cột
+            if (jTable1.getColumnModel().getColumnCount() > 0) {
+                jTable1.getColumnModel().getColumn(0).setPreferredWidth(50);  // ID
+                jTable1.getColumnModel().getColumn(1).setPreferredWidth(200); // Họ tên
+                jTable1.getColumnModel().getColumn(2).setPreferredWidth(120); // SĐT
+                jTable1.getColumnModel().getColumn(3).setPreferredWidth(150); // CCCD
+                jTable1.getColumnModel().getColumn(4).setPreferredWidth(200); // Email
+                jTable1.getColumnModel().getColumn(5).setPreferredWidth(100); // Trạng thái
+            }
+            
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Lấy NguoiThue được chọn từ bảng
+     * @return NguoiThue object từ dòng được chọn hoặc null nếu không có dòng nào được chọn
+     */
+    public NguoiThue getSelectedFromTable() {
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
+            return null;
+        }
+        
+        try {
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            
+            NguoiThue nguoiThue = new NguoiThue();
+            nguoiThue.setID_NguoiDung((Integer) model.getValueAt(selectedRow, 0));
+            nguoiThue.setHoVaTen((String) model.getValueAt(selectedRow, 1));
+            nguoiThue.setSdt((String) model.getValueAt(selectedRow, 2));
+            nguoiThue.setSoCCCD((String) model.getValueAt(selectedRow, 3));
+            nguoiThue.setEmail((String) model.getValueAt(selectedRow, 4));
+            
+            // Nếu có cột trạng thái
+            if (model.getColumnCount() > 5) {
+                String trangThai = (String) model.getValueAt(selectedRow, 5);
+                nguoiThue.setTrangThai("Hoạt động".equals(trangThai));
+            }
+            
+            return nguoiThue;
+            
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    /**
+     * Clear tất cả dữ liệu trong bảng
+     */
+    public void clearTable() {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+    }
 }

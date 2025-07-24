@@ -1,6 +1,7 @@
 package poly.nhatro.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import lombok.*;
 
 /**
@@ -22,7 +23,7 @@ public class HoaDon {
     private BigDecimal tienPhong;
     private BigDecimal tongTien;
     private boolean trangThaiThanhToan;
-    private String ngayThanhToan;
+    private Date ngayThanhToan;
     private int ID_HopDong;
     
 }
