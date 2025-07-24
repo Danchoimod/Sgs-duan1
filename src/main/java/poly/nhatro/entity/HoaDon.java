@@ -26,9 +26,4 @@ public class HoaDon {
     private Date ngayThanhToan;
     private int ID_HopDong;
     
-    
-            
-
-
-    
 }
