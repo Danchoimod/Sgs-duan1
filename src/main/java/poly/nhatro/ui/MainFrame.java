@@ -24,11 +24,12 @@ import javax.swing.JLabel;
 import javax.swing.ToolTipManager;
 import poly.nhatro.util.HoverUtil;
 import poly.nhatro.controller.MainController;
+
 /**
  *
  * @author Phu Pham
  */
-public class MainFrame extends javax.swing.JFrame implements MainController{
+public class MainFrame extends javax.swing.JFrame implements MainController {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
     private final int COLLAPSED_WIDTH = 40;
@@ -646,8 +647,6 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new MainFrame().setVisible(true));
     }
-    
-    
 
     private void expandSidebar() {
         if (collapseTimer != null && collapseTimer.isRunning()) {
@@ -763,7 +762,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
 
         this.setLocationRelativeTo(null);
         this.showLoginJDialog(this);
-                collapseSidebar();
+        collapseSidebar();
     }
 
 }
