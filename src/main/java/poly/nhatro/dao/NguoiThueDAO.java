@@ -8,7 +8,7 @@ import poly.nhatro.entity.NguoiThue;
  *
  * @author tranthuyngan
  */
-public interface NguoiThueDAO {
-    List<NguoiThue> findAll();
-    NguoiThue findById(int id);
+public interface NguoiThueDAO extends CrudDao<NguoiThue, Integer> {
+    // Các method bổ sung nếu cần
+    String getTenPhongByNguoiThueId(int nguoiThueId);
 }
