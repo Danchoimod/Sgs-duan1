@@ -59,7 +59,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
         jLabel9 = new javax.swing.JLabel();
         txtNgaySinh = new poly.nhatro.util.RoundedTextField(20); ;
         jLabel10 = new javax.swing.JLabel();
-        txtPhong = new poly.nhatro.util.RoundedTextField(20);
+        txtPhong = new poly.nhatro.util.RoundedTextField(20); ;
         jScrollPane1 = new javax.swing.JScrollPane();
         tblNguoiThue = new javax.swing.JTable();
         btnClear = new javax.swing.JButton(new com.formdev.flatlaf.extras.FlatSVGIcon("icons/clear.svg", 24, 24));
@@ -119,7 +119,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
         pnlMainLayout.setHorizontalGroup(
             pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlMainLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(38, 38, 38)
                 .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(pnlMainLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
@@ -127,11 +127,11 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                     .addComponent(jLabel3)
                     .addComponent(jLabel2)
                     .addComponent(jLabel1)
-                    .addComponent(txtHoTen, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                    .addComponent(txtHoTen)
                     .addComponent(txtMatKhau)
                     .addComponent(txtEmail)
-                    .addComponent(txtSDT))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
+                    .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 139, Short.MAX_VALUE)
                 .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlMainLayout.createSequentialGroup()
                         .addGap(8, 8, 8)
@@ -153,20 +153,20 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                         .addComponent(rdoDaThanhToan)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(rdoChuaThanhToan)))
-                .addGap(77, 77, 77)
+                .addGap(78, 78, 78)
                 .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel9)
                     .addGroup(pnlMainLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addComponent(jLabel10))
-                    .addComponent(txtNgaySinh, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                    .addComponent(txtPhong))
-                .addGap(46, 46, 46))
+                    .addComponent(txtNgaySinh)
+                    .addComponent(txtPhong, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28))
         );
         pnlMainLayout.setVerticalGroup(
             pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlMainLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
+                .addGap(28, 28, 28)
                 .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel5)
@@ -204,7 +204,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                 .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtQueQuan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         tblNguoiThue.setModel(new javax.swing.table.DefaultTableModel(
@@ -266,25 +266,23 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel11)
-                .addGap(293, 293, 293))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(54, 54, 54)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(69, 69, 69)
-                        .addComponent(btnDelete)
-                        .addGap(88, 88, 88)
-                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(81, 81, 81)
-                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 831, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(93, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 890, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(198, 198, 198)
+                        .addComponent(jLabel11))
+                    .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(87, 87, 87)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(74, 74, 74)
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(86, 86, 86)
+                        .addComponent(btnAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -293,15 +291,16 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(99, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(98, Short.MAX_VALUE))
         );
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -365,10 +364,10 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
     private javax.swing.JTextField txtHoTen;
     private javax.swing.JTextField txtMatKhau;
     private javax.swing.JTextField txtNgaySinh;
+    private javax.swing.JTextField txtPhong;
     private javax.swing.JTextField txtQueQuan;
     private javax.swing.JTextField txtSDT;
     private javax.swing.JTextField txtSoCCCD;
-    private javax.swing.JTextField txtPhong;
     // End of variables declaration//GEN-END:variables
     
     /**
@@ -516,7 +515,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
 
         if (!sdt.matches("^[0-9]{10,11}$")) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                "Số điện thoại phải có 10-11 chữ số!",
+                "Số điện thoại phải có 10-11 chữ số!\nVí dụ: 0901234567 hoặc 84901234567",
                 "Lỗi validation",
                 javax.swing.JOptionPane.ERROR_MESSAGE);
             txtSDT.requestFocus();
@@ -550,7 +549,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
 
         if (!cccd.matches("^[0-9]{12}$")) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                "Số CCCD phải có 12 chữ số!",
+                "Số CCCD phải có 12 chữ số!\nVí dụ: 123456789012",
                 "Lỗi validation",
                 javax.swing.JOptionPane.ERROR_MESSAGE);
             txtSoCCCD.requestFocus();
@@ -574,7 +573,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
         String email = txtEmail.getText().trim();
         if (!email.isEmpty() && !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                "Định dạng email không hợp lệ!",
+                "Định dạng email không hợp lệ!\nVí dụ: nguyenvana@gmail.com",
                 "Lỗi validation",
                 javax.swing.JOptionPane.ERROR_MESSAGE);
             txtEmail.requestFocus();
@@ -589,7 +588,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                 dateFormat.parse(ngaySinhText);
             } catch (Exception e) {
                 javax.swing.JOptionPane.showMessageDialog(this,
-                    "Ngày sinh không đúng định dạng (dd/MM/yyyy)!",
+                    "Ngày sinh không đúng định dạng (dd/MM/yyyy)!\nVí dụ: 25/12/1990",
                     "Lỗi validation",
                     javax.swing.JOptionPane.ERROR_MESSAGE);
                 txtNgaySinh.requestFocus();
