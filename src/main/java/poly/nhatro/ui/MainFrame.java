@@ -738,6 +738,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController{
         DienNuocPanel dienNuocPanel = new DienNuocPanel();
         DoanhthuPanel doanhthuPanel = new DoanhthuPanel();
         HoaDonPanel hoaDonPanel = new HoaDonPanel();
+        hoaDonPanel.init(); // Khởi tạo và load dữ liệu
         HopDongPanel hopDongPanel = new HopDongPanel();
         PhongPanel phongPanel = new PhongPanel();
 

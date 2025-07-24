@@ -9,4 +9,5 @@ public interface HopDongDAO {
     void delete(String id);
     HopDong getById(String id);
     List<HopDong> getAll();
+    boolean existsHopDongById(int id);
 }
