@@ -858,7 +858,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                 return false;
             }
             if (hoTenStr.length() < 2) {
-                XDialog.alert("Họ tên phải có ít nhất 2 ký tự!");
+                XDialog.alert("Họ tên phải có ít nhất 2 ký tự!\nVí dụ: Nguyễn Văn A, Trần B");
                 txtHoten.requestFocus();
                 return false;
             }
@@ -886,7 +886,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                 try {
                     Integer.parseInt(maHopDongStr);
                 } catch (NumberFormatException e) {
-                    XDialog.alert("Mã hợp đồng phải là số nguyên!");
+                    XDialog.alert("Mã hợp đồng phải là số nguyên!\nVí dụ: 1, 2, 3");
                     txtMaHopDong.requestFocus();
                     return false;
                 }
@@ -907,7 +907,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                     return false;
                 }
             } catch (NumberFormatException e) {
-                XDialog.alert("Số điện cũ phải là số nguyên!");
+                XDialog.alert("Số điện cũ phải là số nguyên!\nVí dụ: 100, 250, 1500");
                 txtSoDienCu.requestFocus();
                 return false;
             }
@@ -927,7 +927,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                     return false;
                 }
             } catch (NumberFormatException e) {
-                XDialog.alert("Số điện mới phải là số nguyên!");
+                XDialog.alert("Số điện mới phải là số nguyên!\nVí dụ: 100, 250, 1500");
                 txtSoDienMoi.requestFocus();
                 return false;
             }
@@ -953,7 +953,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                     return false;
                 }
             } catch (NumberFormatException e) {
-                XDialog.alert("Số nước cũ phải là số nguyên!");
+                XDialog.alert("Số nước cũ phải là số nguyên!\nVí dụ: 50, 80, 120");
                 txtSoNuocCu.requestFocus();
                 return false;
             }
@@ -973,7 +973,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                     return false;
                 }
             } catch (NumberFormatException e) {
-                XDialog.alert("Số nước mới phải là số nguyên!");
+                XDialog.alert("Số nước mới phải là số nguyên!\nVí dụ: 50, 80, 120");
                 txtSoNuocMoi.requestFocus();
                 return false;
             }
@@ -1010,7 +1010,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                 try {
                     sdf.parse(ngayStr);
                 } catch (ParseException e) {
-                    XDialog.alert("Định dạng ngày không đúng! Vui lòng nhập theo định dạng yyyy-MM-dd");
+                    XDialog.alert("Định dạng ngày không đúng! Vui lòng nhập theo định dạng yyyy-MM-dd\nVí dụ: 2024-01-15, 2024-12-31");
                     txtNgayThanhToan.requestFocus();
                     return false;
                 }

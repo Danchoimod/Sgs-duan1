@@ -11,7 +11,7 @@ import poly.nhatro.util.XDialog;
 
 /**
  *
- * @author Phu Pham
+ * @author tranthuyngan
  */
 public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueController {
 
@@ -439,7 +439,6 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                 nguoiThue.setNgaySinh(null);
             }
             
-            // Xử lý ID Phòng
             String idPhongText = txtPhong.getText().trim();
             if (!idPhongText.isEmpty()) {
                 try {
@@ -455,10 +454,8 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                 nguoiThue.setID_NguoiDung(Integer.parseInt(selectedId));
             }
             
-            // Xử lý trạng thái thanh toán
             nguoiThue.setTrangThai(rdoDaThanhToan.isSelected());
             
-            // Xử lý giới tính (Nam = true, Nữ = false)
             nguoiThue.setGioiTinh(rdoNam.isSelected());
             
             return nguoiThue;
@@ -515,7 +512,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
 
         if (!sdt.matches("^[0-9]{10,11}$")) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                "Số điện thoại phải có 10-11 chữ số!\nVí dụ: 0901234567 hoặc 84901234567",
+                "Số điện thoại phải có 10-11 chữ số!\nVí dụ: 0901234567 ",
                 "Lỗi validation",
                 javax.swing.JOptionPane.ERROR_MESSAGE);
             txtSDT.requestFocus();
