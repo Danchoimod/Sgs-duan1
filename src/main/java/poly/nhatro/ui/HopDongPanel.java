@@ -101,18 +101,14 @@ public class HopDongPanel extends javax.swing.JPanel {
                 hd.setID_HopDong(0);
             }
 
-            System.out.println("DEBUG (readForm): Giá trị jTextField2 (Ngày bắt đầu) trước khi parse: '" + jTextField2.getText() + "'");
-            System.out.println("DEBUG (readForm): Giá trị jTextField3 (Ngày kết thúc) trước khi parse: '" + jTextField3.getText() + "'");
 
             Date ngayBatDau = XDate.parse(jTextField2.getText(), DATE_FORMAT);
             Date ngayKetThuc = XDate.parse(jTextField3.getText(), DATE_FORMAT);
 
             if (ngayBatDau == null) {
-                System.out.println("DEBUG: XDate.parse() trả về null cho Ngày bắt đầu với chuỗi: '" + jTextField2.getText() + "'");
                 throw new IllegalArgumentException("Ngày bắt đầu không đúng định dạng " + DATE_FORMAT);
             }
             if (ngayKetThuc == null) {
-                System.out.println("DEBUG: XDate.parse() trả về null cho Ngày kết thúc với chuỗi: '" + jTextField3.getText() + "'");
                 throw new IllegalArgumentException("Ngày kết thúc không đúng định dạng " + DATE_FORMAT);
             }
 
