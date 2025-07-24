@@ -22,6 +22,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
      */
     public NguoiThuePanel() {
         initComponents();
+        // Password field will be enabled/disabled based on mode (add vs edit)
         init(); // Load dữ liệu ban đầu
     }
 
@@ -41,7 +42,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
         jLabel1 = new javax.swing.JLabel();
         txtHoTen = new poly.nhatro.util.RoundedTextField(20); ;
         jLabel2 = new javax.swing.JLabel();
-        txtMatKhau = new poly.nhatro.util.RoundedTextField(20); ;
+        txtMatKhau = new poly.nhatro.util.RoundedPasswordField(20); ;
         jLabel3 = new javax.swing.JLabel();
         txtEmail = new poly.nhatro.util.RoundedTextField(20); ;
         jLabel4 = new javax.swing.JLabel();
@@ -218,7 +219,12 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
             new String [] {
                 "Mã Người Dùng", "Họ và tên", "Mật khẩu", "Email", "Số điện thoại", "Số CCCD", "Trạng thái thanh toán", "Giới tính", "Quê quán", "Ngày sinh", "ID_Phòng"
             }
-        ));
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Vô hiệu hóa chỉnh sửa trực tiếp trên bảng
+            }
+        });
         tblNguoiThue.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblNguoiThueMouseClicked(evt);
@@ -362,7 +368,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
     private javax.swing.JTable tblNguoiThue;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtHoTen;
-    private javax.swing.JTextField txtMatKhau;
+    private javax.swing.JPasswordField txtMatKhau;
     private javax.swing.JTextField txtNgaySinh;
     private javax.swing.JTextField txtPhong;
     private javax.swing.JTextField txtQueQuan;
@@ -385,7 +391,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
             txtSDT.setText(nguoiThue.getSdt() != null ? nguoiThue.getSdt() : "");
             txtSoCCCD.setText(nguoiThue.getSoCCCD() != null ? nguoiThue.getSoCCCD() : "");
             txtEmail.setText(nguoiThue.getEmail() != null ? nguoiThue.getEmail() : "");
-            txtMatKhau.setText(nguoiThue.getMatKhau() != null ? nguoiThue.getMatKhau() : "");
+            txtMatKhau.setText(nguoiThue.getMatKhau() != null && !nguoiThue.getMatKhau().isEmpty() ? "••••••••" : "");
             txtQueQuan.setText(nguoiThue.getQueQuan() != null ? nguoiThue.getQueQuan() : "");
             txtPhong.setText(nguoiThue.getID_Phong() != null ? nguoiThue.getID_Phong().toString() : "");           
             if (nguoiThue.getNgaySinh() != null) {
@@ -404,7 +410,9 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
             btnAdd.setEnabled(false);
             btnUpdate.setEnabled(true);
             btnDelete.setEnabled(true);
-            btnClear.setEnabled(true);
+            btnClear.setEnabled(true);           
+            txtMatKhau.setEditable(false);
+            txtMatKhau.setEnabled(false);
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -423,7 +431,21 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
             nguoiThue.setSdt(txtSDT.getText().trim());
             nguoiThue.setSoCCCD(txtSoCCCD.getText().trim());
             nguoiThue.setEmail(txtEmail.getText().trim());
-            nguoiThue.setMatKhau(txtMatKhau.getText().trim());          
+            String password = new String(txtMatKhau.getPassword()).trim();
+            if (!password.isEmpty() && !password.equals("••••••••")) {
+                nguoiThue.setMatKhau(password);
+            } else if (selectedId != null && !selectedId.isEmpty()) {
+                try {
+                    NguoiThue existingNguoiThue = dao.findById(Integer.parseInt(selectedId));
+                    if (existingNguoiThue != null) {
+                        nguoiThue.setMatKhau(existingNguoiThue.getMatKhau());
+                    }
+                } catch (Exception e) {
+                    nguoiThue.setMatKhau("");
+                }
+            } else {
+                nguoiThue.setMatKhau("");
+            }
             nguoiThue.setQueQuan(txtQueQuan.getText().trim());
            
             String ngaySinhText = txtNgaySinh.getText().trim();
@@ -632,7 +654,12 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
         try {
             List<NguoiThue> danhSachNguoiThue = dao.findAll();
             
-            DefaultTableModel model = new DefaultTableModel();
+            DefaultTableModel model = new DefaultTableModel() {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false; 
+                }
+            };
             
             String[] columnNames = {
                 "Mã người dùng", "Họ và tên", "Số điện thoại", "Số CCCD", "Email", 
@@ -767,6 +794,9 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
         btnAdd.setEnabled(true);
         btnUpdate.setEnabled(false);
         btnDelete.setEnabled(false);
+        
+        txtMatKhau.setEditable(true);
+        txtMatKhau.setEnabled(true);
     }
 
     @Override
@@ -802,10 +832,13 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
         txtSDT.setEditable(editable);
         txtSoCCCD.setEditable(editable);
         txtEmail.setEditable(editable);
-        txtMatKhau.setEditable(editable);
         txtQueQuan.setEditable(editable);
         txtNgaySinh.setEditable(editable);
         txtPhong.setEditable(editable);
+        
+        boolean isNewTenant = (selectedId == null || selectedId.isEmpty());
+        txtMatKhau.setEditable(editable && isNewTenant);
+        txtMatKhau.setEnabled(editable && isNewTenant);
         
         rdoDaThanhToan.setEnabled(editable);
         rdoChuaThanhToan.setEnabled(editable);
