@@ -1,19 +1,20 @@
 package poly.nhatro.ui;
 
-import poly.nhatro.entity.HoaDon;
+import poly.nhatro.entity.NguoiThue;
 
 /**
  *
  * @author tranthithuyngan
  */
-public interface HoaDonController extends CrudController<HoaDon> {
-    void init();
+interface NguoiThueController extends CrudController<NguoiThue> {
+    
+ void init();
     @Override
     void open();
     @Override
-    void setForm(HoaDon entity);
+    void setForm(NguoiThue entity);
     @Override
-    HoaDon getForm();
+    NguoiThue getForm();
     @Override
     void create();
     @Override

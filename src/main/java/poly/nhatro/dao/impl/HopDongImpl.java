@@ -24,8 +24,8 @@ public class HopDongImpl implements HopDongDAO {
                     entity.getNgayKetThuc(),
                     entity.getSoTienCoc(),
                     entity.getID_NguoiDung(),
-                    entity.getID_Phong(), // Là int
-                    entity.getID_ChiNhanh()); // Là int
+                    entity.getID_Phong(), 
+                    entity.getID_ChiNhanh()); 
         } catch (RuntimeException e) {
             System.err.println("Lỗi khi thêm hợp đồng: " + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
             throw new RuntimeException("Thêm hợp đồng thất bại.", e);
@@ -50,7 +50,7 @@ public class HopDongImpl implements HopDongDAO {
     }
 
     @Override
-    public void delete(String id) { // ID_HopDong ở đây vẫn là String vì được truyền từ bảng
+    public void delete(String id) { 
         try {
             XJdbc.executeUpdate(DELETE_SQL, id);
         } catch (RuntimeException e) {
@@ -60,7 +60,7 @@ public class HopDongImpl implements HopDongDAO {
     }
 
     @Override
-    public HopDong getById(String id) { // ID_HopDong ở đây vẫn là String vì được truyền từ bảng
+    public HopDong getById(String id) {
         List<HopDong> list = selectBySql(SELECT_BY_ID_SQL, id);
         return list.isEmpty() ? null : list.get(0);
     }
@@ -88,5 +88,21 @@ public class HopDongImpl implements HopDongDAO {
             throw new RuntimeException("Lỗi truy vấn dữ liệu: " + e.getMessage(), e);
         }
         return list;
+    }
+
+    @Override
+    public boolean existsHopDongById(int id) {
+        try {
+            String sql = "SELECT COUNT(*) FROM HOP_DONG WHERE ID_HopDong = ?";
+            try (ResultSet rs = XJdbc.executeQuery(sql, id)) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi kiểm tra tồn tại hợp đồng: " + e.getMessage());
+            throw new RuntimeException("Kiểm tra hợp đồng thất bại.", e);
+        }
+        return false;
     }
 }
