@@ -1,24 +1,61 @@
 package poly.nhatro.entity;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
 
 public class DoanhThu {
-
     private int idHoaDon;
+    private int soDienMoi;
+    private int soNuocMoi;
+    private int soDienCu;
+    private int soNuocCu;
     private BigDecimal tienDien;
     private BigDecimal tienNuoc;
     private BigDecimal tienPhong;
     private BigDecimal tongTien;
-    private Date ngayThanhToan;
     private boolean trangThai;
+    private Date ngayThanhToan;
+    private int idHopDong;
 
+    // Getter và Setter
     public int getIdHoaDon() {
         return idHoaDon;
     }
 
     public void setIdHoaDon(int idHoaDon) {
         this.idHoaDon = idHoaDon;
+    }
+
+    public int getSoDienMoi() {
+        return soDienMoi;
+    }
+
+    public void setSoDienMoi(int soDienMoi) {
+        this.soDienMoi = soDienMoi;
+    }
+
+    public int getSoNuocMoi() {
+        return soNuocMoi;
+    }
+
+    public void setSoNuocMoi(int soNuocMoi) {
+        this.soNuocMoi = soNuocMoi;
+    }
+
+    public int getSoDienCu() {
+        return soDienCu;
+    }
+
+    public void setSoDienCu(int soDienCu) {
+        this.soDienCu = soDienCu;
+    }
+
+    public int getSoNuocCu() {
+        return soNuocCu;
+    }
+
+    public void setSoNuocCu(int soNuocCu) {
+        this.soNuocCu = soNuocCu;
     }
 
     public BigDecimal getTienDien() {
@@ -53,6 +90,14 @@ public class DoanhThu {
         this.tongTien = tongTien;
     }
 
+    public boolean isTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(boolean trangThai) {
+        this.trangThai = trangThai;
+    }
+
     public Date getNgayThanhToan() {
         return ngayThanhToan;
     }
@@ -61,11 +106,11 @@ public class DoanhThu {
         this.ngayThanhToan = ngayThanhToan;
     }
 
-    public boolean isTrangThai() {
-        return trangThai;
+    public int getIdHopDong() {
+        return idHopDong;
     }
 
-    public void setTrangThai(boolean trangThai) {
-        this.trangThai = trangThai;
+    public void setIdHopDong(int idHopDong) {
+        this.idHopDong = idHopDong;
     }
 }

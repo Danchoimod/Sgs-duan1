@@ -17,4 +17,8 @@ public interface DoanhThuDao {
     List<DoanhThu> getAll();
 
     List<DoanhThu> getByDateRange(Date tuNgay, Date denNgay);
+    
+    DoanhThu getById(int idHoaDon);
+    
+    boolean update(DoanhThu dt);
 }
