@@ -321,7 +321,15 @@ public class HopDongPanel extends javax.swing.JPanel {
             new String [] {
                 "Mã hợp đồng", "Ngày bắt đầu", "Ngày kết thúc", "Tiền cọc", "Mã người dùng", "Phòng", "Chi nhánh"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable2MouseClicked(evt);
@@ -479,7 +487,6 @@ public class HopDongPanel extends javax.swing.JPanel {
         if (evt.getClickCount() == 1) {
             edit();
         }
-
     }//GEN-LAST:event_jTable2MouseClicked
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
