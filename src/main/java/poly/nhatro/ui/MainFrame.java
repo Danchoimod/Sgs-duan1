@@ -84,11 +84,11 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
         space9 = new javax.swing.JPanel();
         space8 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        lblDangXuat = new javax.swing.JLabel(new com.formdev.flatlaf.extras.FlatSVGIcon("icons/logout.svg", 24, 24));
         mainPanel = new javax.swing.JPanel();
         pnlHeaderNav = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lblBell = new javax.swing.JLabel(new com.formdev.flatlaf.extras.FlatSVGIcon("icons/bell.svg", 24, 24));
+        lblDangXuat = new javax.swing.JLabel(new com.formdev.flatlaf.extras.FlatSVGIcon("icons/logout.svg", 24, 24));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GSG Manager - màn hình chính");
@@ -138,7 +138,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
         );
         space2Layout.setVerticalGroup(
             space2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 42, Short.MAX_VALUE)
+            .addGap(0, 45, Short.MAX_VALUE)
         );
 
         pnlNav.add(space2);
@@ -173,7 +173,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
         );
         space3Layout.setVerticalGroup(
             space3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 28, Short.MAX_VALUE)
+            .addGap(0, 30, Short.MAX_VALUE)
         );
 
         pnlNav.add(space3);
@@ -205,7 +205,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
         );
         space1Layout.setVerticalGroup(
             space1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 28, Short.MAX_VALUE)
+            .addGap(0, 30, Short.MAX_VALUE)
         );
 
         pnlNav.add(space1);
@@ -237,7 +237,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
         );
         space4Layout.setVerticalGroup(
             space4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 28, Short.MAX_VALUE)
+            .addGap(0, 30, Short.MAX_VALUE)
         );
 
         pnlNav.add(space4);
@@ -269,7 +269,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
         );
         space5Layout.setVerticalGroup(
             space5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 28, Short.MAX_VALUE)
+            .addGap(0, 30, Short.MAX_VALUE)
         );
 
         pnlNav.add(space5);
@@ -301,7 +301,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
         );
         space6Layout.setVerticalGroup(
             space6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 28, Short.MAX_VALUE)
+            .addGap(0, 30, Short.MAX_VALUE)
         );
 
         pnlNav.add(space6);
@@ -333,7 +333,7 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
         );
         space7Layout.setVerticalGroup(
             space7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 28, Short.MAX_VALUE)
+            .addGap(0, 30, Short.MAX_VALUE)
         );
 
         pnlNav.add(space7);
@@ -396,24 +396,10 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 11, Short.MAX_VALUE)
+            .addGap(0, 14, Short.MAX_VALUE)
         );
 
         pnlNav.add(jPanel1);
-
-        lblDangXuat.setForeground(new java.awt.Color(51, 51, 51));
-        lblDangXuat.setText("item 3");
-        lblDangXuat.setToolTipText("Đăng xuất");
-        lblDangXuat.setIconTextGap(10);
-        lblDangXuat.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lblDangXuatMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lblDangXuatMouseEntered(evt);
-            }
-        });
-        pnlNav.add(lblDangXuat);
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
@@ -438,6 +424,19 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
             }
         });
 
+        lblDangXuat.setForeground(new java.awt.Color(51, 51, 51));
+        lblDangXuat.setText("item 3");
+        lblDangXuat.setToolTipText("Đăng xuất");
+        lblDangXuat.setIconTextGap(10);
+        lblDangXuat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblDangXuatMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblDangXuatMouseEntered(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlHeaderNavLayout = new javax.swing.GroupLayout(pnlHeaderNav);
         pnlHeaderNav.setLayout(pnlHeaderNavLayout);
         pnlHeaderNavLayout.setHorizontalGroup(
@@ -447,7 +446,9 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
                 .addComponent(lblBell, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblDangXuat)
+                .addGap(16, 16, 16))
         );
         pnlHeaderNavLayout.setVerticalGroup(
             pnlHeaderNavLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -455,7 +456,8 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
                 .addContainerGap()
                 .addGroup(pnlHeaderNavLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(lblBell))
+                    .addComponent(lblBell)
+                    .addComponent(lblDangXuat))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
@@ -614,7 +616,12 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
     }//GEN-LAST:event_lblHoaDonMouseClicked
 
     private void lblDangXuatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblDangXuatMouseClicked
-        // TODO add your handling code here:
+        // Đăng xuất: Ẩn MainFrame và hiển thị lại màn hình đăng nhập
+        this.setVisible(false);
+        DangNhapDialog dangNhapDialog = new DangNhapDialog(this, true);
+        dangNhapDialog.setLocationRelativeTo(this);
+        dangNhapDialog.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_lblDangXuatMouseClicked
 
     private void lblDangXuatMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblDangXuatMouseEntered

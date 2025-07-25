@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -49,7 +49,7 @@
                       <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="btnTenChiNhanh" alignment="0" min="-2" pref="158" max="-2" attributes="0"/>
+                              <Component id="txtTenChiNhanh" alignment="0" min="-2" pref="158" max="-2" attributes="0"/>
                               <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -83,6 +83,8 @@
                           <Component id="btnSua" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btnXoa" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="btnNew" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace pref="145" max="32767" attributes="0"/>
@@ -104,7 +106,7 @@
                           </Group>
                           <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="btnTenChiNhanh" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtTenChiNhanh" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtGiaDien" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtGiaNuoc" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtDiaChi" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -123,6 +125,7 @@
                               <Component id="btnTao" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnSua" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnXoa" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnNew" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -140,7 +143,7 @@
             <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xfd; chi nh&#xe1;nh"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="btnTenChiNhanh">
+        <Component class="javax.swing.JTextField" name="txtTenChiNhanh">
         </Component>
         <Component class="javax.swing.JTextField" name="txtGiaDien">
         </Component>
@@ -212,6 +215,14 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="&#x110;&#x1ecb;a ch&#x1ec9;"/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnNew">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="L&#xe0;m m&#x1edb;i"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnNewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
