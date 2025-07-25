@@ -1,4 +1,9 @@
-﻿CREATE DATABASE QuanLyNhatro_SGS;
+USE master;
+ALTER DATABASE QuanLyNhatro_SGS SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+DROP DATABASE QuanLyNhatro_SGS;
+
+
+CREATE DATABASE QuanLyNhatro_SGS;
 GO
 
 USE QuanLyNhaTro_SGS;
@@ -18,6 +23,7 @@ CREATE TABLE PHONG (
     trangThai BIT NOT NULL,
     soPhong NVARCHAR(20) NOT NULL,
     moTa NVARCHAR(255),
+    hinhAnh NVARCHAR(255), -- cột thêm để lưu hình ảnh
     ID_ChiNhanh INT FOREIGN KEY REFERENCES CHI_NHANH(ID_ChiNhanh)
 );
 
@@ -74,12 +80,12 @@ INSERT INTO CHI_NHANH (diaChi, giaDien, giaNuoc, tenChiNhanh) VALUES
 (N'456 Đường CMT8, Quận Bình Thủy, Cần Thơ', 3200.00, 16000.00, N'Chi Nhánh Cần Thơ 2');
 
 
-INSERT INTO PHONG (giaPhong, trangThai, soPhong, moTa, ID_ChiNhanh) VALUES
-(2500000.00, 0, N'P101', N'Phòng có ban công, view đẹp', 1),
-(2000000.00, 0, N'P102', N'Phòng tiêu chuẩn, yên tĩnh', 1),
-(3000000.00, 0, N'P201', N'Phòng lớn, có bếp nhỏ', 2),
-(2200000.00, 0, N'P202', N'Phòng đôi, gần thang máy', 2),
-(1800000.00, 0, N'P103', N'Phòng nhỏ, giá phải chăng', 1);
+INSERT INTO PHONG (giaPhong, trangThai, soPhong, moTa, hinhAnh, ID_ChiNhanh) VALUES
+(2500000.00, 0, N'P101', N'Phòng có ban công, view đẹp', N'images/p101.jpg', 1),
+(2000000.00, 0, N'P102', N'Phòng tiêu chuẩn, yên tĩnh', N'images/p102.jpg', 1),
+(3000000.00, 0, N'P201', N'Phòng lớn, có bếp nhỏ', N'images/p201.jpg', 2),
+(2200000.00, 0, N'P202', N'Phòng đôi, gần thang máy', N'images/p202.jpg', 2),
+(1800000.00, 0, N'P103', N'Phòng nhỏ, giá phải chăng', N'images/p103.jpg', 1);
 
 
 INSERT INTO NGUOI_DUNG (hoVaTen, matKhau, email, sdt, soCCCD, trangThai, gioiTinh, queQuan, ngaySinh, ID_Phong) VALUES
@@ -113,7 +119,13 @@ INSERT INTO Gop_Y (noiDungGop_Y, ID_NguoiDung, ID_ChiNhanh) VALUES
 (N'Vị trí thuận tiện, gần chợ.', 4, 2),
 (N'Giá điện nước hơi cao so với khu vực.', 5, 1);
 
+-- bổ sung hóa ngày tạo
+ALTER TABLE HOA_DON
+ADD ngayTao DATETIME DEFAULT GETDATE();
 
+UPDATE HOA_DON
+SET ngayTao = '2024-01-01'
+WHERE ngayTao IS NULL;
 
 SELECT * FROM CHI_NHANH;
 SELECT * FROM PHONG;

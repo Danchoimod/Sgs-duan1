@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-/target
-=======
 # Maven
 target/
 pom.xml.tag
@@ -68,4 +65,4 @@ Thumbs.db
 *.tmp
 *.temp
 *~
->>>>>>> origin/feature/tranthuyngan-hoadon
+
