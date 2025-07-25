@@ -4,12 +4,20 @@
  */
 package poly.nhatro.ui;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import poly.nhatro.controller.DangNhapController;
+import poly.nhatro.util.XDialog;
+import poly.nhatro.util.XJdbc;
+
 /**
  *
  * @author Phu Pham
  */
-public class DangNhapDialog extends javax.swing.JDialog {
-    
+public class DangNhapDialog extends javax.swing.JDialog implements DangNhapController {
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DangNhapDialog.class.getName());
 
     /**
@@ -39,8 +47,14 @@ public class DangNhapDialog extends javax.swing.JDialog {
         MatKhau = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         txtMatKhau = new javax.swing.JPasswordField();
+        lbQuenMK = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -140,13 +154,25 @@ public class DangNhapDialog extends javax.swing.JDialog {
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
+        lbQuenMK.setText("Quên Mật Khẩu ?");
+        lbQuenMK.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbQuenMKMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(62, 62, 62)
-                .addComponent(jLabel3)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(62, 62, 62)
+                        .addComponent(jLabel3))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(lbQuenMK)))
                 .addContainerGap(62, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
@@ -167,7 +193,9 @@ public class DangNhapDialog extends javax.swing.JDialog {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3)
-                .addContainerGap(279, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 203, Short.MAX_VALUE)
+                .addComponent(lbQuenMK)
+                .addGap(60, 60, 60))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addGap(63, 63, 63)
@@ -207,15 +235,26 @@ public class DangNhapDialog extends javax.swing.JDialog {
 
     private void btnDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangNhapActionPerformed
         // TODO add your handling code here:
+        this.login();
     }//GEN-LAST:event_btnDangNhapActionPerformed
 
     private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
         // TODO add your handling code here:
+        this.exit();
     }//GEN-LAST:event_btnThoatActionPerformed
 
     private void txtMatKhauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMatKhauActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtMatKhauActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formWindowOpened
+
+    private void lbQuenMKMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbQuenMKMouseClicked
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_lbQuenMKMouseClicked
 
     /**
      * @param args the command line arguments
@@ -263,7 +302,43 @@ public class DangNhapDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel lbQuenMK;
     private javax.swing.JPasswordField txtMatKhau;
     private javax.swing.JTextField txtTenDangNhap;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void login() {
+        String userName = txtTenDangNhap.getText();
+        String passWord = new String(txtMatKhau.getPassword());
+
+        // Nếu là tài khoản admin mặc định
+        if (userName.equals("admins") && passWord.equals("admin")) {
+            XDialog.alert("Đăng nhập thành công với quyền Admin!");
+            this.dispose();
+            return;
+        }
+
+        // Tìm tài khoản người dùng trực tiếp từ database
+        String sql = "SELECT * FROM NGUOI_DUNG WHERE hoVaTen = ? AND matKhau = ?";
+
+        try (Connection conn = XJdbc.openConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, userName);
+            ps.setString(2, passWord);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    XDialog.alert("Bạn không có quyền truy cập bây giờ!");
+                } else {
+                    XDialog.alert("Đăng nhập thất bại!");
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            XDialog.alert("Lỗi kết nối CSDL!");
+        }
+    }
+
 }
