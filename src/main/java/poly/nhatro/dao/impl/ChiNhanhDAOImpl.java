@@ -10,46 +10,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChiNhanhDAOImpl implements ChiNhanhDAO {
-    
+
     @Override
     public List<ChiNhanh> getAll() {
         String sql = "SELECT * FROM CHI_NHANH";
         return this.getBySql(sql);
     }
-    
+
     @Override
     public boolean add(ChiNhanh chiNhanh) {
         String sql = "INSERT INTO CHI_NHANH(tenChiNhanh, diaChi, giaDien, giaNuoc) VALUES(?,?,?,?)";
-        return XJdbc.executeUpdate(sql, 
+        return XJdbc.executeUpdate(sql,
                 chiNhanh.getTenChiNhanh(),
                 chiNhanh.getDiaChi(),
                 chiNhanh.getGiaDien(),
                 chiNhanh.getGiaNuoc()) > 0;
     }
-    
+
     @Override
     public boolean update(ChiNhanh chiNhanh) {
         String sql = "UPDATE CHI_NHANH SET tenChiNhanh=?, diaChi=?, giaDien=?, giaNuoc=? WHERE ID_ChiNhanh=?";
-        return XJdbc.executeUpdate(sql, 
+        return XJdbc.executeUpdate(sql,
                 chiNhanh.getTenChiNhanh(),
                 chiNhanh.getDiaChi(),
                 chiNhanh.getGiaDien(),
                 chiNhanh.getGiaNuoc(),
                 chiNhanh.getID_ChiNhanh()) > 0;
     }
-    
+
     @Override
     public boolean delete(int id) {
         String sql = "DELETE FROM CHI_NHANH WHERE ID_ChiNhanh=?";
         return XJdbc.executeUpdate(sql, id) > 0;
     }
-    
+
     @Override
     public List<ChiNhanh> search(String keyword) {
         String sql = "SELECT * FROM CHI_NHANH WHERE tenChiNhanh LIKE ? OR diaChi LIKE ?";
         return this.getBySql(sql, "%" + keyword + "%", "%" + keyword + "%");
     }
-    
+
     private List<ChiNhanh> getBySql(String sql, Object... args) {
         List<ChiNhanh> list = new ArrayList<>();
         try (ResultSet rs = XJdbc.executeQuery(sql, args)) {
@@ -67,7 +67,7 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
         }
         return list;
     }
-    
+
     // Các phương thức cũ giữ nguyên
     @Override
     public ChiNhanh getById(int id) {
@@ -75,7 +75,7 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
         List<ChiNhanh> list = this.getBySql(sql, id);
         return list.isEmpty() ? null : list.get(0);
     }
-    
+
     @Override
     public BigDecimal getGiaDienById(int id) {
         String sql = "SELECT giaDien FROM CHI_NHANH WHERE ID_ChiNhanh = ?";
@@ -88,7 +88,7 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
         }
         return BigDecimal.ZERO;
     }
-    
+
     @Override
     public BigDecimal getGiaNuocById(int id) {
         String sql = "SELECT giaNuoc FROM CHI_NHANH WHERE ID_ChiNhanh = ?";
@@ -101,7 +101,7 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
         }
         return BigDecimal.ZERO;
     }
-    
+
     @Override
     public List<String> getAllBranchNames() {
         List<String> branchNames = new ArrayList<>();
@@ -115,4 +115,18 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
         }
         return branchNames;
     }
+    
+    @Override
+    public int layIDTheoTen(String tenChiNhanh) {
+        String sql = "SELECT ID_ChiNhanh FROM CHI_NHANH WHERE tenChiNhanh=?";
+        try (ResultSet rs = XJdbc.executeQuery(sql, tenChiNhanh)) {
+            if (rs.next()) {
+                return rs.getInt("ID_ChiNhanh");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
 }
