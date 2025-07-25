@@ -53,8 +53,8 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
                 cn.getID_ChiNhanh(),
                 cn.getTenChiNhanh(),
                 cn.getDiaChi(),
-                cn.getGiaDien(),
-                cn.getGiaNuoc()
+                cn.getGiaDien().setScale(0, java.math.RoundingMode.DOWN).toPlainString(),
+                cn.getGiaNuoc().setScale(0, java.math.RoundingMode.DOWN).toPlainString()
             });
         }
     }
@@ -68,8 +68,8 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
                 cn.getID_ChiNhanh(),
                 cn.getTenChiNhanh(),
                 cn.getDiaChi(),
-                cn.getGiaDien(),
-                cn.getGiaNuoc()
+                cn.getGiaDien().setScale(0, java.math.RoundingMode.DOWN).toPlainString(),
+                cn.getGiaNuoc().setScale(0, java.math.RoundingMode.DOWN).toPlainString()
             });
         }
     }
@@ -83,10 +83,15 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin chi nhánh!");
             return;
         }
+        // Kiểm tra giá điện, giá nước phải là số
+        if (!isNumber(txtGiaDien.getText().trim()) || !isNumber(txtGiaNuoc.getText().trim())) {
+            JOptionPane.showMessageDialog(this, "Giá điện và giá nước chỉ được nhập số!");
+            return;
+        }
         try {
             ChiNhanh cn = new ChiNhanh();
             cn.setTenChiNhanh(txtTenChiNhanh.getText());
-            cn.setDiaChi(txtDiaChi.getText()); // Bạn cần thêm field địa chỉ vào form
+            cn.setDiaChi(txtDiaChi.getText());
             cn.setGiaDien(new java.math.BigDecimal(txtGiaDien.getText()));
             cn.setGiaNuoc(new java.math.BigDecimal(txtGiaNuoc.getText()));
             if (chiNhanhService.add(cn)) {
@@ -107,13 +112,17 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn chi nhánh cần sửa");
             return;
         }
-
+        // Kiểm tra giá điện, giá nước phải là số
+        if (!isNumber(txtGiaDien.getText().trim()) || !isNumber(txtGiaNuoc.getText().trim())) {
+            JOptionPane.showMessageDialog(this, "Giá điện và giá nước chỉ được nhập số!");
+            return;
+        }
         try {
             int id = (int) tblChiNhanh.getValueAt(row, 0);
             ChiNhanh cn = new ChiNhanh();
             cn.setID_ChiNhanh(id);
             cn.setTenChiNhanh(txtTenChiNhanh.getText());
-            cn.setDiaChi(txtDiaChi.getText()); // Bạn cần thêm field địa chỉ vào form
+            cn.setDiaChi(txtDiaChi.getText());
             cn.setGiaDien(new java.math.BigDecimal(txtGiaDien.getText()));
             cn.setGiaNuoc(new java.math.BigDecimal(txtGiaNuoc.getText()));
 
@@ -171,6 +180,16 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
             txtGiaDien.setText(tblChiNhanh.getValueAt(row, 3).toString());
             txtGiaNuoc.setText(tblChiNhanh.getValueAt(row, 4).toString());
             txtDiaChi.setText(tblChiNhanh.getValueAt(row, 2).toString());
+        }
+    }
+
+    // Thêm hàm kiểm tra số
+    private boolean isNumber(String str) {
+        try {
+            new java.math.BigDecimal(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 
