@@ -17,7 +17,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import poly.nhatro.dao.ChiNhanhDAO;
 import poly.nhatro.dao.PhongDao;
-import poly.nhatro.dao.impl.ChiNhanhImpl;
+import poly.nhatro.dao.impl.ChiNhanhDAOImpl;
 import poly.nhatro.dao.impl.PhongDaoImpl;
 import poly.nhatro.entity.ChiNhanh;
 import poly.nhatro.entity.Phong;
@@ -406,8 +406,8 @@ public class PhongPanel extends javax.swing.JPanel {
     PhongDao phongDao = new PhongDaoImpl();
     List<Phong> listPhong = phongDao.findAll();
 
-    ChiNhanhDAO chiNhanhDAO = new ChiNhanhImpl();
-    List<ChiNhanh> listChiNhanh = chiNhanhDAO.findAll();
+    ChiNhanhDAO chiNhanhDAO = new ChiNhanhDAOImpl();
+    List<ChiNhanh> listChiNhanh = chiNhanhDAO.getAll();
 
     Map<Integer, ChiNhanh> cacheChiNhanh = new HashMap<>();
 
@@ -426,11 +426,11 @@ public class PhongPanel extends javax.swing.JPanel {
         DefaultTableModel model = (DefaultTableModel) tblPhong.getModel();
         model.setRowCount(0);
 
-        ChiNhanhDAO chiNhanhDAO = new ChiNhanhImpl();
+        ChiNhanhDAO chiNhanhDAO = new ChiNhanhDAOImpl();
 
         for (Phong phong : listPhong) {
             // Lấy tên chi nhánh từ ID_ChiNhanh
-            ChiNhanh chiNhanh = cacheChiNhanh.computeIfAbsent(phong.getIdChiNhanh(), id -> chiNhanhDAO.findById(id));
+            ChiNhanh chiNhanh = cacheChiNhanh.computeIfAbsent(phong.getIdChiNhanh(), id -> chiNhanhDAO.getById(id));
             String tenChiNhanh = chiNhanh != null ? chiNhanh.getTenChiNhanh() : "Không xác định";
 
             // Chuyển trạng thái thành text
@@ -486,8 +486,8 @@ public class PhongPanel extends javax.swing.JPanel {
 
         // Lấy ID chi nhánh từ combobox
         String tenChiNhanh = cboChiNhanh.getSelectedItem().toString();
-        ChiNhanh chiNhanh = new ChiNhanhImpl().findByKeyword(tenChiNhanh).get(0);
-        phong.setIdChiNhanh(chiNhanh.getId_ChiNhanh());
+        ChiNhanh chiNhanh = new ChiNhanhDAOImpl().search(tenChiNhanh).get(0);
+        phong.setIdChiNhanh(chiNhanh.getID_ChiNhanh());
 
         return phong;
     }
@@ -502,7 +502,7 @@ public class PhongPanel extends javax.swing.JPanel {
         rdoDaThue.setSelected(phong.isTrangThai());             // nếu đang thuê
         rdoConTrong.setSelected(!phong.isTrangThai());          // nếu còn trống
         // Đặt chi nhánh
-        ChiNhanh chiNhanh = new ChiNhanhImpl().findById(phong.getIdChiNhanh());
+        ChiNhanh chiNhanh = new ChiNhanhDAOImpl().getById(phong.getIdChiNhanh());
         if (chiNhanh != null) {
             cboChiNhanh.setSelectedItem(chiNhanh.getTenChiNhanh());
         }

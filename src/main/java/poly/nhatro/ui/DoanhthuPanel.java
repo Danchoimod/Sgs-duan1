@@ -89,6 +89,8 @@ public class DoanhthuPanel extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null}
             },
             new String [] {
@@ -593,6 +595,7 @@ public class DoanhthuPanel extends javax.swing.JPanel {
     private void fillTableAll() {
         try {
             List<DoanhThu> list = doanhThuDao.getAll();
+            System.out.println("[DEBUG] Số lượng bản ghi lấy được từ database: " + list.size()); // Thêm log kiểm tra
             fillTable(list);
         } catch (RuntimeException e) {
             XDialog.alert("Lỗi khi tải tất cả dữ liệu doanh thu: " + e.getMessage());
