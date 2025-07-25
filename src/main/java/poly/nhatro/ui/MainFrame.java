@@ -616,12 +616,11 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
     }//GEN-LAST:event_lblHoaDonMouseClicked
 
     private void lblDangXuatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblDangXuatMouseClicked
-        // Đăng xuất: Ẩn MainFrame và hiển thị lại màn hình đăng nhập
-        this.setVisible(false);
-        DangNhapDialog dangNhapDialog = new DangNhapDialog(this, true);
-        dangNhapDialog.setLocationRelativeTo(this);
-        dangNhapDialog.setVisible(true);
+        // Đóng MainFrame và mở lại DangNhapDialog
         this.dispose();
+        DangNhapDialog dangNhapDialog = new DangNhapDialog(null, true);
+        dangNhapDialog.setLocationRelativeTo(null);
+        dangNhapDialog.setVisible(true);
     }//GEN-LAST:event_lblDangXuatMouseClicked
 
     private void lblDangXuatMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblDangXuatMouseEntered
