@@ -10,11 +10,12 @@ import java.util.List;
 
 public class HopDongImpl implements HopDongDAO {
 
-    private final String INSERT_SQL = "INSERT INTO HOP_DONG (NgayBatDau, NgayKetThuc, SoTienCoc, ID_NguoiDung, ID_Phong, ID_ChiNhanh) VALUES (?, ?, ?, ?, ?, ?)";
-    private final String UPDATE_SQL = "UPDATE HOP_DONG SET NgayBatDau = ?, NgayKetThuc = ?, SoTienCoc = ?, ID_NguoiDung = ?, ID_Phong = ?, ID_ChiNhanh = ? WHERE ID_HopDong = ?";
-    private final String DELETE_SQL = "DELETE FROM HOP_DONG WHERE ID_HopDong = ?";
-    private final String SELECT_ALL_SQL = "SELECT * FROM HOP_DONG";
-    private final String SELECT_BY_ID_SQL = "SELECT * FROM HOP_DONG WHERE ID_HopDong = ?";
+    private final String INSERT_SQL = "INSERT INTO HopDong (NgayBatDau, NgayKetThuc, SoTienCoc, ID_NguoiDung, ID_Phong, ID_ChiNhanh) VALUES (?, ?, ?, ?, ?, ?)";
+    private final String UPDATE_SQL = "UPDATE HopDong SET NgayBatDau = ?, NgayKetThuc = ?, SoTienCoc = ?, ID_NguoiDung = ?, ID_Phong = ?, ID_ChiNhanh = ? WHERE ID_HopDong = ?";
+    private final String DELETE_SQL = "DELETE FROM HopDong WHERE ID_HopDong = ?";
+    private final String SELECT_ALL_SQL = "SELECT * FROM HopDong";
+    private final String SELECT_BY_ID_SQL = "SELECT * FROM HopDong WHERE ID_HopDong = ?";
+    private final String SELECT_BY_USER_ID_SQL = "SELECT * FROM HopDong WHERE ID_NguoiDung = ?";
 
     @Override
     public void add(HopDong entity) {
@@ -93,7 +94,7 @@ public class HopDongImpl implements HopDongDAO {
     @Override
     public boolean existsHopDongById(int id) {
         try {
-            String sql = "SELECT COUNT(*) FROM HOP_DONG WHERE ID_HopDong = ?";
+            String sql = "SELECT COUNT(*) FROM HopDong WHERE ID_HopDong = ?";
             try (ResultSet rs = XJdbc.executeQuery(sql, id)) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
@@ -104,5 +105,10 @@ public class HopDongImpl implements HopDongDAO {
             throw new RuntimeException("Kiểm tra hợp đồng thất bại.", e);
         }
         return false;
+    }
+
+    @Override
+    public List<HopDong> findByUserId(int userId) {
+        return selectBySql(SELECT_BY_USER_ID_SQL, userId);
     }
 }

@@ -202,11 +202,11 @@ public class HopDongPanel extends javax.swing.JPanel {
         } catch (RuntimeException e) {
             String errorMessage = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
             if (errorMessage != null) {
-                if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("NGUOI_DUNG")) {
+                if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("NguoiDung")) {
                     XDialog.alert("Thêm mới thất bại: Mã người dùng không tồn tại. Vui lòng kiểm tra lại Mã người dùng.");
-                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("PHONG")) {
+                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("Phong")) {
                     XDialog.alert("Thêm mới thất bại: Mã phòng không tồn tại. Vui lòng kiểm tra lại Mã phòng.");
-                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("CHI_NHANH")) {
+                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("ChiNhanh")) {
                     XDialog.alert("Thêm mới thất bại: Mã chi nhánh không tồn tại. Vui lòng kiểm tra lại Mã chi nhánh.");
                 } else {
                     XDialog.alert("Thêm mới thất bại: " + errorMessage);
@@ -237,11 +237,11 @@ public class HopDongPanel extends javax.swing.JPanel {
         } catch (RuntimeException e) {
             String errorMessage = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
             if (errorMessage != null) {
-                if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("NGUOI_DUNG")) {
-                    XDialog.alert("Cập nhật thất bại: Mã người dùng không tồn tại. Vui lòng kiểm tra lại Mã người dùng.");
-                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("PHONG")) {
+                if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("NguoiDung")) {
+                    XDialog.alert("Cậ̣p nhật thất bại: Mã người dùng không tồn tại. Vui lòng kiểm tra lại Mã người dùng.");
+                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("Phong")) {
                     XDialog.alert("Cập nhật thất bại: Mã phòng không tồn tại. Vui lòng kiểm tra lại Mã phòng.");
-                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("CHI_NHANH")) {
+                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("ChiNhanh")) {
                     XDialog.alert("Cập nhật thất bại: Mã chi nhánh không tồn tại. Vui lòng kiểm tra lại Mã chi nhánh.");
                 } else {
                     XDialog.alert("Cập nhật thất bại: ");

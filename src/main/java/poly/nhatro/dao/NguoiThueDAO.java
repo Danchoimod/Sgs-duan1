@@ -10,5 +10,4 @@ import poly.nhatro.entity.NguoiThue;
  */
 public interface NguoiThueDAO extends CrudDao<NguoiThue, Integer> {
     // Các method bổ sung nếu cần
-    String getTenPhongByNguoiThueId(int nguoiThueId);
 }

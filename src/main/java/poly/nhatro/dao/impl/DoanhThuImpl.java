@@ -41,7 +41,7 @@ public class DoanhThuImpl implements DoanhThuDao {
     public List<DoanhThu> getAll() {
         List<DoanhThu> list = new ArrayList<>();
         try {
-            ResultSet rs = XJdbc.executeQuery("SELECT * FROM HOA_DON ORDER BY NgayThanhToan DESC");
+            ResultSet rs = XJdbc.executeQuery("SELECT * FROM HoaDon ORDER BY NgayThanhToan DESC");
             while (rs.next()) {
                 list.add(mapResult(rs));
             }
@@ -56,7 +56,7 @@ public class DoanhThuImpl implements DoanhThuDao {
     public List<DoanhThu> getByDateRange(Date tuNgay, Date denNgay) {
         List<DoanhThu> list = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM HOA_DON WHERE ngayThanhToan BETWEEN ? AND ? ORDER BY ngayThanhToan DESC";
+            String sql = "SELECT * FROM HoaDon WHERE ngayThanhToan BETWEEN ? AND ? ORDER BY ngayThanhToan DESC";
 
             java.sql.Timestamp start = new java.sql.Timestamp(tuNgay.getTime());
             java.sql.Timestamp end = new java.sql.Timestamp(denNgay.getTime());
@@ -80,7 +80,7 @@ public class DoanhThuImpl implements DoanhThuDao {
 
     @Override
     public DoanhThu getById(int idHoaDon) {
-        String sql = "SELECT * FROM HOA_DON WHERE ID_HoaDon = ?";
+        String sql = "SELECT * FROM HoaDon WHERE ID_HoaDon = ?";
         try {
             ResultSet rs = XJdbc.executeQuery(sql, idHoaDon);
             if (rs.next()) {
@@ -95,7 +95,7 @@ public class DoanhThuImpl implements DoanhThuDao {
 
     public boolean update(DoanhThu dt) {
         String sql = """
-        UPDATE HOA_DON
+        UPDATE HoaDon
         SET soDienMoi = ?, soNuocMoi = ?, soDienCu = ?, soNuocCu = ?,
             TienDien = ?, TienNuoc = ?, TienPhong = ?, TongTien = ?, NgayThanhToan = ?, trangThaiThanhToan = ?, ID_HopDong = ?
         WHERE ID_HoaDon = ?
