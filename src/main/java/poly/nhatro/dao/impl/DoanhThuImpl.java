@@ -31,8 +31,8 @@ public class DoanhThuImpl implements DoanhThuDao {
         dt.setTienNuoc(rs.getBigDecimal("tienNuoc"));
         dt.setTienPhong(rs.getBigDecimal("tienPhong"));
         dt.setTongTien(rs.getBigDecimal("tongTien"));
-        dt.setNgayThanhToan(rs.getDate("ngayThanhToan"));
-        dt.setTrangThai(rs.getBoolean("trangThaiThanhToan"));
+        dt.setNgayThanhToan(rs.getDate("ngayTao")); // Đã sửa từ ngayThanhToan -> ngayTao
+        dt.setTrangThai(rs.getBoolean("trangThai")); // Đã sửa từ trangThaiThanhToan -> trangThai
         dt.setIdHopDong(rs.getInt("ID_HopDong")); // Thêm trường này
         return dt;
     }
@@ -41,7 +41,9 @@ public class DoanhThuImpl implements DoanhThuDao {
     public List<DoanhThu> getAll() {
         List<DoanhThu> list = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM HOA_DON ORDER BY NgayThanhToan DESC";
+            // Đã sửa tên bảng từ HOA_DON -> HoaDon
+            // Đã sửa tên cột từ NgayThanhToan -> ngayTao
+            String sql = "SELECT * FROM HoaDon ORDER BY ngayTao DESC";
             System.out.println("[DEBUG - DoanhThuImpl] Executing getAll SQL: " + sql);
             ResultSet rs = XJdbc.executeQuery(sql);
             int rowCount = 0;
@@ -62,7 +64,9 @@ public class DoanhThuImpl implements DoanhThuDao {
     public List<DoanhThu> getByDateRange(Date tuNgay, Date denNgay) {
         List<DoanhThu> list = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM HOA_DON WHERE ngayThanhToan BETWEEN ? AND ? ORDER BY ngayThanhToan DESC";
+            // Đã sửa tên bảng từ HOA_DON -> HoaDon
+            // Đã sửa tên cột từ ngayThanhToan -> ngayTao
+            String sql = "SELECT * FROM HoaDon WHERE ngayTao BETWEEN ? AND ? ORDER BY ngayTao DESC";
 
             java.sql.Timestamp start = new java.sql.Timestamp(tuNgay.getTime());
             java.sql.Timestamp end = new java.sql.Timestamp(denNgay.getTime());
@@ -88,7 +92,8 @@ public class DoanhThuImpl implements DoanhThuDao {
 
     @Override
     public DoanhThu getById(int idHoaDon) {
-        String sql = "SELECT * FROM HOA_DON WHERE ID_HoaDon = ?";
+        // Đã sửa tên bảng từ HOA_DON -> HoaDon
+        String sql = "SELECT * FROM HoaDon WHERE ID_HoaDon = ?";
         try {
             System.out.println("[DEBUG - DoanhThuImpl] Executing getById SQL: " + sql + " with ID: " + idHoaDon);
             ResultSet rs = XJdbc.executeQuery(sql, idHoaDon);
@@ -105,10 +110,12 @@ public class DoanhThuImpl implements DoanhThuDao {
     }
 
     public boolean update(DoanhThu dt) {
+        // Đã sửa tên bảng từ HOA_DON -> HoaDon
+        // Đã sửa tên cột từ NgayThanhToan -> ngayTao, trangThaiThanhToan -> trangThai
         String sql = """
-        UPDATE HOA_DON
+        UPDATE HoaDon
         SET soDienMoi = ?, soNuocMoi = ?, soDienCu = ?, soNuocCu = ?,
-            TienDien = ?, TienNuoc = ?, TienPhong = ?, TongTien = ?, NgayThanhToan = ?, trangThaiThanhToan = ?, ID_HopDong = ?
+            TienDien = ?, TienNuoc = ?, TienPhong = ?, TongTien = ?, ngayTao = ?, trangThai = ?, ID_HopDong = ?
         WHERE ID_HoaDon = ?
         """;
         System.out.println("[DEBUG - DoanhThuImpl] Executing update SQL for ID: " + dt.getIdHoaDon());

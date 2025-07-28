@@ -15,16 +15,15 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class NguoiThue {
-    private int ID_NguoiDung;  
+    private int ID_NguoiDung; // ID tự tăng trong DB, không cần set từ code
     private String hoVaTen;
     private String matKhau;
     private String email;
     private String sdt;
     private String soCCCD;
-    private boolean trangThai;
-    private boolean gioiTinh;
+    private boolean trangThai; // BIT hoặc BOOLEAN trong SQL
+    private boolean gioiTinh; // BIT hoặc BOOLEAN trong SQL (ví dụ: true là nam, false là nữ)
     private String queQuan;
-    private Date ngaySinh;
-    private Integer ID_Phong;
-    
+    private Date ngaySinh; // DATE trong SQL
+    private Integer ID_Phong; // Khóa ngoại, có thể null nếu người thuê chưa được gán phòng
 }

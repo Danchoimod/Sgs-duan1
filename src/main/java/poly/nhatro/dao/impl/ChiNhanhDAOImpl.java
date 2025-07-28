@@ -13,13 +13,13 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
 
     @Override
     public List<ChiNhanh> getAll() {
-        String sql = "SELECT * FROM CHI_NHANH";
+        String sql = "SELECT * FROM ChiNhanh"; // Đã đúng
         return this.getBySql(sql);
     }
 
     @Override
     public boolean add(ChiNhanh chiNhanh) {
-        String sql = "INSERT INTO CHI_NHANH(tenChiNhanh, diaChi, giaDien, giaNuoc) VALUES(?,?,?,?)";
+        String sql = "INSERT INTO ChiNhanh(tenChiNhanh, diaChi, giaDien, giaNuoc) VALUES(?,?,?,?)"; // Đã sửa CHI_NHANH -> ChiNhanh
         return XJdbc.executeUpdate(sql,
                 chiNhanh.getTenChiNhanh(),
                 chiNhanh.getDiaChi(),
@@ -29,7 +29,7 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
 
     @Override
     public boolean update(ChiNhanh chiNhanh) {
-        String sql = "UPDATE CHI_NHANH SET tenChiNhanh=?, diaChi=?, giaDien=?, giaNuoc=? WHERE ID_ChiNhanh=?";
+        String sql = "UPDATE ChiNhanh SET tenChiNhanh=?, diaChi=?, giaDien=?, giaNuoc=? WHERE ID_ChiNhanh=?"; // Đã sửa CHI_NHANH -> ChiNhanh
         return XJdbc.executeUpdate(sql,
                 chiNhanh.getTenChiNhanh(),
                 chiNhanh.getDiaChi(),
@@ -40,13 +40,13 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
 
     @Override
     public boolean delete(int id) {
-        String sql = "DELETE FROM CHI_NHANH WHERE ID_ChiNhanh=?";
+        String sql = "DELETE FROM ChiNhanh WHERE ID_ChiNhanh=?"; // Đã sửa CHI_NHANH -> ChiNhanh
         return XJdbc.executeUpdate(sql, id) > 0;
     }
 
     @Override
     public List<ChiNhanh> search(String keyword) {
-        String sql = "SELECT * FROM CHI_NHANH WHERE tenChiNhanh LIKE ? OR diaChi LIKE ?";
+        String sql = "SELECT * FROM ChiNhanh WHERE tenChiNhanh LIKE ? OR diaChi LIKE ?"; // Đã sửa CHI_NHANH -> ChiNhanh
         return this.getBySql(sql, "%" + keyword + "%", "%" + keyword + "%");
     }
 
@@ -58,8 +58,12 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
                 chiNhanh.setID_ChiNhanh(rs.getInt("ID_ChiNhanh"));
                 chiNhanh.setTenChiNhanh(rs.getString("tenChiNhanh"));
                 chiNhanh.setDiaChi(rs.getString("diaChi"));
-                chiNhanh.setGiaDien(rs.getBigDecimal("giaDien"));
-                chiNhanh.setGiaNuoc(rs.getBigDecimal("giaNuoc"));
+                // Chú ý: trong SQL script, giaDien và giaNuoc là INT,
+                // nhưng ở đây bạn đang đọc là BigDecimal.
+                // Đảm bảo kiểu dữ liệu khớp hoặc xử lý chuyển đổi.
+                // Nếu trong DB là INT, bạn nên dùng getInt() và sau đó chuyển sang BigDecimal nếu cần.
+                chiNhanh.setGiaDien(BigDecimal.valueOf(rs.getInt("giaDien"))); // Sửa getBigDecimal -> getInt
+                chiNhanh.setGiaNuoc(BigDecimal.valueOf(rs.getInt("giaNuoc"))); // Sửa getBigDecimal -> getInt
                 list.add(chiNhanh);
             }
         } catch (SQLException e) {
@@ -68,20 +72,19 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
         return list;
     }
 
-    // Các phương thức cũ giữ nguyên
     @Override
     public ChiNhanh getById(int id) {
-        String sql = "SELECT ID_ChiNhanh, tenChiNhanh, diaChi, giaDien, giaNuoc FROM CHI_NHANH WHERE ID_ChiNhanh = ?";
+        String sql = "SELECT ID_ChiNhanh, tenChiNhanh, diaChi, giaDien, giaNuoc FROM ChiNhanh WHERE ID_ChiNhanh = ?"; // Đã sửa CHI_NHANH -> ChiNhanh
         List<ChiNhanh> list = this.getBySql(sql, id);
         return list.isEmpty() ? null : list.get(0);
     }
 
     @Override
     public BigDecimal getGiaDienById(int id) {
-        String sql = "SELECT giaDien FROM CHI_NHANH WHERE ID_ChiNhanh = ?";
+        String sql = "SELECT giaDien FROM ChiNhanh WHERE ID_ChiNhanh = ?"; // Đã sửa CHI_NHANH -> ChiNhanh
         try (ResultSet rs = XJdbc.executeQuery(sql, id)) {
             if (rs.next()) {
-                return rs.getBigDecimal("giaDien");
+                return BigDecimal.valueOf(rs.getInt("giaDien")); // Sửa getBigDecimal -> getInt
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,10 +94,10 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
 
     @Override
     public BigDecimal getGiaNuocById(int id) {
-        String sql = "SELECT giaNuoc FROM CHI_NHANH WHERE ID_ChiNhanh = ?";
+        String sql = "SELECT giaNuoc FROM ChiNhanh WHERE ID_ChiNhanh = ?"; // Đã sửa CHI_NHANH -> ChiNhanh
         try (ResultSet rs = XJdbc.executeQuery(sql, id)) {
             if (rs.next()) {
-                return rs.getBigDecimal("giaNuoc");
+                return BigDecimal.valueOf(rs.getInt("giaNuoc")); // Sửa getBigDecimal -> getInt
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -105,7 +108,7 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
     @Override
     public List<String> getAllBranchNames() {
         List<String> branchNames = new ArrayList<>();
-        String sql = "SELECT tenChiNhanh FROM CHI_NHANH ORDER BY tenChiNhanh";
+        String sql = "SELECT tenChiNhanh FROM ChiNhanh ORDER BY tenChiNhanh"; // Đã sửa CHI_NHANH -> ChiNhanh
         try (ResultSet rs = XJdbc.executeQuery(sql)) {
             while (rs.next()) {
                 branchNames.add(rs.getString("tenChiNhanh"));
@@ -118,7 +121,7 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
     
     @Override
     public int layIDTheoTen(String tenChiNhanh) {
-        String sql = "SELECT ID_ChiNhanh FROM CHI_NHANH WHERE tenChiNhanh=?";
+        String sql = "SELECT ID_ChiNhanh FROM ChiNhanh WHERE tenChiNhanh=?"; // Đã sửa CHI_NHANH -> ChiNhanh
         try (ResultSet rs = XJdbc.executeQuery(sql, tenChiNhanh)) {
             if (rs.next()) {
                 return rs.getInt("ID_ChiNhanh");
@@ -128,5 +131,4 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
         }
         return -1;
     }
-
 }

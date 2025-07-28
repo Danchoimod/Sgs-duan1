@@ -12,64 +12,74 @@ public class PhongDaoImpl implements PhongDao {
 
     @Override
     public Phong create(Phong entity) {
-        String sql = "INSERT INTO PHONG(giaPhong, trangThai, soPhong, moTa, hinhAnh, ID_ChiNhanh) VALUES(?,?,?,?,?,?)";
+        // Đã sửa tên bảng từ PHONG -> Phong
+        // Đã sửa tên cột từ hinhAnh -> anhPhong
+        String sql = "INSERT INTO Phong(giaPhong, trangThai, soPhong, moTa, anhPhong, ID_ChiNhanh) VALUES(?,?,?,?,?,?)";
         XJdbc.executeUpdate(sql,
                 entity.getGiaPhong(),
                 entity.isTrangThai(),
                 entity.getSoPhong(),
                 entity.getMoTa(),
-                entity.getHinhAnh(),
+                entity.getAnhPhong(), // Đã sửa getHinhAnh() -> getAnhPhong()
                 entity.getIdChiNhanh());
         return entity;
     }
 
     @Override
     public void update(Phong entity) {
-        String sql = "UPDATE PHONG SET giaPhong=?, trangThai=?, soPhong=?, moTa=?, hinhAnh=?, ID_ChiNhanh=? WHERE ID_Phong=?";
+        // Đã sửa tên bảng từ PHONG -> Phong
+        // Đã sửa tên cột từ hinhAnh -> anhPhong
+        String sql = "UPDATE Phong SET giaPhong=?, trangThai=?, soPhong=?, moTa=?, anhPhong=?, ID_ChiNhanh=? WHERE ID_Phong=?";
         XJdbc.executeUpdate(sql,
                 entity.getGiaPhong(),
                 entity.isTrangThai(),
                 entity.getSoPhong(),
                 entity.getMoTa(),
-                entity.getHinhAnh(),
+                entity.getAnhPhong(), // Đã sửa getHinhAnh() -> getAnhPhong()
                 entity.getIdChiNhanh(),
                 entity.getIdPhong());
     }
 
     @Override
     public void deleteById(Integer id) {
-        String sql = "DELETE FROM PHONG WHERE ID_Phong=?";
+        // Đã sửa tên bảng từ PHONG -> Phong
+        String sql = "DELETE FROM Phong WHERE ID_Phong=?";
         XJdbc.executeUpdate(sql, id);
     }
 
     @Override
     public List<Phong> findAll() {
-        String sql = "SELECT * FROM PHONG";
+        // Đã sửa tên bảng từ PHONG -> Phong
+        String sql = "SELECT * FROM Phong";
         return select(sql);
     }
 
     @Override
     public Phong findById(Integer id) {
-        String sql = "SELECT * FROM PHONG WHERE ID_Phong=?";
+        // Đã sửa tên bảng từ PHONG -> Phong
+        String sql = "SELECT * FROM Phong WHERE ID_Phong=?";
         List<Phong> list = select(sql, id);
         return list.size() > 0 ? list.get(0) : null;
     }
 
     // Phương thức mới: Tìm phòng theo số phòng
     public List<Phong> findBySoPhong(String soPhong) {
-        String sql = "SELECT * FROM PHONG WHERE soPhong LIKE ?";
+        // Đã sửa tên bảng từ PHONG -> Phong
+        String sql = "SELECT * FROM Phong WHERE soPhong LIKE ?";
         return select(sql, "%" + soPhong + "%");
     }
 
     // Phương thức mới: Tìm phòng theo chi nhánh
     public List<Phong> findByChiNhanh(Integer idChiNhanh) {
-        String sql = "SELECT * FROM PHONG WHERE ID_ChiNhanh=?";
+        // Đã sửa tên bảng từ PHONG -> Phong
+        String sql = "SELECT * FROM Phong WHERE ID_ChiNhanh=?";
         return select(sql, idChiNhanh);
     }
 
     // Phương thức mới: Đếm số lượng phòng
     public int countPhong() {
-        String sql = "SELECT COUNT(*) FROM PHONG";
+        // Đã sửa tên bảng từ PHONG -> Phong
+        String sql = "SELECT COUNT(*) FROM Phong";
         try {
             ResultSet rs = XJdbc.executeQuery(sql);
             if (rs.next()) {
@@ -96,8 +106,8 @@ public class PhongDaoImpl implements PhongDao {
                 String moTa = rs.getString("moTa");
                 phong.setMoTa(rs.wasNull() ? null : moTa);
 
-                String hinhAnh = rs.getString("hinhAnh");
-                phong.setHinhAnh(rs.wasNull() ? null : hinhAnh);
+                String anhPhong = rs.getString("anhPhong"); // Đã sửa tên cột từ hinhAnh -> anhPhong
+                phong.setAnhPhong(rs.wasNull() ? null : anhPhong); // Đã sửa setHinhAnh() -> setAnhPhong()
 
                 phong.setIdChiNhanh(rs.getInt("ID_ChiNhanh"));
                 list.add(phong);
