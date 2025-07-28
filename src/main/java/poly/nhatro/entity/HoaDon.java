@@ -14,21 +14,12 @@ import lombok.*;
 @Data
 public class HoaDon {
     private int ID_HoaDon;
-    private int soDienMoi;
-    private int soDienCu;
-    private int soNuocMoi;
-    private int soNuocCu;
-    private BigDecimal tienDien;
-    private BigDecimal tienNuoc;
-    private BigDecimal tienPhong;
-    private BigDecimal tongTien;
-    private boolean trangThaiThanhToan;
-    private Date ngayThanhToan;
+    private String trangThai;
+    private Date ngayTao;
+    private int ID_NguoiDung;
+    private int ID_Phong;
     private int ID_HopDong;
-    
-    
-            
-
-
+    private int ID_ChiNhanh;
+   
     
 }
