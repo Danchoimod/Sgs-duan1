@@ -53,8 +53,8 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
                 cn.getID_ChiNhanh(),
                 cn.getTenChiNhanh(),
                 cn.getDiaChi(),
-                cn.getGiaDien(),
-                cn.getGiaNuoc()
+                cn.getGiaDien().setScale(0, java.math.RoundingMode.DOWN).toPlainString(),
+                cn.getGiaNuoc().setScale(0, java.math.RoundingMode.DOWN).toPlainString()
             });
         }
     }
@@ -68,17 +68,30 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
                 cn.getID_ChiNhanh(),
                 cn.getTenChiNhanh(),
                 cn.getDiaChi(),
-                cn.getGiaDien(),
-                cn.getGiaNuoc()
+                cn.getGiaDien().setScale(0, java.math.RoundingMode.DOWN).toPlainString(),
+                cn.getGiaNuoc().setScale(0, java.math.RoundingMode.DOWN).toPlainString()
             });
         }
     }
 
     private void add() {
+        // Kiểm tra các trường thông tin có bị rỗng không
+        if (txtTenChiNhanh.getText().trim().isEmpty() ||
+            txtDiaChi.getText().trim().isEmpty() ||
+            txtGiaDien.getText().trim().isEmpty() ||
+            txtGiaNuoc.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin chi nhánh!");
+            return;
+        }
+        // Kiểm tra giá điện, giá nước phải là số
+        if (!isNumber(txtGiaDien.getText().trim()) || !isNumber(txtGiaNuoc.getText().trim())) {
+            JOptionPane.showMessageDialog(this, "Giá điện và giá nước chỉ được nhập số!");
+            return;
+        }
         try {
             ChiNhanh cn = new ChiNhanh();
-            cn.setTenChiNhanh(btnTenChiNhanh.getText());
-            cn.setDiaChi(txtDiaChi.getText()); // Bạn cần thêm field địa chỉ vào form
+            cn.setTenChiNhanh(txtTenChiNhanh.getText());
+            cn.setDiaChi(txtDiaChi.getText());
             cn.setGiaDien(new java.math.BigDecimal(txtGiaDien.getText()));
             cn.setGiaNuoc(new java.math.BigDecimal(txtGiaNuoc.getText()));
             if (chiNhanhService.add(cn)) {
@@ -99,13 +112,17 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn chi nhánh cần sửa");
             return;
         }
-
+        // Kiểm tra giá điện, giá nước phải là số
+        if (!isNumber(txtGiaDien.getText().trim()) || !isNumber(txtGiaNuoc.getText().trim())) {
+            JOptionPane.showMessageDialog(this, "Giá điện và giá nước chỉ được nhập số!");
+            return;
+        }
         try {
             int id = (int) tblChiNhanh.getValueAt(row, 0);
             ChiNhanh cn = new ChiNhanh();
             cn.setID_ChiNhanh(id);
-            cn.setTenChiNhanh(btnTenChiNhanh.getText());
-            cn.setDiaChi(txtDiaChi.getText()); // Bạn cần thêm field địa chỉ vào form
+            cn.setTenChiNhanh(txtTenChiNhanh.getText());
+            cn.setDiaChi(txtDiaChi.getText());
             cn.setGiaDien(new java.math.BigDecimal(txtGiaDien.getText()));
             cn.setGiaNuoc(new java.math.BigDecimal(txtGiaNuoc.getText()));
 
@@ -131,18 +148,27 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
         int id = (int) tblChiNhanh.getValueAt(row, 0);
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa chi nhánh này?");
         if (confirm == JOptionPane.YES_OPTION) {
-            if (chiNhanhService.delete(id)) {
-                JOptionPane.showMessageDialog(this, "Xóa thành công");
-                loadDataToTable();
-                clearForm();
-            } else {
-                JOptionPane.showMessageDialog(this, "Xóa thất bại");
+            try {
+                if (chiNhanhService.delete(id)) {
+                    JOptionPane.showMessageDialog(this, "Xóa thành công");
+                    loadDataToTable();
+                    clearForm();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Xóa thất bại");
+                }
+            } catch (Exception e) {
+                // Kiểm tra thông báo lỗi liên quan đến ràng buộc khoá ngoại phòng
+                if (e.getMessage() != null && e.getMessage().contains("REFERENCE constraint") && e.getMessage().contains("PHONG")) {
+                    JOptionPane.showMessageDialog(this, "Còn phòng trong chi nhánh, vui lòng xóa hết phòng");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
+                }
             }
         }
     }
 
     private void clearForm() {
-        btnTenChiNhanh.setText("");
+        txtTenChiNhanh.setText("");
         txtGiaDien.setText("");
         txtGiaNuoc.setText("");
     }
@@ -150,10 +176,20 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
     private void showSelectedRow() {
         int row = tblChiNhanh.getSelectedRow();
         if (row >= 0) {
-            btnTenChiNhanh.setText(tblChiNhanh.getValueAt(row, 1).toString());
+            txtTenChiNhanh.setText(tblChiNhanh.getValueAt(row, 1).toString());
             txtGiaDien.setText(tblChiNhanh.getValueAt(row, 3).toString());
             txtGiaNuoc.setText(tblChiNhanh.getValueAt(row, 4).toString());
             txtDiaChi.setText(tblChiNhanh.getValueAt(row, 2).toString());
+        }
+    }
+
+    // Thêm hàm kiểm tra số
+    private boolean isNumber(String str) {
+        try {
+            new java.math.BigDecimal(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 
@@ -168,7 +204,7 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        btnTenChiNhanh = new javax.swing.JTextField();
+        txtTenChiNhanh = new javax.swing.JTextField();
         txtGiaDien = new javax.swing.JTextField();
         txtGiaNuoc = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -182,6 +218,7 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
         btnXoa = new javax.swing.JButton();
         txtDiaChi = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        btnNew = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblChiNhanh = new javax.swing.JTable();
 
@@ -232,6 +269,13 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
 
         jLabel7.setText("Địa chỉ");
 
+        btnNew.setText("Làm mới");
+        btnNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNewActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -242,7 +286,7 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
                     .addComponent(jLabel1)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnTenChiNhanh, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtTenChiNhanh, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -268,7 +312,9 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSua)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnXoa)))
+                        .addComponent(btnXoa)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnNew)))
                 .addContainerGap(145, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -285,7 +331,7 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
                             .addComponent(jLabel7))
                         .addGap(1, 1, 1)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnTenChiNhanh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtTenChiNhanh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtGiaDien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtGiaNuoc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtDiaChi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -300,7 +346,8 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnTao)
                             .addComponent(btnSua)
-                            .addComponent(btnXoa))))
+                            .addComponent(btnXoa)
+                            .addComponent(btnNew))))
                 .addGap(18, 18, 18))
         );
 
@@ -350,6 +397,7 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
     private void tblChiNhanhMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblChiNhanhMouseClicked
         // TODO add your handling code here:
         showSelectedRow();
+        btnTao.setEnabled(false);
     }//GEN-LAST:event_tblChiNhanhMouseClicked
 
     private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseClicked
@@ -372,11 +420,20 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
         delete();
     }//GEN-LAST:event_btnXoaActionPerformed
 
+    private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
+        // TODO add your handling code here:
+        txtDiaChi.setText("");
+        txtTenChiNhanh.setText("");
+        txtGiaNuoc.setText("");
+        txtGiaDien.setText("");
+        btnTao.setEnabled(true);
+    }//GEN-LAST:event_btnNewActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnNew;
     private javax.swing.JButton btnSua;
     private javax.swing.JButton btnTao;
-    private javax.swing.JTextField btnTenChiNhanh;
     private javax.swing.JButton btnXoa;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -391,6 +448,7 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
     private javax.swing.JTextField txtDiaChi;
     private javax.swing.JTextField txtGiaDien;
     private javax.swing.JTextField txtGiaNuoc;
+    private javax.swing.JTextField txtTenChiNhanh;
     private javax.swing.JTextField txtTimKiem;
     // End of variables declaration//GEN-END:variables
 }
