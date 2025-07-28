@@ -15,30 +15,24 @@ import poly.nhatro.util.*;
  * @author tranthithuyngan
  */
 public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
-    // Đã sửa tên bảng từ HOA_DON -> HoaDon
-    // Đã sửa tên cột từ trangThaiThanhToan -> trangThai, ngayThanhToan -> ngayTao
-    String createSql = "INSERT INTO HoaDon(soDienMoi, soNuocMoi, soDienCu, soNuocCu, tienDien, tienNuoc, tienPhong, tongTien, trangThai, ngayTao, ID_HopDong) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    String updateSql = "UPDATE HoaDon SET soDienMoi = ?, soNuocMoi = ?, soDienCu = ?, soNuocCu = ?, tienDien = ?, tienNuoc = ?, tienPhong = ?, tongTien = ?, trangThai = ?, ngayTao = ?, ID_HopDong = ? WHERE ID_HoaDon = ?";
+    String createSql = "INSERT INTO HoaDon(trangThai, ngayTao, ID_NguoiDung, ID_Phong, ID_HopDong, ID_ChiNhanh) VALUES(?, ?, ?, ?, ?, ?)";
+    String updateSql = "UPDATE HoaDon SET trangThai = ?, ngayTao = ?, ID_NguoiDung = ?, ID_Phong = ?, ID_HopDong = ?, ID_ChiNhanh = ? WHERE ID_HoaDon = ?";
     String deleteSql = "DELETE FROM HoaDon WHERE ID_HoaDon = ?";
     String findAllSql = "SELECT * FROM HoaDon";
     String findById = "SELECT * FROM HoaDon WHERE ID_HoaDon = ?";
-    String findByTrangThai = "SELECT * FROM HoaDon WHERE trangThai = ?"; // Đã sửa tên cột
-    
-    // Đã sửa tên bảng từ HOA_DON, HOP_DONG, PHONG, CHI_NHANH, NGUOI_DUNG -> HoaDon, HopDong, Phong, ChiNhanh, NguoiDung
-    // Đã sửa tên cột để khớp với schema thực tế: ngayTao (HopDong), tenNguoiDung (NguoiDung), soDienThoai (NguoiDung)
+    String findByTrangThai = "SELECT * FROM HoaDon WHERE trangThai = ?";
     String selectWithDetailsSql = "SELECT "
-            + "hd.ID_HoaDon, hd.soDienMoi, hd.soNuocMoi, hd.soDienCu, hd.soNuocCu, "
-            + "hd.tienDien, hd.tienNuoc, hd.tienPhong, hd.tongTien, "
-            + "hd.trangThai, hd.ngayTao, " // Đã sửa tên cột
-            + "hop.ngayTao AS ngayBatDauHopDong, hop.thoiHan, " // Lấy ngayTao và thoiHan từ HopDong
+            + "hd.ID_HoaDon, hd.trangThai, hd.ngayTao, hd.ID_NguoiDung, hd.ID_Phong, "
+            + "hd.ID_HopDong, hd.ID_ChiNhanh, "
+            + "hop.ngayBatDau, hop.ngayKetThuc, "
             + "p.soPhong, p.giaPhong, "
             + "cn.tenChiNhanh, "
-            + "nd.tenNguoiDung, nd.soDienThoai " // Đã sửa tên cột
+            + "nd.tenNguoiDung, nd.soDienThoai "
             + "FROM HoaDon hd "
             + "JOIN HopDong hop ON hd.ID_HopDong = hop.ID_HopDong "
-            + "JOIN Phong p ON hd.ID_Phong = p.ID_Phong "
-            + "JOIN ChiNhanh cn ON hd.ID_ChiNhanh = cn.ID_ChiNhanh " // Đã sửa JOIN từ hop.ID_ChiNhanh -> hd.ID_ChiNhanh
-            + "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung"; // Đã sửa JOIN từ hop.ID_NguoiDung -> hd.ID_NguoiDung
+            + "JOIN Phong p ON hop.ID_Phong = p.ID_Phong "
+            + "JOIN ChiNhanh cn ON hop.ID_ChiNhanh = cn.ID_ChiNhanh "
+            + "JOIN NguoiDung nd ON hop.ID_NguoiDung = nd.ID_NguoiDung";
     
     // Tương tự cho selectDetailsByIdSql
     String selectDetailsByIdSql = "SELECT "
@@ -48,36 +42,31 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
             + "hop.ngayTao AS ngayBatDauHopDong, hop.thoiHan, " // Lấy ngayTao và thoiHan từ HopDong
             + "p.soPhong, p.giaPhong, "
             + "cn.tenChiNhanh, "
-            + "nd.tenNguoiDung, nd.soDienThoai " // Đã sửa tên cột
+            + "nd.tenNguoiDung, nd.soDienThoai "
             + "FROM HoaDon hd "
             + "JOIN HopDong hop ON hd.ID_HopDong = hop.ID_HopDong "
-            + "JOIN Phong p ON hd.ID_Phong = p.ID_Phong "
-            + "JOIN ChiNhanh cn ON hd.ID_ChiNhanh = cn.ID_ChiNhanh "
-            + "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung "
+            + "JOIN Phong p ON hop.ID_Phong = p.ID_Phong "
+            + "JOIN ChiNhanh cn ON hop.ID_ChiNhanh = cn.ID_ChiNhanh "
+            + "JOIN NguoiDung nd ON hop.ID_NguoiDung = nd.ID_NguoiDung "
             + "WHERE hd.ID_HoaDon = ?";
     
-    // Tương tự cho getHoTenSql
-    String getHoTenSql = "SELECT nd.tenNguoiDung FROM HoaDon hd " + // Đã sửa tên bảng và cột
+    String getHoTenSql = "SELECT nd.tenNguoiDung FROM HoaDon hd " +
                         "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
                         "WHERE hd.ID_HoaDon = ?";
     
-    // Tương tự cho getTenPhongSql
-    String getTenPhongSql = "SELECT p.soPhong FROM HoaDon hd " + // Đã sửa tên bảng
+    String getTenPhongSql = "SELECT p.soPhong FROM HoaDon hd " +
                            "JOIN Phong p ON hd.ID_Phong = p.ID_Phong " +
                            "WHERE hd.ID_HoaDon = ?";
     
-    // Tương tự cho getTenChiNhanhSql
-    String getTenChiNhanhSql = "SELECT cn.tenChiNhanh FROM HoaDon hd " + // Đã sửa tên bảng
+    String getTenChiNhanhSql = "SELECT cn.tenChiNhanh FROM HoaDon hd " +
                               "JOIN ChiNhanh cn ON hd.ID_ChiNhanh = cn.ID_ChiNhanh " +
                               "WHERE hd.ID_HoaDon = ?";
     
-    // Tương tự cho getChiNhanhIdSql
-    String getChiNhanhIdSql = "SELECT cn.ID_ChiNhanh FROM HoaDon hd " + // Đã sửa tên bảng
+    String getChiNhanhIdSql = "SELECT cn.ID_ChiNhanh FROM HoaDon hd " +
                               "JOIN ChiNhanh cn ON hd.ID_ChiNhanh = cn.ID_ChiNhanh " +
                               "WHERE hd.ID_HoaDon = ?";
     
-    // Tương tự cho getChiNhanhIdByHopDongSql
-    String getChiNhanhIdByHopDongSql = "SELECT ID_ChiNhanh FROM HopDong WHERE ID_HopDong = ?"; // Đã sửa tên bảng
+    String getChiNhanhIdByHopDongSql = "SELECT p.ID_ChiNhanh FROM HopDong hd JOIN Phong p ON hd.ID_Phong = p.ID_Phong WHERE hd.ID_HopDong = ?";
 
     @Override
     public List<HoaDon> findAll() {
@@ -94,26 +83,18 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
     @Override
     public void update(HoaDon entity) {
         XJdbc.executeUpdate(updateSql, 
-            entity.getSoDienMoi(),
-            entity.getSoNuocMoi(),
-            entity.getSoDienCu(),
-            entity.getSoNuocCu(),
-            entity.getTienDien(),
-            entity.getTienNuoc(),
-            entity.getTienPhong(),
-            entity.getTongTien(),
-            entity.isTrangThaiThanhToan(), // Giữ nguyên tên getter của entity
-            entity.getNgayThanhToan(),    // Giữ nguyên tên getter của entity
+
+            entity.getTrangThai(),
+            entity.getNgayTao(),
+            entity.getID_NguoiDung(),
+            entity.getID_Phong(),
             entity.getID_HopDong(),
+            entity.getID_ChiNhanh(),
             entity.getID_HoaDon());
     }
 
 
-    @Override
-    public List<HoaDon> findByTrangThai(boolean daThanhToan) {
-        return XQuery.getBeanList(HoaDon.class, findByTrangThai, daThanhToan);
-    }
-
+ 
     @Override
     public List<Object[]> selectWithDetals() {
         List<Object[]> detailsList = new ArrayList<>();
@@ -147,8 +128,10 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
                 details[13] = rs.getString("soPhong");
                 details[14] = rs.getDouble("giaPhong");
                 details[15] = rs.getString("tenChiNhanh");
-                details[16] = rs.getString("tenNguoiDung"); // Đã sửa tên cột
-                details[17] = rs.getString("soDienThoai"); // Đã sửa tên cột
+
+                details[16] = rs.getString("tenNguoiDung");
+                details[17] = rs.getString("soDienThoai");
+
                 detailsList.add(details);
             }
         } catch (SQLException e) {
@@ -160,17 +143,12 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
     @Override
     public HoaDon create(HoaDon entity) {
         XJdbc.executeUpdate(createSql,
-                entity.getSoDienMoi(),
-                entity.getSoNuocMoi(),
-                entity.getSoDienCu(),
-                entity.getSoNuocCu(),
-                entity.getTienDien(),
-                entity.getTienNuoc(),
-                entity.getTienPhong(),
-                entity.getTongTien(),
-                entity.isTrangThaiThanhToan(), // Giữ nguyên tên getter của entity
-                entity.getNgayThanhToan(),    // Giữ nguyên tên getter của entity
-                entity.getID_HopDong());
+                entity.getTrangThai(),
+                entity.getNgayTao(),
+                entity.getID_NguoiDung(),
+                entity.getID_Phong(),
+                entity.getID_HopDong(),
+                entity.getID_ChiNhanh());
         return entity;
     }
 
@@ -215,8 +193,8 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
                 details[13] = rs.getString("soPhong");
                 details[14] = rs.getDouble("giaPhong");
                 details[15] = rs.getString("tenChiNhanh");
-                details[16] = rs.getString("tenNguoiDung"); // Đã sửa tên cột
-                details[17] = rs.getString("soDienThoai"); // Đã sửa tên cột
+                details[16] = rs.getString("tenNguoiDung");
+                details[17] = rs.getString("soDienThoai");
                 return details;
             }
         } catch (SQLException e) {
@@ -229,7 +207,7 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
     public String getHoTenByHoaDonId(int hoaDonId) {
         try (ResultSet rs = XJdbc.executeQuery(getHoTenSql, hoaDonId)) {
             if (rs.next()) {
-                return rs.getString("tenNguoiDung"); // Đã sửa tên cột
+                return rs.getString("tenNguoiDung");
             }
         } catch (SQLException e) {
             throw new RuntimeException("Lỗi khi lấy họ tên khách hàng: " + e.getMessage(), e);
@@ -287,7 +265,6 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
     
     @Override
     public double getGiaPhongByHopDongId(int hopDongId) {
-        // Đã sửa tên bảng từ HOP_DONG, PHONG -> HopDong, Phong
         String sql = "SELECT p.giaPhong FROM HopDong hd " +
                      "JOIN Phong p ON hd.ID_Phong = p.ID_Phong " +
                      "WHERE hd.ID_HopDong = ?";
@@ -299,6 +276,11 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
             throw new RuntimeException("Lỗi khi lấy giá phòng theo hợp đồng: " + e.getMessage(), e);
         }
         return 0;
+    }
+
+    @Override
+    public List<HoaDon> findByTrangThai(String trangThai) {
+        return XQuery.getBeanList(HoaDon.class, findByTrangThai);
     }
     
 }

@@ -16,7 +16,7 @@ public interface HoaDonDAO extends CrudDao<HoaDon, Integer> {
         
     HoaDon findById(int id);
     
-    List<HoaDon> findByTrangThai(boolean daThanhToan);
+    List<HoaDon> findByTrangThai(String trangThai);
     List<Object[]> selectWithDetals();
     
     /**

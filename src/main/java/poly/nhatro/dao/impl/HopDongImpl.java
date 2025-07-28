@@ -12,19 +12,12 @@ import java.util.Calendar; // For date calculations
 
 public class HopDongImpl implements HopDongDAO {
 
-    // Helper method to read a single HopDong from a ResultSet
-    private HopDong readFromResultSet(ResultSet rs) throws SQLException {
-        HopDong hopDong = new HopDong();
-        hopDong.setID_HopDong(rs.getInt("ID_HopDong"));
-        hopDong.setNgayTao(rs.getTimestamp("ngayTao")); // Use getTimestamp for DATETIME
-        hopDong.setThoiHan(rs.getInt("thoiHan"));
-        hopDong.setTienCoc(rs.getInt("tienCoc"));
-        hopDong.setNuocBanDau(rs.getInt("nuocBanDau"));
-        hopDong.setDienBanDau(rs.getInt("dienBanDau"));
-        hopDong.setID_NguoiDung(rs.getInt("ID_NguoiDung"));
-        hopDong.setID_Phong(rs.getInt("ID_Phong"));
-        return hopDong;
-    }
+    private final String INSERT_SQL = "INSERT INTO HopDong (NgayBatDau, NgayKetThuc, SoTienCoc, ID_NguoiDung, ID_Phong, ID_ChiNhanh) VALUES (?, ?, ?, ?, ?, ?)";
+    private final String UPDATE_SQL = "UPDATE HopDong SET NgayBatDau = ?, NgayKetThuc = ?, SoTienCoc = ?, ID_NguoiDung = ?, ID_Phong = ?, ID_ChiNhanh = ? WHERE ID_HopDong = ?";
+    private final String DELETE_SQL = "DELETE FROM HopDong WHERE ID_HopDong = ?";
+    private final String SELECT_ALL_SQL = "SELECT * FROM HopDong";
+    private final String SELECT_BY_ID_SQL = "SELECT * FROM HopDong WHERE ID_HopDong = ?";
+    private final String SELECT_BY_USER_ID_SQL = "SELECT * FROM HopDong WHERE ID_NguoiDung = ?";
 
     // Generic select method using XJdbc
     private List<HopDong> select(String sql, Object... args) {
@@ -101,37 +94,23 @@ public class HopDongImpl implements HopDongDAO {
     }
 
     @Override
-    public List<HopDong> selectExpiredContracts() {
-        // Contracts are expired if their end date (ngayTao + thoiHan months) is in the past
-        String sql = "SELECT * FROM HopDong WHERE DATEADD(month, thoiHan, ngayTao) <= GETDATE()";
-        return select(sql);
+    public boolean existsHopDongById(int id) {
+        try {
+            String sql = "SELECT COUNT(*) FROM HopDong WHERE ID_HopDong = ?";
+            try (ResultSet rs = XJdbc.executeQuery(sql, id)) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi kiểm tra tồn tại hợp đồng: " + e.getMessage());
+            throw new RuntimeException("Kiểm tra hợp đồng thất bại.", e);
+        }
+        return false;
     }
 
     @Override
-    public List<HopDong> searchContracts(String keyword) {
-        String sql = "SELECT hd.* FROM HopDong hd " +
-                     "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
-                     "JOIN Phong p ON hd.ID_Phong = p.ID_Phong " +
-                     "WHERE hd.ID_HopDong LIKE ? OR nd.tenNguoiDung LIKE ? OR p.soPhong LIKE ?";
-        String searchPattern = "%" + keyword + "%";
-        return select(sql, searchPattern, searchPattern, searchPattern);
-    }
-
-    @Override
-    public List<HopDong> selectByChiNhanh(int ID_ChiNhanh) {
-        String sql = "SELECT hd.* FROM HopDong hd JOIN Phong p ON hd.ID_Phong = p.ID_Phong WHERE p.ID_ChiNhanh = ?";
-        return select(sql, ID_ChiNhanh);
-    }
-
-    @Override
-    public List<HopDong> selectByNguoiKiHopDong(int ID_NguoiDung) {
-        String sql = "SELECT * FROM HopDong WHERE ID_NguoiDung = ?";
-        return select(sql, ID_NguoiDung);
-    }
-
-    @Override
-    public List<HopDong> selectByRoom(int ID_Phong) {
-        String sql = "SELECT * FROM HopDong WHERE ID_Phong = ?";
-        return select(sql, ID_Phong);
+    public List<HopDong> findByUserId(int userId) {
+        return selectBySql(SELECT_BY_USER_ID_SQL, userId);
     }
 }

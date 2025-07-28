@@ -13,14 +13,16 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
 
     @Override
     public List<ChiNhanh> getAll() {
-        String sql = "SELECT * FROM ChiNhanh"; // Đã đúng
+
+        String sql = "SELECT * FROM ChiNhanh";
         return this.getBySql(sql);
     }
 
     @Override
     public boolean add(ChiNhanh chiNhanh) {
-        String sql = "INSERT INTO ChiNhanh(tenChiNhanh, diaChi, giaDien, giaNuoc) VALUES(?,?,?,?)"; // Đã sửa CHI_NHANH -> ChiNhanh
-        return XJdbc.executeUpdate(sql,
+
+        String sql = "INSERT INTO ChiNhanh(tenChiNhanh, diaChi, giaDien, giaNuoc) VALUES(?,?,?,?)";
+        return XJdbc.executeUpdate(sql, 
                 chiNhanh.getTenChiNhanh(),
                 chiNhanh.getDiaChi(),
                 chiNhanh.getGiaDien(),
@@ -29,8 +31,10 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
 
     @Override
     public boolean update(ChiNhanh chiNhanh) {
-        String sql = "UPDATE ChiNhanh SET tenChiNhanh=?, diaChi=?, giaDien=?, giaNuoc=? WHERE ID_ChiNhanh=?"; // Đã sửa CHI_NHANH -> ChiNhanh
-        return XJdbc.executeUpdate(sql,
+
+        String sql = "UPDATE ChiNhanh SET tenChiNhanh=?, diaChi=?, giaDien=?, giaNuoc=? WHERE ID_ChiNhanh=?";
+        return XJdbc.executeUpdate(sql, 
+
                 chiNhanh.getTenChiNhanh(),
                 chiNhanh.getDiaChi(),
                 chiNhanh.getGiaDien(),
@@ -40,13 +44,14 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
 
     @Override
     public boolean delete(int id) {
-        String sql = "DELETE FROM ChiNhanh WHERE ID_ChiNhanh=?"; // Đã sửa CHI_NHANH -> ChiNhanh
+        String sql = "DELETE FROM ChiNhanh WHERE ID_ChiNhanh=?";
         return XJdbc.executeUpdate(sql, id) > 0;
     }
 
     @Override
     public List<ChiNhanh> search(String keyword) {
-        String sql = "SELECT * FROM ChiNhanh WHERE tenChiNhanh LIKE ? OR diaChi LIKE ?"; // Đã sửa CHI_NHANH -> ChiNhanh
+
+        String sql = "SELECT * FROM ChiNhanh WHERE tenChiNhanh LIKE ? OR diaChi LIKE ?";
         return this.getBySql(sql, "%" + keyword + "%", "%" + keyword + "%");
     }
 
@@ -74,14 +79,17 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
 
     @Override
     public ChiNhanh getById(int id) {
-        String sql = "SELECT ID_ChiNhanh, tenChiNhanh, diaChi, giaDien, giaNuoc FROM ChiNhanh WHERE ID_ChiNhanh = ?"; // Đã sửa CHI_NHANH -> ChiNhanh
+
+        String sql = "SELECT ID_ChiNhanh, tenChiNhanh, diaChi, giaDien, giaNuoc FROM ChiNhanh WHERE ID_ChiNhanh = ?";
+
         List<ChiNhanh> list = this.getBySql(sql, id);
         return list.isEmpty() ? null : list.get(0);
     }
 
     @Override
     public BigDecimal getGiaDienById(int id) {
-        String sql = "SELECT giaDien FROM ChiNhanh WHERE ID_ChiNhanh = ?"; // Đã sửa CHI_NHANH -> ChiNhanh
+
+        String sql = "SELECT giaDien FROM ChiNhanh WHERE ID_ChiNhanh = ?";
         try (ResultSet rs = XJdbc.executeQuery(sql, id)) {
             if (rs.next()) {
                 return BigDecimal.valueOf(rs.getInt("giaDien")); // Sửa getBigDecimal -> getInt
@@ -94,7 +102,9 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
 
     @Override
     public BigDecimal getGiaNuocById(int id) {
-        String sql = "SELECT giaNuoc FROM ChiNhanh WHERE ID_ChiNhanh = ?"; // Đã sửa CHI_NHANH -> ChiNhanh
+
+        String sql = "SELECT giaNuoc FROM ChiNhanh WHERE ID_ChiNhanh = ?";
+
         try (ResultSet rs = XJdbc.executeQuery(sql, id)) {
             if (rs.next()) {
                 return BigDecimal.valueOf(rs.getInt("giaNuoc")); // Sửa getBigDecimal -> getInt
@@ -108,7 +118,9 @@ public class ChiNhanhDAOImpl implements ChiNhanhDAO {
     @Override
     public List<String> getAllBranchNames() {
         List<String> branchNames = new ArrayList<>();
-        String sql = "SELECT tenChiNhanh FROM ChiNhanh ORDER BY tenChiNhanh"; // Đã sửa CHI_NHANH -> ChiNhanh
+
+        String sql = "SELECT tenChiNhanh FROM ChiNhanh ORDER BY tenChiNhanh";
+
         try (ResultSet rs = XJdbc.executeQuery(sql)) {
             while (rs.next()) {
                 branchNames.add(rs.getString("tenChiNhanh"));

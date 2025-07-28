@@ -327,24 +327,55 @@ public class HopDongPanel extends javax.swing.JPanel {
             fillTableActiveContracts(); // Refresh tables
             fillTableExpiredContracts();
             clearForm();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Mã hợp đồng không hợp lệ. Vui lòng chọn hợp đồng từ bảng.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi xóa hợp đồng: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+
+            XDialog.alert("Thêm mới thành công!");
+        } catch (RuntimeException e) {
+            String errorMessage = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+            if (errorMessage != null) {
+                if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("NguoiDung")) {
+                    XDialog.alert("Thêm mới thất bại: Mã người dùng không tồn tại. Vui lòng kiểm tra lại Mã người dùng.");
+                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("Phong")) {
+                    XDialog.alert("Thêm mới thất bại: Mã phòng không tồn tại. Vui lòng kiểm tra lại Mã phòng.");
+                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("ChiNhanh")) {
+                    XDialog.alert("Thêm mới thất bại: Mã chi nhánh không tồn tại. Vui lòng kiểm tra lại Mã chi nhánh.");
+                } else {
+                    XDialog.alert("Thêm mới thất bại: " + errorMessage);
+                }
+            } else {
+                XDialog.alert("Thêm mới thất bại: Đã xảy ra lỗi không xác định.");
+            }
             e.printStackTrace();
         }
     }
 
-    private void editHopDong(JTable table) {
-        currentIndex = table.getSelectedRow();
-        if (currentIndex >= 0) {
-            try {
-                // Get ID_HopDong from the table model (first column)
-                int hopDongId = (int) table.getValueAt(currentIndex, 0); 
-                HopDong hd = hopDongDAO.selectById(hopDongId); // Changed to hopDongDAO
-                if (hd != null) {
-                    setForm(hd);
-                    updateStatus();
+
+    private void update() {
+        try {
+            HopDong hd = readForm();
+            if (hd.getSoTienCoc() < 0) {
+                XDialog.alert("Số tiền cọc không được âm.");
+                return;
+            }
+            if (hd.getNgayBatDau().after(hd.getNgayKetThuc())) {
+                XDialog.alert("Ngày bắt đầu không được sau ngày kết thúc.");
+                return;
+            }
+
+            hopDongDAO.update(hd);
+            fillTable();
+            clearForm();
+            XDialog.alert("Cập nhật thành công!");
+        } catch (RuntimeException e) {
+            String errorMessage = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+            if (errorMessage != null) {
+                if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("NguoiDung")) {
+                    XDialog.alert("Cậ̣p nhật thất bại: Mã người dùng không tồn tại. Vui lòng kiểm tra lại Mã người dùng.");
+                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("Phong")) {
+                    XDialog.alert("Cập nhật thất bại: Mã phòng không tồn tại. Vui lòng kiểm tra lại Mã phòng.");
+                } else if (errorMessage.contains("FOREIGN KEY constraint") && errorMessage.contains("ChiNhanh")) {
+                    XDialog.alert("Cập nhật thất bại: Mã chi nhánh không tồn tại. Vui lòng kiểm tra lại Mã chi nhánh.");
+                } else {
+                    XDialog.alert("Cập nhật thất bại: ");
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu hợp đồng lên form: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);

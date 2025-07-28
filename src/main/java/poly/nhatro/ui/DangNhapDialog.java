@@ -312,6 +312,11 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
     // End of variables declaration//GEN-END:variables
 
     @Override
+    public void exit() {
+        this.dispose();
+    }
+
+    @Override
     public void login() {
         String userName = txtTenDangNhap.getText();
         String passWord = new String(txtMatKhau.getPassword());
@@ -324,7 +329,7 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
         }
 
         // Tìm tài khoản người dùng trực tiếp từ database
-        String sql = "SELECT * FROM NGUOI_DUNG WHERE hoVaTen = ? AND matKhau = ?";
+        String sql = "SELECT * FROM NguoiDung WHERE tenNguoiDung = ? AND matKhau = ?";
 
         try (Connection conn = XJdbc.openConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 

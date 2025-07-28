@@ -1,10 +1,7 @@
 package poly.nhatro.entity;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import java.util.Date;
+import lombok.*;
+
 
 /**
  *
@@ -15,15 +12,16 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class NguoiThue {
-    private int ID_NguoiDung; // ID tự tăng trong DB, không cần set từ code
-    private String hoVaTen;
+    private int ID_NguoiDung;  
+    private String tenNguoiDung;
     private String matKhau;
     private String email;
-    private String sdt;
-    private String soCCCD;
-    private boolean trangThai; // BIT hoặc BOOLEAN trong SQL
-    private boolean gioiTinh; // BIT hoặc BOOLEAN trong SQL (ví dụ: true là nam, false là nữ)
-    private String queQuan;
-    private Date ngaySinh; // DATE trong SQL
-    private Integer ID_Phong; // Khóa ngoại, có thể null nếu người thuê chưa được gán phòng
+    private String soDienThoai; // Match database column
+    private String cccdCmnn; // Match database column
+    private String anhTruocCccd; // Match database column
+    private String anhSauCccd; // Match database column      
+    private String trangThai; // Match database column (String, not boolean)
+    private String diaChi;
+    private String vaiTro; // Match database column (String, not Boolean)
+    
 }
