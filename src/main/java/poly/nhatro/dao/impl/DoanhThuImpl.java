@@ -31,7 +31,7 @@ public class DoanhThuImpl implements DoanhThuDao {
         dt.setTienNuoc(rs.getBigDecimal("tienNuoc"));
         dt.setTienPhong(rs.getBigDecimal("tienPhong"));
         dt.setTongTien(rs.getBigDecimal("tongTien"));
-        dt.setNgayThanhToan(rs.getDate("ngayThanhToan"));
+        dt.setNgayThanhToan(rs.getDate("ngayTao"));
         dt.setTrangThai(rs.getBoolean("trangThaiThanhToan"));
         dt.setIdHopDong(rs.getInt("ID_HopDong")); // Thêm trường này
         return dt;
@@ -41,7 +41,7 @@ public class DoanhThuImpl implements DoanhThuDao {
     public List<DoanhThu> getAll() {
         List<DoanhThu> list = new ArrayList<>();
         try {
-            ResultSet rs = XJdbc.executeQuery("SELECT * FROM HoaDon ORDER BY NgayThanhToan DESC");
+            ResultSet rs = XJdbc.executeQuery("SELECT * FROM HoaDon ORDER BY ngayTao DESC");
             while (rs.next()) {
                 list.add(mapResult(rs));
             }
@@ -56,7 +56,7 @@ public class DoanhThuImpl implements DoanhThuDao {
     public List<DoanhThu> getByDateRange(Date tuNgay, Date denNgay) {
         List<DoanhThu> list = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM HoaDon WHERE ngayThanhToan BETWEEN ? AND ? ORDER BY ngayThanhToan DESC";
+            String sql = "SELECT * FROM HoaDon WHERE ngayTao BETWEEN ? AND ? ORDER BY ngayTao DESC";
 
             java.sql.Timestamp start = new java.sql.Timestamp(tuNgay.getTime());
             java.sql.Timestamp end = new java.sql.Timestamp(denNgay.getTime());
@@ -97,7 +97,7 @@ public class DoanhThuImpl implements DoanhThuDao {
         String sql = """
         UPDATE HoaDon
         SET soDienMoi = ?, soNuocMoi = ?, soDienCu = ?, soNuocCu = ?,
-            TienDien = ?, TienNuoc = ?, TienPhong = ?, TongTien = ?, NgayThanhToan = ?, trangThaiThanhToan = ?, ID_HopDong = ?
+            TienDien = ?, TienNuoc = ?, TienPhong = ?, TongTien = ?, ngayTao = ?, trangThaiThanhToan = ?, ID_HopDong = ?
         WHERE ID_HoaDon = ?
         """;
 

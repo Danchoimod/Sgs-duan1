@@ -6,7 +6,7 @@ package poly.nhatro.ui;
 
 import poly.nhatro.entity.ChiNhanh;
 import poly.nhatro.service.ChiNhanhService;
-import poly.nhatro.service.impl.ChiNhanhServiceImpl;
+import poly.nhatro.service.ChiNhanhServiceImpl;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;

@@ -642,7 +642,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                 return;
             }
             int userId = Integer.parseInt(userIdStr);
-            List<HopDong> contracts = hopDongDAO.findByUserId(userId);
+            List<HopDong> contracts = hopDongDAO.selectByNguoiKiHopDong(userId);
 
             cboId_Phong.removeAllItems();
             cboId_HopDong.removeAllItems();

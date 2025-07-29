@@ -482,7 +482,7 @@ public class PhongPanel extends javax.swing.JPanel {
         phong.setGiaPhong(new BigDecimal(txtGia.getText()));
         phong.setTrangThai(false); // Mặc định chưa cho thuê
         phong.setMoTa(txtMota.getText());
-        phong.setHinhAnh(imagePath);
+        phong.setAnhPhong(imagePath);
 
         // Lấy ID chi nhánh từ combobox
         String tenChiNhanh = cboChiNhanh.getSelectedItem().toString();
@@ -508,8 +508,8 @@ public class PhongPanel extends javax.swing.JPanel {
         }
 
         // Hiển thị ảnh
-        if (phong.getHinhAnh() != null) {
-            imagePath = phong.getHinhAnh();
+        if (phong.getAnhPhong() != null) {
+            imagePath = phong.getAnhPhong();
             displayImage(imagePath);
         }
     }

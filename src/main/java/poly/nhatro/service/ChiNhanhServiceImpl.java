@@ -1,4 +1,4 @@
-package poly.nhatro.service.impl;
+package poly.nhatro.service;
 
 import poly.nhatro.dao.ChiNhanhDAO;
 import poly.nhatro.dao.impl.ChiNhanhDAOImpl;

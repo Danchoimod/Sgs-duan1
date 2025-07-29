@@ -13,19 +13,19 @@ public class Phong {
     private boolean trangThai; // true: đã cho thuê, false: còn trống
     private String soPhong;
     private String moTa;
-    private String hinhAnh;
+    private String anhPhong;
     private int idChiNhanh;
 
     // Constructors
     public Phong() {
     }
 
-    public Phong(BigDecimal giaPhong, boolean trangThai, String soPhong, String moTa, String hinhAnh, int idChiNhanh) {
+    public Phong(BigDecimal giaPhong, boolean trangThai, String soPhong, String moTa, String anhPhong, int idChiNhanh) {
         this.giaPhong = giaPhong;
         this.trangThai = trangThai;
         this.soPhong = soPhong;
         this.moTa = moTa;
-        this.hinhAnh = hinhAnh;
+        this.anhPhong = anhPhong;
         this.idChiNhanh = idChiNhanh;
     }
 
@@ -70,12 +70,12 @@ public class Phong {
         this.moTa = moTa;
     }
 
-    public String getHinhAnh() {
-        return hinhAnh;
+    public String getAnhPhong() {
+        return anhPhong;
     }
 
-    public void setHinhAnh(String hinhAnh) {
-        this.hinhAnh = hinhAnh;
+    public void setAnhPhong(String anhPhong) {
+        this.anhPhong = anhPhong;
     }
 
     public int getIdChiNhanh() {
@@ -95,7 +95,7 @@ public class Phong {
                 ", trangThai=" + trangThai +
                 ", soPhong='" + soPhong + '\'' +
                 ", moTa='" + moTa + '\'' +
-                ", hinhAnh='" + hinhAnh + '\'' +
+                ", anhPhong='" + anhPhong + '\'' +
                 ", idChiNhanh=" + idChiNhanh +
                 '}';
     }

@@ -1,22 +1,45 @@
 package poly.nhatro.entity;
 
-import java.util.Date;
-// import lombok.Data; // Nếu đang dùng Lombok, hãy giữ @Data
+import java.util.Date; // For DATETIME in SQL
 
-// @Data // Bỏ comment nếu dùng Lombok
 public class HopDong {
-    private int ID_HopDong; // Là int, tự động tăng trong DB
-    private Date ngayBatDau;
-    private Date ngayKetThuc;
-    private double soTienCoc;
-    private int ID_NguoiDung;
-    private int ID_Phong;    // Là int
-    private int ID_ChiNhanh; // Là int
+    private int ID_HopDong;
+    private Date ngayTao; // Corresponds to ngayTao DATETIME NOT NULL
+    private int thoiHan; // Corresponds to thoiHan INT NOT NULL (likely in months)
+    private int tienCoc; // Corresponds to tienCoc INT NOT NULL
+    private int nuocBanDau; // Corresponds to nuocBanDau INT NOT NULL
+    private int dienBanDau; // Corresponds to dienBanDau INT NOT NULL
+    private int ID_NguoiDung; // Corresponds to ID_NguoiDung INT NOT NULL
+    private int ID_Phong; // Corresponds to ID_Phong INT NOT NULL
 
-    // Constructor (nếu không dùng Lombok, có thể tạo constructor rỗng)
-    public HopDong() {}
+    // Constructors
 
-    // Getters and Setters (nếu không dùng Lombok, hãy tạo thủ công hoặc dùng IDE)
+    public HopDong() {
+    }
+
+    public HopDong(Date ngayTao, int thoiHan, int tienCoc, int nuocBanDau, int dienBanDau, int ID_NguoiDung, int ID_Phong) {
+        this.ngayTao = ngayTao;
+        this.thoiHan = thoiHan;
+        this.tienCoc = tienCoc;
+        this.nuocBanDau = nuocBanDau;
+        this.dienBanDau = dienBanDau;
+        this.ID_NguoiDung = ID_NguoiDung;
+        this.ID_Phong = ID_Phong;
+    }
+
+    public HopDong(int ID_HopDong, Date ngayTao, int thoiHan, int tienCoc, int nuocBanDau, int dienBanDau, int ID_NguoiDung, int ID_Phong) {
+        this.ID_HopDong = ID_HopDong;
+        this.ngayTao = ngayTao;
+        this.thoiHan = thoiHan;
+        this.tienCoc = tienCoc;
+        this.nuocBanDau = nuocBanDau;
+        this.dienBanDau = dienBanDau;
+        this.ID_NguoiDung = ID_NguoiDung;
+        this.ID_Phong = ID_Phong;
+    }
+
+    // Getters and Setters
+
     public int getID_HopDong() {
         return ID_HopDong;
     }
@@ -25,28 +48,44 @@ public class HopDong {
         this.ID_HopDong = ID_HopDong;
     }
 
-    public Date getNgayBatDau() {
-        return ngayBatDau;
+    public Date getNgayTao() {
+        return ngayTao;
     }
 
-    public void setNgayBatDau(Date ngayBatDau) {
-        this.ngayBatDau = ngayBatDau;
+    public void setNgayTao(Date ngayTao) {
+        this.ngayTao = ngayTao;
     }
 
-    public Date getNgayKetThuc() {
-        return ngayKetThuc;
+    public int getThoiHan() {
+        return thoiHan;
     }
 
-    public void setNgayKetThuc(Date ngayKetThuc) {
-        this.ngayKetThuc = ngayKetThuc;
+    public void setThoiHan(int thoiHan) {
+        this.thoiHan = thoiHan;
     }
 
-    public double getSoTienCoc() {
-        return soTienCoc;
+    public int getTienCoc() {
+        return tienCoc;
     }
 
-    public void setSoTienCoc(double soTienCoc) {
-        this.soTienCoc = soTienCoc;
+    public void setTienCoc(int tienCoc) {
+        this.tienCoc = tienCoc;
+    }
+
+    public int getNuocBanDau() {
+        return nuocBanDau;
+    }
+
+    public void setNuocBanDau(int nuocBanDau) {
+        this.nuocBanDau = nuocBanDau;
+    }
+
+    public int getDienBanDau() {
+        return dienBanDau;
+    }
+
+    public void setDienBanDau(int dienBanDau) {
+        this.dienBanDau = dienBanDau;
     }
 
     public int getID_NguoiDung() {
@@ -65,11 +104,18 @@ public class HopDong {
         this.ID_Phong = ID_Phong;
     }
 
-    public int getID_ChiNhanh() {
-        return ID_ChiNhanh;
-    }
-
-    public void setID_ChiNhanh(int ID_ChiNhanh) {
-        this.ID_ChiNhanh = ID_ChiNhanh;
+    // Optional: Override toString() for easy debugging
+    @Override
+    public String toString() {
+        return "HopDong{" +
+               "ID_HopDong=" + ID_HopDong +
+               ", ngayTao=" + ngayTao +
+               ", thoiHan=" + thoiHan +
+               ", tienCoc=" + tienCoc +
+               ", nuocBanDau=" + nuocBanDau +
+               ", dienBanDau=" + dienBanDau +
+               ", ID_NguoiDung=" + ID_NguoiDung +
+               ", ID_Phong=" + ID_Phong +
+               '}';
     }
 }

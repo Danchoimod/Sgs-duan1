@@ -12,26 +12,26 @@ public class PhongDaoImpl implements PhongDao {
 
     @Override
     public Phong create(Phong entity) {
-        String sql = "INSERT INTO PHONG(giaPhong, trangThai, soPhong, moTa, hinhAnh, ID_ChiNhanh) VALUES(?,?,?,?,?,?)";
+        String sql = "INSERT INTO PHONG(giaPhong, trangThai, soPhong, moTa, anhPhong, ID_ChiNhanh) VALUES(?,?,?,?,?,?)";
         XJdbc.executeUpdate(sql,
                 entity.getGiaPhong(),
                 entity.isTrangThai(),
                 entity.getSoPhong(),
                 entity.getMoTa(),
-                entity.getHinhAnh(),
+                entity.getAnhPhong(),
                 entity.getIdChiNhanh());
         return entity;
     }
 
     @Override
     public void update(Phong entity) {
-        String sql = "UPDATE PHONG SET giaPhong=?, trangThai=?, soPhong=?, moTa=?, hinhAnh=?, ID_ChiNhanh=? WHERE ID_Phong=?";
+        String sql = "UPDATE PHONG SET giaPhong=?, trangThai=?, soPhong=?, moTa=?, anhPhong=?, ID_ChiNhanh=? WHERE ID_Phong=?";
         XJdbc.executeUpdate(sql,
                 entity.getGiaPhong(),
                 entity.isTrangThai(),
                 entity.getSoPhong(),
                 entity.getMoTa(),
-                entity.getHinhAnh(),
+                entity.getAnhPhong(),
                 entity.getIdChiNhanh(),
                 entity.getIdPhong());
     }
@@ -96,8 +96,8 @@ public class PhongDaoImpl implements PhongDao {
                 String moTa = rs.getString("moTa");
                 phong.setMoTa(rs.wasNull() ? null : moTa);
 
-                String hinhAnh = rs.getString("hinhAnh");
-                phong.setHinhAnh(rs.wasNull() ? null : hinhAnh);
+                String anhPhong = rs.getString("anhPhong");
+                phong.setAnhPhong(rs.wasNull() ? null : anhPhong);
 
                 phong.setIdChiNhanh(rs.getInt("ID_ChiNhanh"));
                 list.add(phong);
