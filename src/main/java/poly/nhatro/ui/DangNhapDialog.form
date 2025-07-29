@@ -106,7 +106,7 @@
                       <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
                       <Component id="TenDangNhap" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="MatKhau" min="-2" pref="89" max="-2" attributes="0"/>
+                      <Component id="MatKhau" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btnThoat" alignment="3" min="-2" max="-2" attributes="0"/>

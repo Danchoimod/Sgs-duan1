@@ -24,26 +24,25 @@ import poly.nhatro.util.XDialog;
  * @author Phu Pham
  */
 public class DoanhthuPanel extends javax.swing.JPanel {
-    private boolean isInitializing = true; 
+
+    private boolean isInitializing = true;
 
     /**
      * Creates new form DoanhthuPanel
      */
     public DoanhthuPanel() {
         initComponents();
-        initPanel(); 
-        fillTableAll(); 
-        
-        
+        initPanel();
+        fillTableAll();
+
         isInitializing = false;
-        cboLocNhanh.setSelectedIndex(0); 
+        cboLocNhanh.setSelectedIndex(0);
     }
 
     // Khởi tạo panel khi nó được hiển thị
     private void initPanel() {
-       
-    }
 
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -445,8 +444,7 @@ public class DoanhthuPanel extends javax.swing.JPanel {
     private javax.swing.JTextField txtTienPhong;
     // End of variables declaration//GEN-END:variables
 
-
-   private DoanhThuDao doanhThuDao = new DoanhThuImpl();
+    private DoanhThuDao doanhThuDao = new DoanhThuImpl();
 
     private void fillTable(List<DoanhThu> list) {
         DefaultTableModel model = (DefaultTableModel) tblDoanhThu.getModel();
@@ -686,8 +684,7 @@ public class DoanhthuPanel extends javax.swing.JPanel {
         }
     }
 
-
-    public void clear(){
+    public void clear() {
         txtIDHoaDon.setText("");
         txtNgayThanhToan.setText("");
         txtTienDien.setText("");

@@ -12,6 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class NguoiThue {
+
     private int ID_NguoiDung;  
     private String tenNguoiDung;
     private String matKhau;
@@ -25,3 +26,4 @@ public class NguoiThue {
     private String vaiTro; // Match database column (String, not Boolean)
     
 }
+

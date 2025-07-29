@@ -2,13 +2,16 @@ package poly.nhatro.dao.impl;
 
 import poly.nhatro.dao.HopDongDAO;
 import poly.nhatro.entity.HopDong;
-import poly.nhatro.util.XJdbc;
+import poly.nhatro.util.XJdbc; // Using the provided XJdbc utility
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
+import java.util.Calendar; // For date calculations
 
 public class HopDongImpl implements HopDongDAO {
+
 
     private final String INSERT_SQL = "INSERT INTO HopDong (NgayBatDau, NgayKetThuc, SoTienCoc, ID_NguoiDung, ID_Phong, ID_ChiNhanh) VALUES (?, ?, ?, ?, ?, ?)";
     private final String UPDATE_SQL = "UPDATE HopDong SET NgayBatDau = ?, NgayKetThuc = ?, SoTienCoc = ?, ID_NguoiDung = ?, ID_Phong = ?, ID_ChiNhanh = ? WHERE ID_HopDong = ?";
@@ -17,81 +20,83 @@ public class HopDongImpl implements HopDongDAO {
     private final String SELECT_BY_ID_SQL = "SELECT * FROM HopDong WHERE ID_HopDong = ?";
     private final String SELECT_BY_USER_ID_SQL = "SELECT * FROM HopDong WHERE ID_NguoiDung = ?";
 
-    @Override
-    public void add(HopDong entity) {
-        try {
-            XJdbc.executeUpdate(INSERT_SQL,
-                    entity.getNgayBatDau(),
-                    entity.getNgayKetThuc(),
-                    entity.getSoTienCoc(),
-                    entity.getID_NguoiDung(),
-                    entity.getID_Phong(), 
-                    entity.getID_ChiNhanh()); 
-        } catch (RuntimeException e) {
-            System.err.println("Lỗi khi thêm hợp đồng: " + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
-            throw new RuntimeException("Thêm hợp đồng thất bại.", e);
-        }
-    }
 
-    @Override
-    public void update(HopDong entity) {
-        try {
-            XJdbc.executeUpdate(UPDATE_SQL,
-                    entity.getNgayBatDau(),
-                    entity.getNgayKetThuc(),
-                    entity.getSoTienCoc(),
-                    entity.getID_NguoiDung(),
-                    entity.getID_Phong(), // Là int
-                    entity.getID_ChiNhanh(), // Là int
-                    entity.getID_HopDong()); // Là int
-        } catch (RuntimeException e) {
-            System.err.println("Lỗi khi cập nhật hợp đồng: " + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
-            throw new RuntimeException("Cập nhật hợp đồng thất bại.", e);
-        }
-    }
-
-    @Override
-    public void delete(String id) { 
-        try {
-            XJdbc.executeUpdate(DELETE_SQL, id);
-        } catch (RuntimeException e) {
-            System.err.println("Lỗi khi xóa hợp đồng: " + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
-            throw new RuntimeException("Xóa hợp đồng thất bại.", e);
-        }
-    }
-
-    @Override
-    public HopDong getById(String id) {
-        List<HopDong> list = selectBySql(SELECT_BY_ID_SQL, id);
-        return list.isEmpty() ? null : list.get(0);
-    }
-
-    @Override
-    public List<HopDong> getAll() {
-        return selectBySql(SELECT_ALL_SQL);
-    }
-
-    private List<HopDong> selectBySql(String sql, Object... args) {
+    // Generic select method using XJdbc
+    private List<HopDong> select(String sql, Object... args) {
         List<HopDong> list = new ArrayList<>();
-        try (ResultSet rs = XJdbc.executeQuery(sql, args)) {
+        try (ResultSet rs = XJdbc.executeQuery(sql, args)) { // Using XJdbc.executeQuery
             while (rs.next()) {
-                HopDong entity = new HopDong();
-                entity.setID_HopDong(rs.getInt("ID_HopDong")); // Đọc là int
-                entity.setNgayBatDau(rs.getDate("NgayBatDau"));
-                entity.setNgayKetThuc(rs.getDate("NgayKetThuc"));
-                entity.setSoTienCoc(rs.getDouble("SoTienCoc"));
-                entity.setID_NguoiDung(rs.getInt("ID_NguoiDung"));
-                entity.setID_Phong(rs.getInt("ID_Phong"));    // Đọc là int
-                entity.setID_ChiNhanh(rs.getInt("ID_ChiNhanh")); // Đọc là int
-                list.add(entity);
+                list.add(readFromResultSet(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Lỗi truy vấn dữ liệu: " + e.getMessage(), e);
+            // It's good practice to log the error, and re-throw a runtime exception
+            // or a custom checked exception.
+            throw new RuntimeException("Error executing SQL query: " + sql, e);
         }
         return list;
     }
 
     @Override
+    public HopDong insert(HopDong hopDong) {
+        String sql = "INSERT INTO HopDong (ngayTao, thoiHan, tienCoc, nuocBanDau, dienBanDau, ID_NguoiDung, ID_Phong) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        XJdbc.executeUpdate(sql, // Using XJdbc.executeUpdate
+                hopDong.getNgayTao(),
+                hopDong.getThoiHan(),
+                hopDong.getTienCoc(),
+                hopDong.getNuocBanDau(),
+                hopDong.getDienBanDau(),
+                hopDong.getID_NguoiDung(),
+                hopDong.getID_Phong());
+
+        // Note: XJdbc.executeUpdate does not return generated keys directly.
+        // If you need the generated ID, you would typically use a separate SELECT SCOPE_IDENTITY()
+        // query after the insert, or modify XJdbc to support Statement.RETURN_GENERATED_KEYS.
+        return hopDong;
+    }
+
+    @Override
+    public HopDong update(HopDong hopDong) {
+        String sql = "UPDATE HopDong SET ngayTao=?, thoiHan=?, tienCoc=?, nuocBanDau=?, dienBanDau=?, ID_NguoiDung=?, ID_Phong=? WHERE ID_HopDong=?";
+        XJdbc.executeUpdate(sql, // Using XJdbc.executeUpdate
+                hopDong.getNgayTao(),
+                hopDong.getThoiHan(),
+                hopDong.getTienCoc(),
+                hopDong.getNuocBanDau(),
+                hopDong.getDienBanDau(),
+                hopDong.getID_NguoiDung(),
+                hopDong.getID_Phong(),
+                hopDong.getID_HopDong());
+        return hopDong;
+    }
+
+    @Override
+    public void delete(int ID_HopDong) {
+        String sql = "DELETE FROM HopDong WHERE ID_HopDong=?";
+        XJdbc.executeUpdate(sql, ID_HopDong); // Using XJdbc.executeUpdate
+    }
+
+    @Override
+    public HopDong selectById(int ID_HopDong) {
+        String sql = "SELECT * FROM HopDong WHERE ID_HopDong=?";
+        List<HopDong> list = select(sql, ID_HopDong);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public List<HopDong> selectAll() {
+        String sql = "SELECT * FROM HopDong";
+        return select(sql);
+    }
+
+    @Override
+    public List<HopDong> selectActiveContracts() {
+        // Contracts are active if their end date (ngayTao + thoiHan months) is in the future
+        String sql = "SELECT * FROM HopDong WHERE DATEADD(month, thoiHan, ngayTao) > GETDATE()";
+        return select(sql);
+    }
+
+    @Override
+
     public boolean existsHopDongById(int id) {
         try {
             String sql = "SELECT COUNT(*) FROM HopDong WHERE ID_HopDong = ?";
