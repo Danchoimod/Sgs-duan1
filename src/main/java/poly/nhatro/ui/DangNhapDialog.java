@@ -48,9 +48,14 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
         jLabel2 = new javax.swing.JLabel();
         txtMatKhau = new javax.swing.JPasswordField();
         lbQuenMK = new javax.swing.JLabel();
+        ckbHienThiMK = new javax.swing.JCheckBox();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
             }
@@ -74,13 +79,13 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
         TenDangNhap.setLayout(TenDangNhapLayout);
         TenDangNhapLayout.setHorizontalGroup(
             TenDangNhapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 228, Short.MAX_VALUE)
+            .addGap(0, 261, Short.MAX_VALUE)
             .addGroup(TenDangNhapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(TenDangNhapLayout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(TenDangNhapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jLabel1)
-                        .addComponent(txtTenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtTenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         TenDangNhapLayout.setVerticalGroup(
@@ -133,23 +138,25 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
         MatKhau.setLayout(MatKhauLayout);
         MatKhauLayout.setHorizontalGroup(
             MatKhauLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 228, Short.MAX_VALUE)
+            .addGroup(MatKhauLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addContainerGap(192, Short.MAX_VALUE))
             .addGroup(MatKhauLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(MatKhauLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(MatKhauLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel2))
+                    .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         MatKhauLayout.setVerticalGroup(
             MatKhauLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(MatKhauLayout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(jLabel2)
+                .addContainerGap(53, Short.MAX_VALUE))
             .addGroup(MatKhauLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(MatKhauLayout.createSequentialGroup()
-                    .addGap(18, 18, 18)
-                    .addComponent(jLabel2)
-                    .addGap(18, 18, 18)
+                    .addGap(52, 52, 52)
                     .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
@@ -161,6 +168,12 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
             }
         });
 
+        ckbHienThiMK.setBackground(new java.awt.Color(255, 255, 255));
+        ckbHienThiMK.setText("Hiển Thị Mật Khẩu");
+
+        jLabel4.setForeground(new java.awt.Color(102, 204, 255));
+        jLabel4.setText("Nhà Trọ - SGS");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -168,12 +181,18 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(62, 62, 62)
-                        .addComponent(jLabel3))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(24, 24, 24)
-                        .addComponent(lbQuenMK)))
-                .addContainerGap(62, Short.MAX_VALUE))
+                        .addComponent(lbQuenMK)
+                        .addGap(26, 26, 26)
+                        .addComponent(ckbHienThiMK))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(104, 104, 104)
+                        .addComponent(jLabel4)))
+                .addContainerGap(23, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addGap(76, 76, 76))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
@@ -191,15 +210,19 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(7, 7, 7)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 203, Short.MAX_VALUE)
-                .addComponent(lbQuenMK)
-                .addGap(60, 60, 60))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 180, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbQuenMK)
+                    .addComponent(ckbHienThiMK))
+                .addGap(55, 55, 55))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
-                    .addGap(63, 63, 63)
-                    .addComponent(TenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(75, 75, 75)
+                    .addComponent(TenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(MatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(38, 38, 38)
@@ -216,14 +239,14 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
             .addGroup(layout.createSequentialGroup()
                 .addGap(69, 69, 69)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addContainerGap(68, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         pack();
@@ -255,6 +278,11 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
         // TODO add your handling code here:
         
     }//GEN-LAST:event_lbQuenMKMouseClicked
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -298,9 +326,11 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
     private javax.swing.JPanel TenDangNhap;
     private javax.swing.JButton btnDangNhap;
     private javax.swing.JButton btnThoat;
+    private javax.swing.JCheckBox ckbHienThiMK;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel lbQuenMK;
     private javax.swing.JPasswordField txtMatKhau;
@@ -318,7 +348,7 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
         String passWord = new String(txtMatKhau.getPassword());
 
         // Nếu là tài khoản admin mặc định
-        if (userName.equals("admins") && passWord.equals("admin")) {
+        if (userName.equals("admin") && passWord.equals("admin")) {
             XDialog.alert("Đăng nhập thành công với quyền Admin!");
             this.dispose();
             return;
