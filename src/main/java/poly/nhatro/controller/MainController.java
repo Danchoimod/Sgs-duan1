@@ -7,6 +7,7 @@ package poly.nhatro.controller;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import poly.nhatro.ui.DangNhapDialog;
+import poly.nhatro.ui.QuenMatKhauJDiaLog;
 
 /**
  *
@@ -21,4 +22,9 @@ public interface MainController {
     default void showLoginJDialog(JFrame frame) {
         this.showJDialog(new DangNhapDialog(frame, true));
     }
+    
+    default void showQuenMatKhauJDialog(JFrame frame) {
+        this.showJDialog(new QuenMatKhauJDiaLog(frame, true));
+    }
+    
 }
