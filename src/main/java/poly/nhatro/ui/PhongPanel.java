@@ -423,32 +423,33 @@ public class PhongPanel extends javax.swing.JPanel {
     }
 
     private void fillTable() {
-        DefaultTableModel model = (DefaultTableModel) tblPhong.getModel();
-        model.setRowCount(0);
+    listPhong = phongDao.findAll(); // TẢI LẠI DỮ LIỆU TỪ DATABASE
 
-        ChiNhanhDAO chiNhanhDAO = new ChiNhanhDAOImpl();
+    DefaultTableModel model = (DefaultTableModel) tblPhong.getModel();
+    model.setRowCount(0);
 
-        for (Phong phong : listPhong) {
-            // Lấy tên chi nhánh từ ID_ChiNhanh
-            ChiNhanh chiNhanh = cacheChiNhanh.computeIfAbsent(phong.getIdChiNhanh(), id -> chiNhanhDAO.getById(id));
-            String tenChiNhanh = chiNhanh != null ? chiNhanh.getTenChiNhanh() : "Không xác định";
+    ChiNhanhDAO chiNhanhDAO = new ChiNhanhDAOImpl();
 
-            // Chuyển trạng thái thành text
-            String trangThai = phong.isTrangThai() ? "Đã thuê" : "Còn trống";
+    for (Phong phong : listPhong) {
+        ChiNhanh chiNhanh = cacheChiNhanh.computeIfAbsent(phong.getIdChiNhanh(), id -> chiNhanhDAO.getById(id));
+        String tenChiNhanh = chiNhanh != null ? chiNhanh.getTenChiNhanh() : "Không xác định";
+        String trangThai = phong.isTrangThai() ? "Đã thuê" : "Còn trống";
 
-            // Thêm dòng vào table
-            model.addRow(new Object[]{
-                phong.getIdPhong(),
-                phong.getSoPhong(),
-                phong.getGiaPhong(),
-                trangThai,
-                tenChiNhanh,
-                phong.getMoTa()
-            });
-        }
+        model.addRow(new Object[]{
+            phong.getIdPhong(),
+            phong.getSoPhong(),
+            phong.getGiaPhong(),
+            trangThai,
+            tenChiNhanh,
+            phong.getMoTa()
+        });
     }
+}
+
+    
 
     private String imagePath; // Biến lưu đường dẫn ảnh
+
     private void chooseImage() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Chọn ảnh phòng");
@@ -482,7 +483,7 @@ public class PhongPanel extends javax.swing.JPanel {
         phong.setGiaPhong(new BigDecimal(txtGia.getText()));
         phong.setTrangThai(false); // Mặc định chưa cho thuê
         phong.setMoTa(txtMota.getText());
-        phong.setHinhAnh(imagePath);
+        phong.setAnhPhong(imagePath);
 
         // Lấy ID chi nhánh từ combobox
         String tenChiNhanh = cboChiNhanh.getSelectedItem().toString();
@@ -508,8 +509,8 @@ public class PhongPanel extends javax.swing.JPanel {
         }
 
         // Hiển thị ảnh
-        if (phong.getHinhAnh() != null) {
-            imagePath = phong.getHinhAnh();
+        if (phong.getAnhPhong()!= null) {
+            imagePath = phong.getAnhPhong();
             displayImage(imagePath);
         }
     }
@@ -524,14 +525,19 @@ public class PhongPanel extends javax.swing.JPanel {
         imagePath = null;
         rdoConTrong.setSelected(true);
         txtIdPhong.setText("");
-        this.fillTable();
     }
 
     private boolean validateForm() {
         String soPhong = txtSoPhong.getText().trim();
         String giaStr = txtGia.getText().trim();
         String moTa = txtMota.getText().trim();
+        String idStr = txtIdPhong.getText().trim();
 
+        if (idStr.isEmpty()) {
+            XDialog.alert("Vui lòng nhập ID phòng", "Lỗi nhập liệu");
+            txtIdPhong.requestFocus();
+            return false;
+        }
 
         if (soPhong.isEmpty()) {
             XDialog.alert("Vui lòng nhập số phòng", "Lỗi nhập liệu");
@@ -543,7 +549,6 @@ public class PhongPanel extends javax.swing.JPanel {
             txtSoPhong.requestFocus();
             return false;
         }
-
 
         if (giaStr.isEmpty()) {
             XDialog.alert("Vui lòng nhập giá phòng", "Lỗi nhập liệu");
@@ -563,13 +568,11 @@ public class PhongPanel extends javax.swing.JPanel {
             return false;
         }
 
-
         if (cboChiNhanh.getSelectedIndex() <= 0 || cboChiNhanh.getSelectedItem() == null) {
             XDialog.alert("Vui lòng chọn chi nhánh", "Lỗi nhập liệu");
             cboChiNhanh.requestFocus();
             return false;
         }
-
 
         if (moTa.isEmpty()) {
             if (!XDialog.confirm("Mô tả đang để trống. Bạn có muốn tiếp tục?")) {

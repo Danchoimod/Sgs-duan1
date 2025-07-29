@@ -15,4 +15,5 @@ public interface ChiNhanhDAO {
     BigDecimal getGiaDienById(int id);
     BigDecimal getGiaNuocById(int id);
     List<String> getAllBranchNames();
+    int layIDTheoTen(String tenChiNhanh);
 }

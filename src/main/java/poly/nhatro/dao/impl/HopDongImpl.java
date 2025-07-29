@@ -2,11 +2,13 @@ package poly.nhatro.dao.impl;
 
 import poly.nhatro.dao.HopDongDAO;
 import poly.nhatro.entity.HopDong;
-import poly.nhatro.util.XJdbc;
+import poly.nhatro.util.XJdbc; // Using the provided XJdbc utility
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
+import java.util.Calendar; // For date calculations
 
 public class HopDongImpl implements HopDongDAO {
 
@@ -33,60 +35,17 @@ public class HopDongImpl implements HopDongDAO {
         }
     }
 
-    @Override
-    public void update(HopDong entity) {
-        try {
-            XJdbc.executeUpdate(UPDATE_SQL,
-                    entity.getNgayBatDau(),
-                    entity.getNgayKetThuc(),
-                    entity.getSoTienCoc(),
-                    entity.getID_NguoiDung(),
-                    entity.getID_Phong(), // Là int
-                    entity.getID_ChiNhanh(), // Là int
-                    entity.getID_HopDong()); // Là int
-        } catch (RuntimeException e) {
-            System.err.println("Lỗi khi cập nhật hợp đồng: " + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
-            throw new RuntimeException("Cập nhật hợp đồng thất bại.", e);
-        }
-    }
-
-    @Override
-    public void delete(String id) { 
-        try {
-            XJdbc.executeUpdate(DELETE_SQL, id);
-        } catch (RuntimeException e) {
-            System.err.println("Lỗi khi xóa hợp đồng: " + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
-            throw new RuntimeException("Xóa hợp đồng thất bại.", e);
-        }
-    }
-
-    @Override
-    public HopDong getById(String id) {
-        List<HopDong> list = selectBySql(SELECT_BY_ID_SQL, id);
-        return list.isEmpty() ? null : list.get(0);
-    }
-
-    @Override
-    public List<HopDong> getAll() {
-        return selectBySql(SELECT_ALL_SQL);
-    }
-
-    private List<HopDong> selectBySql(String sql, Object... args) {
+    // Generic select method using XJdbc
+    private List<HopDong> select(String sql, Object... args) {
         List<HopDong> list = new ArrayList<>();
-        try (ResultSet rs = XJdbc.executeQuery(sql, args)) {
+        try (ResultSet rs = XJdbc.executeQuery(sql, args)) { // Using XJdbc.executeQuery
             while (rs.next()) {
-                HopDong entity = new HopDong();
-                entity.setID_HopDong(rs.getInt("ID_HopDong")); // Đọc là int
-                entity.setNgayBatDau(rs.getDate("NgayBatDau"));
-                entity.setNgayKetThuc(rs.getDate("NgayKetThuc"));
-                entity.setSoTienCoc(rs.getDouble("SoTienCoc"));
-                entity.setID_NguoiDung(rs.getInt("ID_NguoiDung"));
-                entity.setID_Phong(rs.getInt("ID_Phong"));    // Đọc là int
-                entity.setID_ChiNhanh(rs.getInt("ID_ChiNhanh")); // Đọc là int
-                list.add(entity);
+                list.add(readFromResultSet(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Lỗi truy vấn dữ liệu: " + e.getMessage(), e);
+            // It's good practice to log the error, and re-throw a runtime exception
+            // or a custom checked exception.
+            throw new RuntimeException("Error executing SQL query: " + sql, e);
         }
         return list;
     }

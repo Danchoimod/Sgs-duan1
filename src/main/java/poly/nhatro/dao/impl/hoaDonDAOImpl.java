@@ -3,6 +3,7 @@ package poly.nhatro.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import poly.nhatro.dao.CrudDao;
 import poly.nhatro.dao.HoaDonDAO;
@@ -33,11 +34,12 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
             + "JOIN ChiNhanh cn ON hop.ID_ChiNhanh = cn.ID_ChiNhanh "
             + "JOIN NguoiDung nd ON hop.ID_NguoiDung = nd.ID_NguoiDung";
     
+    // Tương tự cho selectDetailsByIdSql
     String selectDetailsByIdSql = "SELECT "
             + "hd.ID_HoaDon, hd.soDienMoi, hd.soNuocMoi, hd.soDienCu, hd.soNuocCu, "
             + "hd.tienDien, hd.tienNuoc, hd.tienPhong, hd.tongTien, "
-            + "hd.trangThaiThanhToan, hd.ngayThanhToan, "
-            + "hop.ngayBatDau, hop.ngayKetThuc, "
+            + "hd.trangThai, hd.ngayTao, " // Đã sửa tên cột
+            + "hop.ngayTao AS ngayBatDauHopDong, hop.thoiHan, " // Lấy ngayTao và thoiHan từ HopDong
             + "p.soPhong, p.giaPhong, "
             + "cn.tenChiNhanh, "
             + "nd.tenNguoiDung, nd.soDienThoai "
@@ -97,7 +99,7 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
         List<Object[]> detailsList = new ArrayList<>();
         try (ResultSet rs = XJdbc.executeQuery(selectWithDetailsSql)) {
             while (rs.next()) {
-                Object[] details = new Object[18];
+                Object[] details = new Object[18]; // Kích thước mảng cần được điều chỉnh nếu số cột thay đổi
                 details[0] = rs.getInt("ID_HoaDon");
                 details[1] = rs.getInt("soDienMoi");
                 details[2] = rs.getInt("soNuocMoi");
@@ -107,10 +109,21 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
                 details[6] = rs.getDouble("tienNuoc");
                 details[7] = rs.getDouble("tienPhong");
                 details[8] = rs.getDouble("tongTien");
-                details[9] = rs.getBoolean("trangThaiThanhToan");
-                details[10] = rs.getDate("ngayThanhToan");
-                details[11] = rs.getDate("ngayBatDau");
-                details[12] = rs.getDate("ngayKetThuc");
+                details[9] = rs.getBoolean("trangThai"); // Đã sửa tên cột
+                details[10] = rs.getDate("ngayTao"); // Đã sửa tên cột
+                details[11] = rs.getDate("ngayBatDauHopDong"); // Lấy từ alias
+                // Cần tính toán ngayKetThuc từ ngayBatDauHopDong và thoiHan
+                Date ngayBatDauHopDong = rs.getDate("ngayBatDauHopDong");
+                int thoiHan = rs.getInt("thoiHan");
+                if (ngayBatDauHopDong != null) {
+                    java.util.Calendar cal = java.util.Calendar.getInstance();
+                    cal.setTime(ngayBatDauHopDong);
+                    cal.add(java.util.Calendar.MONTH, thoiHan);
+                    details[12] = cal.getTime(); // ngayKetThuc
+                } else {
+                    details[12] = null;
+                }
+
                 details[13] = rs.getString("soPhong");
                 details[14] = rs.getDouble("giaPhong");
                 details[15] = rs.getString("tenChiNhanh");
@@ -150,7 +163,7 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
     public Object[] getDetailsByHoaDonId(int hoaDonId) {
         try (ResultSet rs = XJdbc.executeQuery(selectDetailsByIdSql, hoaDonId)) {
             if (rs.next()) {
-                Object[] details = new Object[18];
+                Object[] details = new Object[18]; // Kích thước mảng cần được điều chỉnh nếu số cột thay đổi
                 details[0] = rs.getInt("ID_HoaDon");
                 details[1] = rs.getInt("soDienMoi");
                 details[2] = rs.getInt("soNuocMoi");
@@ -160,10 +173,20 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
                 details[6] = rs.getDouble("tienNuoc");
                 details[7] = rs.getDouble("tienPhong");
                 details[8] = rs.getDouble("tongTien");
-                details[9] = rs.getBoolean("trangThaiThanhToan");
-                details[10] = rs.getDate("ngayThanhToan");
-                details[11] = rs.getDate("ngayBatDau");
-                details[12] = rs.getDate("ngayKetThuc");
+                details[9] = rs.getBoolean("trangThai"); // Đã sửa tên cột
+                details[10] = rs.getDate("ngayTao"); // Đã sửa tên cột
+                details[11] = rs.getDate("ngayBatDauHopDong"); // Lấy từ alias
+                // Cần tính toán ngayKetThuc từ ngayBatDauHopDong và thoiHan
+                Date ngayBatDauHopDong = rs.getDate("ngayBatDauHopDong");
+                int thoiHan = rs.getInt("thoiHan");
+                if (ngayBatDauHopDong != null) {
+                    java.util.Calendar cal = java.util.Calendar.getInstance();
+                    cal.setTime(ngayBatDauHopDong);
+                    cal.add(java.util.Calendar.MONTH, thoiHan);
+                    details[12] = cal.getTime(); // ngayKetThuc
+                } else {
+                    details[12] = null;
+                }
                 details[13] = rs.getString("soPhong");
                 details[14] = rs.getDouble("giaPhong");
                 details[15] = rs.getString("tenChiNhanh");

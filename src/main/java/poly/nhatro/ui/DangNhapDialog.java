@@ -251,10 +251,14 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
         // TODO add your handling code here:
     }//GEN-LAST:event_formWindowOpened
 
-    private void lbQuenMKMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbQuenMKMouseClicked
-        // TODO add your handling code here:
-        
-    }//GEN-LAST:event_lbQuenMKMouseClicked
+    private void lbQuenMKMouseClicked(java.awt.event.MouseEvent evt) {                                      
+        try {
+            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://localhost:5173"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            poly.nhatro.util.XDialog.alert("Không thể mở trình duyệt!");
+        }
+    } 
 
     /**
      * @param args the command line arguments
