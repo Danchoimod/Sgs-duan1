@@ -4,28 +4,17 @@
  */
 package poly.nhatro.ui;
 
-import javax.swing.JFrame;
-import poly.nhatro.controller.QuenMatKhauController;
-
 /**
  *
  * @author THACH VAN BACH
  */
-public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKhauController {
+public class DoiMatKhau extends javax.swing.JDialog {
 
     /**
-     * Creates new form QuenMatKhauJDiaLog
+     * Creates new form DoiMatKhau
      */
-    public QuenMatKhauJDiaLog(java.awt.Frame parent, boolean modal) {
+    public DoiMatKhau(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        initComponents();
-    }
-
-    private JFrame parent;
-
-    public QuenMatKhauJDiaLog(JFrame parent, boolean modal) {
-        super(parent, modal);
-        this.parent = parent;
         initComponents();
     }
 
@@ -42,25 +31,16 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
         TenDangNhap = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtTenDangNhap = new javax.swing.JTextField();
+        btnDangNhap = new javax.swing.JButton();
+        btnThoat = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         MatKhau = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         txtMatKhau = new javax.swing.JPasswordField();
         jLabel4 = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
-        TenDangNhap1 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
-        txtTenDangNhap1 = new javax.swing.JTextField();
-        btnXacNhan = new javax.swing.JButton();
-        btnQuayLai = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(427, 407));
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-        });
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -68,7 +48,7 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
         TenDangNhap.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel1.setText("Tên Người Dùng:");
+        jLabel1.setText("Mật khẩu mới:");
 
         txtTenDangNhap.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -87,17 +67,37 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
             TenDangNhapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(TenDangNhapLayout.createSequentialGroup()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtTenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
+        btnDangNhap.setBackground(new java.awt.Color(0, 0, 0));
+        btnDangNhap.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnDangNhap.setForeground(new java.awt.Color(255, 255, 255));
+        btnDangNhap.setText("Đổi Mật Khẩu");
+        btnDangNhap.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDangNhapActionPerformed(evt);
+            }
+        });
+
+        btnThoat.setBackground(new java.awt.Color(0, 0, 0));
+        btnThoat.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnThoat.setForeground(new java.awt.Color(255, 255, 255));
+        btnThoat.setText("Thoát");
+        btnThoat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThoatActionPerformed(evt);
+            }
+        });
+
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel3.setText("Quên Mật Khẩu");
+        jLabel3.setText("Đổi Mật Khẩu");
 
         MatKhau.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel2.setText("Email:");
+        jLabel2.setText("Xác nhận lại mật khẩu:");
 
         txtMatKhau.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -123,52 +123,6 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
         jLabel4.setForeground(new java.awt.Color(102, 204, 255));
         jLabel4.setText("Nhà Trọ - SGS");
 
-        TenDangNhap1.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel5.setText("Số CMND:");
-
-        txtTenDangNhap1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTenDangNhap1ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout TenDangNhap1Layout = new javax.swing.GroupLayout(TenDangNhap1);
-        TenDangNhap1.setLayout(TenDangNhap1Layout);
-        TenDangNhap1Layout.setHorizontalGroup(
-            TenDangNhap1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel5)
-            .addComponent(txtTenDangNhap1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        TenDangNhap1Layout.setVerticalGroup(
-            TenDangNhap1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(TenDangNhap1Layout.createSequentialGroup()
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(txtTenDangNhap1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
-        btnXacNhan.setBackground(new java.awt.Color(0, 0, 0));
-        btnXacNhan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnXacNhan.setForeground(new java.awt.Color(255, 255, 255));
-        btnXacNhan.setText("Xác Nhận");
-        btnXacNhan.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnXacNhanActionPerformed(evt);
-            }
-        });
-
-        btnQuayLai.setBackground(new java.awt.Color(0, 0, 0));
-        btnQuayLai.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnQuayLai.setForeground(new java.awt.Color(255, 255, 255));
-        btnQuayLai.setText("Quay Lại");
-        btnQuayLai.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnQuayLaiActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -176,24 +130,23 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(53, 53, 53)
-                        .addComponent(jLabel3))
+                        .addGap(67, 67, 67)
+                        .addComponent(btnDangNhap)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnThoat))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(101, 101, 101)
+                        .addGap(103, 103, 103)
                         .addComponent(jLabel4))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(79, 79, 79)
-                        .addComponent(btnXacNhan)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnQuayLai))
+                        .addGap(26, 26, 26)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(MatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(TenDangNhap1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(TenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(MatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(27, Short.MAX_VALUE))
+                        .addGap(66, 66, 66)
+                        .addComponent(jLabel3)))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -202,18 +155,16 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(32, 32, 32)
                 .addComponent(TenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addComponent(TenDangNhap1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(MatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnXacNhan)
-                    .addComponent(btnQuayLai))
+                    .addComponent(btnDangNhap)
+                    .addComponent(btnThoat))
                 .addContainerGap())
         );
 
@@ -224,7 +175,7 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
             .addGroup(layout.createSequentialGroup()
                 .addGap(69, 69, 69)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -241,29 +192,17 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTenDangNhapActionPerformed
 
+    private void btnDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangNhapActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDangNhapActionPerformed
+
+    private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnThoatActionPerformed
+
     private void txtMatKhauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMatKhauActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtMatKhauActionPerformed
-
-    private void txtTenDangNhap1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenDangNhap1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenDangNhap1ActionPerformed
-
-    private void btnXacNhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXacNhanActionPerformed
-        // TODO add your handling code here:
-        this.showNhapOTPJDialog(parent);
-    }//GEN-LAST:event_btnXacNhanActionPerformed
-
-    private void btnQuayLaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuayLaiActionPerformed
-        // TODO add your handling code here:
-        this.dispose();
-        showLoginJDialog(parent);
-    }//GEN-LAST:event_btnQuayLaiActionPerformed
-
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        // TODO add your handling code here:
-        System.exit(0);
-    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -282,20 +221,20 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(QuenMatKhauJDiaLog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DoiMatKhau.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(QuenMatKhauJDiaLog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DoiMatKhau.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(QuenMatKhauJDiaLog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DoiMatKhau.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(QuenMatKhauJDiaLog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DoiMatKhau.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                QuenMatKhauJDiaLog dialog = new QuenMatKhauJDiaLog(new javax.swing.JFrame(), true);
+                DoiMatKhau dialog = new DoiMatKhau(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -310,18 +249,15 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel MatKhau;
     private javax.swing.JPanel TenDangNhap;
-    private javax.swing.JPanel TenDangNhap1;
-    private javax.swing.JButton btnQuayLai;
-    private javax.swing.JButton btnXacNhan;
+    private javax.swing.JButton btnDangNhap;
+    private javax.swing.JButton btnThoat;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JPasswordField txtMatKhau;
     private javax.swing.JTextField txtTenDangNhap;
-    private javax.swing.JTextField txtTenDangNhap1;
     // End of variables declaration//GEN-END:variables
 }
