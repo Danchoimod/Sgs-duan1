@@ -28,7 +28,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="175" max="32767" attributes="0"/>
+              <EmptySpace pref="205" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -146,18 +146,14 @@
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="jScrollPane4" min="-2" pref="183" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="btnCheckAll" alignment="0" pref="42" max="32767" attributes="0"/>
-                              <Component id="btnUncheckAll" alignment="0" max="32767" attributes="0"/>
-                              <Component id="btnDeleteCheckedItems" alignment="1" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="btnMovePrev" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnMoveNext" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnMoveLast" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnMoveFirst" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="btnMovePrev" max="32767" attributes="0"/>
+                          <Component id="btnMoveFirst" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnCheckAll" alignment="0" pref="42" max="32767" attributes="0"/>
+                          <Component id="btnUncheckAll" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnDeleteCheckedItems" alignment="1" max="32767" attributes="0"/>
+                          <Component id="btnMoveNext" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnMoveLast" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                   </Group>
@@ -187,6 +183,9 @@
                       </Table>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblHoaDonMouseClicked"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -235,7 +234,7 @@
                                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                                       <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
                                           <Component id="cboId_HopDong" max="32767" attributes="0"/>
-                                          <Component id="txtNgayTaoHoaDon" min="-2" pref="204" max="-2" attributes="0"/>
+                                          <Component id="dateNgayTaoHoaDon" min="-2" pref="204" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -279,7 +278,7 @@
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="txtNgayTaoHoaDon" max="32767" attributes="0"/>
+                              <Component id="dateNgayTaoHoaDon" max="32767" attributes="0"/>
                               <Component id="cboTrangThaiThanhToan" min="-2" pref="39" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace pref="56" max="32767" attributes="0"/>
@@ -312,17 +311,18 @@
                     <Property name="text" type="java.lang.String" value="Ng&#xe0;y t&#x1ea1;o ho&#xe1; &#x111;&#x1a1;n"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="txtNgayTaoHoaDon">
+                <Component class="javax.swing.JTextField" name="dateNgayTaoHoaDon">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Helvetica Neue" size="14" style="2"/>
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtNgayTaoHoaDonActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dateNgayTaoHoaDonActionPerformed"/>
                   </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new poly.nhatro.util.RoundedTextField(20); "/>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;JDateChooser&gt;"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel12">
@@ -433,6 +433,9 @@
                       </StringArray>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboId_NguoiDungActionPerformed"/>
+                  </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                   </AuxValues>
@@ -445,7 +448,7 @@
                   <Color blue="58" green="e5" red="66" type="rgb"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Helvetica Neue" size="14" style="3"/>
+                  <Font name="Helvetica Neue" size="13" style="3"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="T&#x1ea1;o Ho&#xe1; &#x110;&#x1a1;n"/>
               </Properties>
@@ -462,7 +465,7 @@
                   <Color blue="31" green="ed" red="ff" type="rgb"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Helvetica Neue" size="14" style="3"/>
+                  <Font name="Helvetica Neue" size="13" style="3"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="S&#x1eed;a Ho&#xe1; &#x110;&#x1a1;n"/>
               </Properties>
@@ -479,7 +482,7 @@
                   <Color blue="23" green="48" red="ff" type="rgb"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Helvetica Neue" size="14" style="3"/>
+                  <Font name="Helvetica Neue" size="13" style="3"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Xo&#xe1; Ho&#xe1; &#x110;&#x1a1;n"/>
               </Properties>
@@ -493,7 +496,7 @@
             <Component class="javax.swing.JButton" name="btnLamMoi">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Helvetica Neue" size="14" style="3"/>
+                  <Font name="Helvetica Neue" size="13" style="3"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="L&#xe0;m M&#x1edb;i"/>
               </Properties>
@@ -507,15 +510,18 @@
             <Component class="javax.swing.JButton" name="btnCheckAll">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Helvetica Neue" size="14" style="3"/>
+                  <Font name="Helvetica Neue" size="13" style="3"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Ch&#x1ecd;n t&#x1ea5;t c&#x1ea3;"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCheckAllActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnUncheckAll">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Helvetica Neue" size="14" style="3"/>
+                  <Font name="Helvetica Neue" size="13" style="3"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="B&#x1ecf; ch&#x1ecd;n t&#x1ea5;t c&#x1ea3;"/>
               </Properties>
@@ -526,10 +532,13 @@
             <Component class="javax.swing.JButton" name="btnDeleteCheckedItems">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Helvetica Neue" size="14" style="3"/>
+                  <Font name="Helvetica Neue" size="13" style="3"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Xo&#xe1; c&#xe1;c ho&#xe1; &#x111;&#x1a1;n &#x111;&#xe3; ch&#x1ecd;n"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteCheckedItemsActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnMoveFirst">
               <Properties>
@@ -578,7 +587,7 @@
             <Component class="javax.swing.JButton" name="btnXuatHoaDon">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Helvetica Neue" size="14" style="3"/>
+                  <Font name="Helvetica Neue" size="13" style="3"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Xu&#x1ea5;t ho&#xe1; &#x111;&#x1a1;n"/>
               </Properties>

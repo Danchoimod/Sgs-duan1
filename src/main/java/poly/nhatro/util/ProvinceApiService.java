@@ -10,8 +10,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.SwingUtilities;
-import javax.swing.JComboBox;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -69,7 +67,14 @@ public class ProvinceApiService {
                 JSONArray jsonArray = new JSONArray(response.toString());
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject provinceObj = jsonArray.getJSONObject(i);
-                    String code = provinceObj.getString("code");
+                    // Xử lý code có thể là String hoặc Integer
+                    String code;
+                    try {
+                        code = provinceObj.getString("code");
+                    } catch (Exception e) {
+                        // Nếu code là số, chuyển thành String
+                        code = String.valueOf(provinceObj.get("code"));
+                    }
                     String name = provinceObj.getString("name");
                     provinces.add(new Province(code, name));
                 }
@@ -140,36 +145,6 @@ public class ProvinceApiService {
         return defaultProvinces;
     }
     
-    /**
-     * Tải danh sách tỉnh thành vào JComboBox trong background thread
-     * @param comboBox JComboBox cần load dữ liệu
-     */
-    public static void loadProvincesToComboBox(JComboBox<Province> comboBox) {
-        // Xóa dữ liệu cũ và thêm item loading
-        SwingUtilities.invokeLater(() -> {
-            comboBox.removeAllItems();
-            comboBox.addItem(new Province("", "Đang tải..."));
-            comboBox.setEnabled(false);
-        });
-        
-        // Tải dữ liệu trong background thread
-        new Thread(() -> {
-            List<Province> provinces = getProvinces();
-            
-            // Cập nhật UI trong EDT
-            SwingUtilities.invokeLater(() -> {
-                comboBox.removeAllItems();
-                comboBox.addItem(new Province("", "-- Chọn tỉnh thành --"));
-                
-                for (Province province : provinces) {
-                    comboBox.addItem(province);
-                }
-                
-                comboBox.setEnabled(true);
-                log.info("Đã load {} tỉnh thành vào ComboBox", provinces.size());
-            });
-        }).start();
-    }
     
     /**
      * Tìm tỉnh thành theo tên
@@ -182,10 +157,48 @@ public class ProvinceApiService {
             return null;
         }
         
-        return provinces.stream()
-                .filter(province -> province.getName().equalsIgnoreCase(provinceName.trim()))
+        String searchName = provinceName.trim();
+        
+        // Thử tìm khớp chính xác trước
+        Province exactMatch = provinces.stream()
+                .filter(province -> province.getName().equalsIgnoreCase(searchName))
                 .findFirst()
                 .orElse(null);
+                
+        if (exactMatch != null) {
+            return exactMatch;
+        }
+        
+        // Nếu không tìm thấy, thử chuẩn hóa tên và tìm lại
+        String normalizedSearchName = normalizeProvinceName(searchName);
+        return provinces.stream()
+                .filter(province -> normalizeProvinceName(province.getName()).equalsIgnoreCase(normalizedSearchName))
+                .findFirst()
+                .orElse(null);
+    }
+    
+    /**
+     * Chuẩn hóa tên tỉnh bằng cách loại bỏ tiền tố "Thành phố" và "Tỉnh"
+     * @param provinceName Tên tỉnh gốc
+     * @return Tên tỉnh đã chuẩn hóa
+     */
+    private static String normalizeProvinceName(String provinceName) {
+        if (provinceName == null) {
+            return "";
+        }
+        
+        String normalized = provinceName.trim();
+        
+        // Loại bỏ tiền tố "Thành phố "
+        if (normalized.startsWith("Thành phố ")) {
+            normalized = normalized.substring("Thành phố ".length());
+        }
+        // Loại bỏ tiền tố "Tỉnh "
+        else if (normalized.startsWith("Tỉnh ")) {
+            normalized = normalized.substring("Tỉnh ".length());
+        }
+        
+        return normalized.trim();
     }
     
     /**
