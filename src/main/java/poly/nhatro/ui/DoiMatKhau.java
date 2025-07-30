@@ -4,17 +4,32 @@
  */
 package poly.nhatro.ui;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import poly.nhatro.controller.MainController;
+import poly.nhatro.dao.NguoiThueDAO;
+import poly.nhatro.dao.impl.NguoiThueDaoImpl;
+import poly.nhatro.util.XDialog;
+
 /**
  *
  * @author THACH VAN BACH
  */
-public class DoiMatKhau extends javax.swing.JDialog {
-
+public class DoiMatKhau extends javax.swing.JDialog implements MainController {
+    private String emailDangXacNhan;
     /**
      * Creates new form DoiMatKhau
      */
-    public DoiMatKhau(java.awt.Frame parent, boolean modal) {
+    public DoiMatKhau(java.awt.Frame parent, boolean modal, String email) {
         super(parent, modal);
+        initComponents();
+        this.emailDangXacNhan = email;
+    }
+    private JFrame parent;
+
+    public DoiMatKhau(JFrame parent, boolean modal) {
+        super(parent, modal);
+        this.parent = parent;
         initComponents();
     }
 
@@ -30,17 +45,22 @@ public class DoiMatKhau extends javax.swing.JDialog {
         jPanel3 = new javax.swing.JPanel();
         TenDangNhap = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtTenDangNhap = new javax.swing.JTextField();
+        txtMatKhauMoi = new javax.swing.JTextField();
         btnDangNhap = new javax.swing.JButton();
         btnThoat = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         MatKhau = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        txtMatKhau = new javax.swing.JPasswordField();
+        txtNhapLaiMK = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -50,9 +70,9 @@ public class DoiMatKhau extends javax.swing.JDialog {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setText("Mật khẩu mới:");
 
-        txtTenDangNhap.addActionListener(new java.awt.event.ActionListener() {
+        txtMatKhauMoi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTenDangNhapActionPerformed(evt);
+                txtMatKhauMoiActionPerformed(evt);
             }
         });
 
@@ -61,14 +81,14 @@ public class DoiMatKhau extends javax.swing.JDialog {
         TenDangNhapLayout.setHorizontalGroup(
             TenDangNhapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel1)
-            .addComponent(txtTenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(txtMatKhauMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         TenDangNhapLayout.setVerticalGroup(
             TenDangNhapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(TenDangNhapLayout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtTenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(txtMatKhauMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         btnDangNhap.setBackground(new java.awt.Color(0, 0, 0));
@@ -99,9 +119,9 @@ public class DoiMatKhau extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("Xác nhận lại mật khẩu:");
 
-        txtMatKhau.addActionListener(new java.awt.event.ActionListener() {
+        txtNhapLaiMK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMatKhauActionPerformed(evt);
+                txtNhapLaiMKActionPerformed(evt);
             }
         });
 
@@ -109,15 +129,18 @@ public class DoiMatKhau extends javax.swing.JDialog {
         MatKhau.setLayout(MatKhauLayout);
         MatKhauLayout.setHorizontalGroup(
             MatKhauLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel2)
-            .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(MatKhauLayout.createSequentialGroup()
+                .addGroup(MatKhauLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(txtNhapLaiMK, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         MatKhauLayout.setVerticalGroup(
             MatKhauLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MatKhauLayout.createSequentialGroup()
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addComponent(txtNhapLaiMK, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jLabel4.setForeground(new java.awt.Color(102, 204, 255));
@@ -130,23 +153,23 @@ public class DoiMatKhau extends javax.swing.JDialog {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(67, 67, 67)
-                        .addComponent(btnDangNhap)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnThoat))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(103, 103, 103)
                         .addComponent(jLabel4))
                     .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(66, 66, 66)
+                        .addComponent(jLabel3))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(MatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(TenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(66, 66, 66)
-                        .addComponent(jLabel3)))
-                .addContainerGap(25, Short.MAX_VALUE))
+                            .addComponent(TenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(jPanel3Layout.createSequentialGroup()
+                                    .addComponent(btnDangNhap)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(btnThoat))
+                                .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -175,34 +198,65 @@ public class DoiMatKhau extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGap(69, 69, 69)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtTenDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenDangNhapActionPerformed
+    private void txtMatKhauMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMatKhauMoiActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenDangNhapActionPerformed
+    }//GEN-LAST:event_txtMatKhauMoiActionPerformed
 
     private void btnDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangNhapActionPerformed
         // TODO add your handling code here:
+        String matKhauMoi = txtMatKhauMoi.getText().trim();
+        String nhapLaiMK = txtNhapLaiMK.getText().trim();
+        String email = this.emailDangXacNhan; // truyền từ bước nhập OTP qua
+
+        if (matKhauMoi.isEmpty() || nhapLaiMK.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
+            return;
+        }
+
+        if (!matKhauMoi.equals(nhapLaiMK)) {
+            JOptionPane.showMessageDialog(this, "Mật khẩu nhập lại không trùng khớp.");
+            return;
+        }
+
+        NguoiThueDAO dao = new NguoiThueDaoImpl();
+        boolean capNhat = dao.updatePasswordByEmail(email, matKhauMoi);
+
+        if (capNhat) {
+            JOptionPane.showMessageDialog(this, "Đổi mật khẩu thành công.");
+            this.dispose();
+            showLoginJDialog(parent);// Đóng form đổi mật khẩu
+        } else {
+            JOptionPane.showMessageDialog(this, "Đổi mật khẩu thất bại.");
+        }
     }//GEN-LAST:event_btnDangNhapActionPerformed
 
     private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
         // TODO add your handling code here:
+        this.dispose();
+        showLoginJDialog(parent);
     }//GEN-LAST:event_btnThoatActionPerformed
 
-    private void txtMatKhauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMatKhauActionPerformed
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtMatKhauActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_formWindowClosing
+
+    private void txtNhapLaiMKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNhapLaiMKActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNhapLaiMKActionPerformed
 
     /**
      * @param args the command line arguments
@@ -257,7 +311,7 @@ public class DoiMatKhau extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JPasswordField txtMatKhau;
-    private javax.swing.JTextField txtTenDangNhap;
+    private javax.swing.JTextField txtMatKhauMoi;
+    private javax.swing.JTextField txtNhapLaiMK;
     // End of variables declaration//GEN-END:variables
 }
