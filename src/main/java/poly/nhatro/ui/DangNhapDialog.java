@@ -386,9 +386,16 @@ public class DangNhapDialog extends javax.swing.JDialog implements DangNhapContr
                 ps.setString(2, passWord);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        // Đăng nhập thành công nhưng chưa có quyền truy cập
-                        XDialog.alert("Bạn không có quyền truy cập hệ thống!");
-                        return;
+                        String vaiTro = rs.getString("vaiTro"); // lấy vai trò từ DB
+
+                        if ("Chủ trọ".equalsIgnoreCase(vaiTro.trim())) {
+                            XDialog.alert("Đăng nhập thành công với vai trò Chủ trọ!");
+                            this.dispose(); // đóng form đăng nhập
+                            // mở giao diện chính hoặc chuyển tiếp ở đây nếu cần
+                        } else {
+                            XDialog.alert("Bạn không có quyền truy cập hệ thống!");
+                        }
+
                     } else {
                         XDialog.alert("Mật khẩu không đúng!");
                     }
