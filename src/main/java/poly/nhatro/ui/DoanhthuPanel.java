@@ -54,8 +54,6 @@ public class DoanhthuPanel extends javax.swing.JPanel {
 
         btnTrangThai = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
-        txtBegin = new javax.swing.JTextField();
-        txtEnd = new javax.swing.JTextField();
         cboLocNhanh = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -90,6 +88,8 @@ public class DoanhthuPanel extends javax.swing.JPanel {
         btnMoveLast = new javax.swing.JButton();
         btnMoveNext = new javax.swing.JButton();
         btnMovePrevious = new javax.swing.JButton();
+        dateBegin = new com.toedter.calendar.JDateChooser();
+        dateEnd = new com.toedter.calendar.JDateChooser();
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -174,7 +174,6 @@ public class DoanhthuPanel extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -189,7 +188,6 @@ public class DoanhthuPanel extends javax.swing.JPanel {
                             .addComponent(txtTienDien))
                         .addGap(49, 49, 49)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(dateNgayThanhToan, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,11 +196,15 @@ public class DoanhthuPanel extends javax.swing.JPanel {
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel11)
-                                    .addComponent(txtTongTien, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                    .addComponent(txtTongTien, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(rdoDaThanhToan)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(rdoChuaThanhToan)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(rdoDaThanhToan)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(rdoChuaThanhToan))
+                            .addComponent(jLabel6))
                         .addGap(434, 434, 434)
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -265,7 +267,7 @@ public class DoanhthuPanel extends javax.swing.JPanel {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, true, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -344,7 +346,6 @@ public class DoanhthuPanel extends javax.swing.JPanel {
                                 .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnMoveFirst)
                         .addGap(42, 42, 42)
                         .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -383,15 +384,15 @@ public class DoanhthuPanel extends javax.swing.JPanel {
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(100, 100, 100)
+                        .addGap(36, 36, 36)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(dateBegin, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(dateEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(23, 23, 23)
                         .addComponent(btnFilter)
                         .addGap(30, 30, 30)
                         .addComponent(cboLocNhanh, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -404,16 +405,19 @@ public class DoanhthuPanel extends javax.swing.JPanel {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cboLocNhanh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1)
                             .addComponent(jLabel2)
                             .addComponent(btnFilter)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(15, 15, 15)
-                        .addComponent(jLabel4)))
-                .addGap(29, 29, 29)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel4)
+                                .addComponent(jLabel1))
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(dateEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(dateBegin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(30, 30, 30)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -494,6 +498,8 @@ public class DoanhthuPanel extends javax.swing.JPanel {
     private javax.swing.ButtonGroup btnTrangThai;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cboLocNhanh;
+    private com.toedter.calendar.JDateChooser dateBegin;
+    private com.toedter.calendar.JDateChooser dateEnd;
     private com.toedter.calendar.JDateChooser dateNgayThanhToan;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -514,8 +520,6 @@ public class DoanhthuPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton rdoChuaThanhToan;
     private javax.swing.JRadioButton rdoDaThanhToan;
     private javax.swing.JTable tblDoanhThu;
-    private javax.swing.JTextField txtBegin;
-    private javax.swing.JTextField txtEnd;
     private javax.swing.JTextField txtIDHoaDon;
     private javax.swing.JTextField txtTenPhong;
     private javax.swing.JTextField txtTienDien;
@@ -577,33 +581,19 @@ public class DoanhthuPanel extends javax.swing.JPanel {
         }
 
         if (range != null) {
-            txtBegin.setText(XDate.format(range.getBegin(), XDate.PATTERN_SHORT));
-            txtEnd.setText(XDate.format(range.getEnd(), XDate.PATTERN_SHORT));
+            dateBegin.setDate(range.getBegin());
+            dateEnd.setDate(range.getEnd());
             fillByDateRange(); 
         }
     }
 
     private boolean validateForm() {
-        String tuNgayStr = txtBegin.getText().trim();
-        String denNgayStr = txtEnd.getText().trim();
-        Date tuNgay = null;
-        Date denNgay = null;
+        Date tuNgay = dateBegin.getDate();
+        Date denNgay = dateEnd.getDate();
         Date today = XDate.now();
         
         try {
-            if (!tuNgayStr.isEmpty()) {
-                tuNgay = XDate.parse(tuNgayStr, XDate.PATTERN_SHORT);
-                if (tuNgay == null) {
-                    XDialog.alert("Định dạng ngày 'Từ ngày' không hợp lệ (MM/dd/yyyy).");
-                    return false;
-                }
-            }
-            if (!denNgayStr.isEmpty()) {
-                denNgay = XDate.parse(denNgayStr, XDate.PATTERN_SHORT);
-                if (denNgay == null) {
-                    XDialog.alert("Định dạng ngày 'Đến ngày' không hợp lệ (MM/dd/yyyy).");
-                    return false;
-                }
+            if (denNgay != null) {
                 Calendar todayCal = Calendar.getInstance();
                 todayCal.setTime(today);
                 todayCal.set(Calendar.HOUR_OF_DAY, 23);
@@ -613,12 +603,12 @@ public class DoanhthuPanel extends javax.swing.JPanel {
                 Date endOfToday = todayCal.getTime();
                 
                 if (denNgay.after(endOfToday)) {
-                    XDialog.alert("'Đến ngày' không được lớn hơn ngày hôm nay.");
+                    XDialog.alert("'Ngày kết thúc' không được lớn hơn ngày hôm nay.");
                     return false;
                 }
             }
             if (tuNgay != null && denNgay != null && tuNgay.after(denNgay)) {
-                XDialog.alert("'Từ ngày' không được sau 'Đến ngày'.");
+                XDialog.alert("'Ngày bắt đầu' không được sau 'Ngày kết thúc'.");
                 return false;
             }
         } catch (Exception e) {
@@ -629,11 +619,11 @@ public class DoanhthuPanel extends javax.swing.JPanel {
     }
 
     private void fillByDateRange() {
-        String tuNgayStr = txtBegin.getText().trim();
-        String denNgayStr = txtEnd.getText().trim();
+        Date tuNgay = dateBegin.getDate();
+        Date denNgay = dateEnd.getDate();
 
-        if (tuNgayStr.isEmpty() && denNgayStr.isEmpty()) {
-            XDialog.alert("Vui lòng nhập 'Từ ngày' hoặc 'Đến ngày' hoặc chọn tùy chọn lọc nhanh.");
+        if (tuNgay == null && denNgay == null) {
+            XDialog.alert("Vui lòng chọn 'Ngày bắt đầu' hoặc 'Ngày kết thúc' hoặc chọn tùy chọn lọc nhanh.");
             fillTableAll(); 
             return;
         }
@@ -643,19 +633,15 @@ public class DoanhthuPanel extends javax.swing.JPanel {
         }
 
         try {
-            Date tuNgay = null;
-            Date denNgay = null;
-            
-            if (!tuNgayStr.isEmpty()) {
-                tuNgay = XDate.parse(tuNgayStr, XDate.PATTERN_SHORT);
-            } else {
+            if (tuNgay == null) {
                 Calendar cal = Calendar.getInstance();
                 cal.set(1900, Calendar.JANUARY, 1, 0, 0, 0);
                 tuNgay = cal.getTime();
             }
 
-            if (!denNgayStr.isEmpty()) {
-                denNgay = XDate.parse(denNgayStr, XDate.PATTERN_SHORT);
+            if (denNgay == null) {
+                denNgay = XDate.now();
+            } else {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(denNgay);
                 cal.set(Calendar.HOUR_OF_DAY, 23);
@@ -663,8 +649,6 @@ public class DoanhthuPanel extends javax.swing.JPanel {
                 cal.set(Calendar.SECOND, 59);
                 cal.set(Calendar.MILLISECOND, 999);
                 denNgay = cal.getTime();
-            } else {
-                denNgay = XDate.now();
             }
 
             List<DoanhThu> list = doanhThuDao.getByDateRange(tuNgay, denNgay);

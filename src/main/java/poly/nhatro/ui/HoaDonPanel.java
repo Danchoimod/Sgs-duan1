@@ -42,6 +42,8 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
         if (dateNgayTaoHoaDon != null) {
             dateNgayTaoHoaDon.setDate(new Date()); 
         }
+        // Load initial data into table
+        fillToTable();
     }
     
     /**
