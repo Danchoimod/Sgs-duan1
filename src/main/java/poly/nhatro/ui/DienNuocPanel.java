@@ -15,7 +15,7 @@ import poly.nhatro.entity.Phong;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.ArrayList; 
+import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
 import java.awt.event.MouseEvent;
@@ -32,6 +32,7 @@ import java.io.IOException;
 import javax.swing.table.TableModel;
 
 public class DienNuocPanel extends javax.swing.JPanel implements dienNuocController {
+
     private DienNuocDAO dienNuocDao;
     private ChiNhanhDAO chiNhanhDao;
     private PhongDaoImpl phongDao;
@@ -50,13 +51,11 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
 
     @Override
     public void init() {
-        loadChiNhanhToComboBox(); 
+        loadChiNhanhToComboBox();
         txtDienNuoc.setEditable(false); // ID Điện nước không cho sửa
         filterAndFillTable(); // Gọi phương thức này để lọc và điền dữ liệu ban đầu
-        clear(); 
+        clear();
     }
-    
-   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -126,6 +125,11 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         jLabel1.setText("Chi nhánh");
 
         cboChiNhanh.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboChiNhanh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboChiNhanhActionPerformed(evt);
+            }
+        });
 
         btnLocTheoChiNhanh.setText("Lọc theo chi nhánh");
         btnLocTheoChiNhanh.addActionListener(new java.awt.event.ActionListener() {
@@ -295,7 +299,6 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     }//GEN-LAST:event_btnThemActionPerformed
 
     private void btnLocTheoChiNhanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLocTheoChiNhanhActionPerformed
-        // TODO add your handling code here:
         filterAndFillTable();
     }//GEN-LAST:event_btnLocTheoChiNhanhActionPerformed
 
@@ -314,14 +317,19 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     }//GEN-LAST:event_btnLamMoiActionPerformed
 
     private void btnExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcelActionPerformed
-      this.Excel();
+        this.Excel();
     }//GEN-LAST:event_btnExcelActionPerformed
 
     private void tblDienNuocMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDienNuocMouseClicked
-         if (evt.getClickCount() == 1) { // Chỉ xử lý khi là một click đơn
+        if (evt.getClickCount() == 1) { // Chỉ xử lý khi là một click đơn
             edit(); // Gọi phương thức edit() để hiển thị dữ liệu lên form
         }
     }//GEN-LAST:event_tblDienNuocMouseClicked
+
+    private void cboChiNhanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboChiNhanhActionPerformed
+        // TODO add your handling code here:
+      filterAndFillTable();
+    }//GEN-LAST:event_cboChiNhanhActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -347,32 +355,28 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     private javax.swing.JTextField txtSoDien;
     private javax.swing.JTextField txtSoNuoc;
     // End of variables declaration//GEN-END:variables
- 
+
     @Override
     public void open() {
-        // Method can be used to open panel, no specific logic needed here
+// Method can be used to open panel, no specific logic needed here
     }
 
     @Override
     public void setForm(DienNuoc entity) {
         if (entity != null) {
             txtDienNuoc.setText(String.valueOf(entity.getIdDienNuoc()));
-
             if (entity.getTenChiNhanh() != null) {
                 cboChiNhanh.setSelectedItem(entity.getTenChiNhanh());
             } else {
-                cboChiNhanh.setSelectedIndex(0); 
+                cboChiNhanh.setSelectedIndex(0);
             }
-            
             if (entity.getSoPhong() != null) {
                 txtMaPhong.setText(entity.getSoPhong());
             } else {
-                txtMaPhong.setText(""); 
+                txtMaPhong.setText("");
             }
-
             txtSoDien.setText(String.valueOf(entity.getGiaDien()));
             txtSoNuoc.setText(String.valueOf(entity.getGiaNuoc()));
-
         } else {
             clear();
         }
@@ -401,7 +405,6 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             e.printStackTrace();
             return false;
         }
-
         if (txtSoDien.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Số điện không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             txtSoDien.requestFocusInWindow();
@@ -441,23 +444,21 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
 
     @Override
     public DienNuoc getForm() {
-        if (!validateForm()) { 
+        if (!validateForm()) {
             return null;
         }
-
         DienNuoc dienNuoc = new DienNuoc();
-        // Giữ lại ID_DienNuoc nếu đang ở chế độ sửa
+// Giữ lại ID_DienNuoc nếu đang ở chế độ sửa
         if (currentIndex >= 0 && currentIndex < currentList.size()) {
             dienNuoc.setIdDienNuoc(currentList.get(currentIndex).getIdDienNuoc());
         }
-        // ID_DienNuoc từ txtDienNuoc chỉ dùng để hiển thị, không dùng để tạo/cập nhật entity
-        // nếu đang thêm mới, ID sẽ được DB tự động sinh.
-
+// ID_DienNuoc từ txtDienNuoc chỉ dùng để hiển thị, không dùng để tạo/cập nhật entity
+// nếu đang thêm mới, ID sẽ được DB tự động sinh.
         String soPhongText = txtMaPhong.getText();
         Integer idPhong = null;
         if (soPhongText != null && !soPhongText.isEmpty()) {
             try {
-                idPhong = dienNuocDao.findPhongIdBySoPhong(soPhongText); 
+                idPhong = dienNuocDao.findPhongIdBySoPhong(soPhongText);
                 if (idPhong == null) {
                     JOptionPane.showMessageDialog(this, "Mã phòng không hợp lệ hoặc không tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                     return null;
@@ -471,7 +472,6 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             return null;
         }
         dienNuoc.setIdPhong(idPhong);
-
         try {
             dienNuoc.setGiaDien(Integer.parseInt(txtSoDien.getText()));
             dienNuoc.setGiaNuoc(Integer.parseInt(txtSoNuoc.getText()));
@@ -488,14 +488,13 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
 
     @Override
     public void create() {
-        if (!validateForm()) { 
+        if (!validateForm()) {
             return;
         }
-
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn thêm mới bản ghi này?", "Xác nhận thêm mới", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             DienNuoc newDienNuoc = getForm();
-            if (newDienNuoc == null) { 
+            if (newDienNuoc == null) {
                 return;
             }
             try {
@@ -503,12 +502,10 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                 JOptionPane.showMessageDialog(this, "Thêm mới thành công!");
                 filterAndFillTable(); // Cập nhật lại bảng sau khi thêm
                 clear();
-            }
-            catch (RuntimeException e) { 
+            } catch (RuntimeException e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi thêm mới: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Lỗi không xác định khi thêm mới: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
@@ -521,15 +518,13 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             JOptionPane.showMessageDialog(this, "Vui lòng chọn một bản ghi để cập nhật.");
             return;
         }
-
-        if (!validateForm()) { 
+        if (!validateForm()) {
             return;
         }
-        
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn cập nhật bản ghi này?", "Xác nhận cập nhật", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             DienNuoc updatedDienNuoc = getForm();
-            if (updatedDienNuoc == null) { 
+            if (updatedDienNuoc == null) {
                 return;
             }
             try {
@@ -538,12 +533,10 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                 JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
                 filterAndFillTable(); // Cập nhật lại bảng sau khi sửa
                 clear();
-            }
-            catch (RuntimeException e) { 
+            } catch (RuntimeException e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Lỗi không xác định khi cập nhật: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
@@ -564,12 +557,10 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                 JOptionPane.showMessageDialog(this, "Xóa thành công!");
                 filterAndFillTable(); // Cập nhật lại bảng sau khi xóa
                 clear();
-            }
-            catch (RuntimeException e) { 
+            } catch (RuntimeException e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi xóa: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Lỗi không xác định khi xóa: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
@@ -578,11 +569,11 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
 
     @Override
     public void clear() {
-        cboChiNhanh.setSelectedIndex(0); 
+        cboChiNhanh.setSelectedIndex(0);
         txtSoDien.setText("");
         txtSoNuoc.setText("");
-        txtDienNuoc.setText(""); 
-        txtMaPhong.setText(""); 
+        txtDienNuoc.setText("");
+        txtMaPhong.setText("");
         currentIndex = -1;
         setEditable(true);
         txtDienNuoc.setEditable(false); // Đảm bảo ID không sửa được
@@ -595,7 +586,7 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             currentIndex = selectedRow;
             DienNuoc selectedDienNuoc = currentList.get(selectedRow);
             setForm(selectedDienNuoc);
-            setEditable(true); 
+            setEditable(true);
             txtDienNuoc.setEditable(false); // Mã điện nước thường không được sửa
         } else {
             clear();
@@ -604,21 +595,20 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
 
     @Override
     public void setEditable(boolean editable) {
-        txtMaPhong.setEditable(editable); 
+        txtMaPhong.setEditable(editable);
         txtSoDien.setEditable(editable);
         txtSoNuoc.setEditable(editable);
-        cboChiNhanh.setEnabled(editable); 
+        cboChiNhanh.setEnabled(editable);
         btnThem.setEnabled(editable);
         btnSua.setEnabled(editable);
         btnXoa.setEnabled(editable);
         txtDienNuoc.setEditable(false); // Mã điện nước không cho sửa
     }
-    
-    // Phương thức mới để vừa lọc vừa điền dữ liệu vào bảng
+// Phương thức mới để vừa lọc vừa điền dữ liệu vào bảng
+
     public void filterAndFillTable() {
         DefaultTableModel model = (DefaultTableModel) tblDienNuoc.getModel();
         model.setRowCount(0); // Xóa tất cả các hàng hiện có
-
         String selectedChiNhanhName = (String) cboChiNhanh.getSelectedItem();
         try {
             List<DienNuoc> filteredList;
@@ -629,61 +619,58 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                 if (idChiNhanh != null) {
                     filteredList = dienNuocDao.findByChiNhanhId(idChiNhanh); // Lọc theo ID chi nhánh
                 } else {
-                    // Trường hợp không tìm thấy ID chi nhánh (có thể xảy ra nếu dữ liệu bị lỗi)
+// Trường hợp không tìm thấy ID chi nhánh (có thể xảy ra nếu dữ liệu bị lỗi)
                     filteredList = new ArrayList<>(); // Trả về danh sách rỗng
                     JOptionPane.showMessageDialog(this, "Không tìm thấy ID cho chi nhánh đã chọn: " + selectedChiNhanhName, "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
             currentList = filteredList; // Cập nhật currentList
-
-            // --- BẮT ĐẦU ĐOẠN MÃ DEBUG ---
+// --- BẮT ĐẦU ĐOẠN MÃ DEBUG ---
             System.out.println("--- DEBUG: Kiểm tra giá trị ID_DienNuoc từ currentList sau khi lọc ---");
             if (currentList != null) {
                 for (DienNuoc dn : currentList) {
-                    System.out.println("  ID_DienNuoc: " + dn.getIdDienNuoc() + ", GiaDien: " + dn.getGiaDien() + ", GiaNuoc: " + dn.getGiaNuoc() + ", MaPhong: " + dn.getSoPhong() + ", TenChiNhanh: " + dn.getTenChiNhanh());
+                    System.out.println(" ID_DienNuoc: " + dn.getIdDienNuoc() + ", GiaDien: " + dn.getGiaDien() + ", GiaNuoc: " + dn.getGiaNuoc() + ", MaPhong: " + dn.getSoPhong() + ", TenChiNhanh: " + dn.getTenChiNhanh());
                 }
             } else {
-                System.out.println("  currentList is null or empty.");
+                System.out.println(" currentList is null or empty.");
             }
             System.out.println("--- KẾT THÚC ĐOẠN MÃ DEBUG ---");
-            // --- KẾT THÚC ĐOẠN MÃ DEBUG ---
-
-            // Điền dữ liệu vào bảng từ currentList đã lọc
-            for (DienNuoc dn : currentList) { 
+// --- KẾT THÚC ĐOẠN MÃ DEBUG ---
+// Điền dữ liệu vào bảng từ currentList đã lọc
+            for (DienNuoc dn : currentList) {
                 Object[] row = {
                     dn.getTenChiNhanh(),
-                    dn.getIdDienNuoc(), 
+                    dn.getIdDienNuoc(),
                     dn.getGiaDien(),
                     dn.getGiaNuoc(),
-                    dn.getSoPhong() 
+                    dn.getSoPhong()
                 };
                 model.addRow(row);
             }
-        } catch (RuntimeException e) { 
+        } catch (RuntimeException e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi lọc và tải dữ liệu vào bảng: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi không xác định khi lọc và tải dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
+// fillToTable giờ chỉ gọi filterAndFillTable()
 
-    // fillToTable giờ chỉ gọi filterAndFillTable()
     @Override
     public void fillToTable() {
         filterAndFillTable();
     }
 
     private void loadChiNhanhToComboBox() {
-        cboChiNhanh.removeAllItems(); 
-        cboChiNhanh.addItem("Tất cả"); 
-        chiNhanhMap.clear(); 
+        cboChiNhanh.removeAllItems();
+        cboChiNhanh.addItem("Tất cả");
+        chiNhanhMap.clear();
         try {
             List<ChiNhanh> chiNhanhs = chiNhanhDao.getAll();
             for (ChiNhanh cn : chiNhanhs) {
-                cboChiNhanh.addItem(cn.getTenChiNhanh()); 
-                chiNhanhMap.put(cn.getTenChiNhanh(), cn.getID_ChiNhanh()); 
+                cboChiNhanh.addItem(cn.getTenChiNhanh());
+                chiNhanhMap.put(cn.getTenChiNhanh(), cn.getID_ChiNhanh());
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách chi nhánh: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -711,7 +698,7 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa " + selectedRows.length + " bản ghi đã chọn?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             try {
-                // Xóa từ dưới lên để tránh lỗi index khi xóa
+// Xóa từ dưới lên để tránh lỗi index khi xóa
                 for (int i = selectedRows.length - 1; i >= 0; i--) {
                     int modelRow = tblDienNuoc.convertRowIndexToModel(selectedRows[i]);
                     int dienNuocIdToDelete = currentList.get(modelRow).getIdDienNuoc();
@@ -720,12 +707,10 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                 JOptionPane.showMessageDialog(this, "Đã xóa các bản ghi đã chọn thành công!");
                 filterAndFillTable(); // Cập nhật lại bảng sau khi xóa
                 clear();
-            }
-            catch (RuntimeException e) { 
+            } catch (RuntimeException e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi xóa các bản ghi đã chọn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Lỗi không xác định khi xóa các bản ghi đã chọn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
@@ -781,16 +766,13 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Lưu file Excel");
         fileChooser.setSelectedFile(new File("DuLieuDienNuoc.xlsx"));
-
         int userSelection = fileChooser.showSaveDialog(this);
         if (userSelection == JFileChooser.APPROVE_OPTION) {
             File fileToSave = fileChooser.getSelectedFile();
             if (!fileToSave.getAbsolutePath().toLowerCase().endsWith(".xlsx")) {
                 fileToSave = new File(fileToSave.getAbsolutePath() + ".xlsx");
             }
-            try (Workbook workbook = new XSSFWorkbook();
-                 FileOutputStream fileOut = new FileOutputStream(fileToSave)) {
-
+            try (Workbook workbook = new XSSFWorkbook(); FileOutputStream fileOut = new FileOutputStream(fileToSave)) {
                 Sheet sheet = workbook.createSheet("Dữ liệu Điện Nước");
                 DefaultTableModel model = (DefaultTableModel) tblDienNuoc.getModel();
                 Row headerRow = sheet.createRow(0);
@@ -817,9 +799,7 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                     }
                 }
                 workbook.write(fileOut);
-
                 JOptionPane.showMessageDialog(this, "Xuất file Excel thành công!\nĐường dẫn: " + fileToSave.getAbsolutePath(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi xuất file Excel: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
