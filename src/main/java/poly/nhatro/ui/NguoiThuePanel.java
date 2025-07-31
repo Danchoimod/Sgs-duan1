@@ -17,6 +17,8 @@ import javax.swing.SwingWorker;
 import javax.swing.SwingUtilities;
 import java.io.File;
 import poly.nhatro.util.ExcelOutput;
+import poly.nhatro.util.XDate;
+import java.util.Date;
 
 
 /**
@@ -73,6 +75,8 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
         cboDiaChi = new javax.swing.JComboBox<>();
         cboTrangThaiHoatDong = new javax.swing.JComboBox<>();
         cboVaiTro = new javax.swing.JComboBox<>();
+        jLabel7 = new javax.swing.JLabel();
+        dateNgaySinh = new com.toedter.calendar.JDateChooser();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblNguoiThue = new javax.swing.JTable();
         btnClear = new javax.swing.JButton(new com.formdev.flatlaf.extras.FlatSVGIcon("icons/clear.svg", 24, 24));
@@ -161,6 +165,9 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
 
         cboVaiTro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Chủ trọ ", "Người thuê" }));
 
+        jLabel7.setFont(new java.awt.Font("Helvetica Neue", 3, 14)); // NOI18N
+        jLabel7.setText("Ngày sinh");
+
         javax.swing.GroupLayout pnlInfoLayout = new javax.swing.GroupLayout(pnlInfo);
         pnlInfo.setLayout(pnlInfoLayout);
         pnlInfoLayout.setHorizontalGroup(
@@ -172,27 +179,34 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 208, Short.MAX_VALUE))
                 .addGap(123, 123, 123)
                 .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel1)
-                        .addComponent(txtHoTen, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
-                        .addComponent(txtMatKhau)
-                        .addComponent(txtEmail)
-                        .addComponent(txtSDT))
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(txtSoCCCDnCMND, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel9)
-                        .addComponent(jLabel8)
-                        .addComponent(cboTrangThaiHoatDong, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cboVaiTro, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cboDiaChi, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel5))
-                .addGap(57, 57, 57))
+                    .addGroup(pnlInfoLayout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(pnlInfoLayout.createSequentialGroup()
+                        .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(dateNgaySinh, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
+                            .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel1)
+                                    .addComponent(txtHoTen, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
+                                    .addComponent(txtMatKhau)
+                                    .addComponent(txtEmail)
+                                    .addComponent(txtSDT))
+                                .addComponent(jLabel2)
+                                .addComponent(jLabel3)
+                                .addComponent(jLabel4)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                        .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtSoCCCDnCMND, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel9)
+                                .addComponent(jLabel8)
+                                .addComponent(cboTrangThaiHoatDong, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(cboVaiTro, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(cboDiaChi, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel5))
+                        .addGap(57, 57, 57))))
         );
         pnlInfoLayout.setVerticalGroup(
             pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -235,26 +249,30 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                                 .addComponent(cboVaiTro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(dateNgaySinh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         tblNguoiThue.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID_NguoiDung", "Tên người dùng", "Số điện thoại", "Email", "Mật khẩu", "Địa chỉ", "Số CMNN/CCCD", "Ảnh trước CCCD", "Ảnh sau CCCD", "Vai trò", "Trạng thái", ""
+                "ID_NguoiDung", "Tên người dùng", "Số điện thoại", "Email", "Mật khẩu", "Ngày sinh", "Địa chỉ", "Số CMNN/CCCD", "Ảnh trước CCCD", "Ảnh sau CCCD", "Vai trò", "Trạng thái", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -444,7 +462,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                         .addComponent(btnMovePrev, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(89, 89, 89))
+                .addGap(48, 48, 48))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -461,7 +479,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -573,6 +591,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
     private javax.swing.JComboBox<ProvinceApiService.Province> cboDiaChi;
     private javax.swing.JComboBox<String> cboTrangThaiHoatDong;
     private javax.swing.JComboBox<String> cboVaiTro;
+    private com.toedter.calendar.JDateChooser dateNgaySinh;
     private javax.swing.ButtonGroup groupTrangThaiHoatDong;
     private javax.swing.ButtonGroup groupVaiTro;
     private javax.swing.JLabel jLabel1;
@@ -582,6 +601,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -616,6 +636,12 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
             txtSoCCCDnCMND.setText(nguoiThue.getCccdCmnn()!= null ? nguoiThue.getCccdCmnn(): "");
             txtEmail.setText(nguoiThue.getEmail() != null ? nguoiThue.getEmail() : "");
             txtMatKhau.setText(nguoiThue.getMatKhau() != null && !nguoiThue.getMatKhau().isEmpty() ? "••••••••" : "");
+            
+            if (nguoiThue.getNamSinh() != null) {
+                dateNgaySinh.setDate(nguoiThue.getNamSinh());
+            } else {
+                dateNgaySinh.setDate(null);
+            }
             
             if (nguoiThue.getDiaChi() != null && !nguoiThue.getDiaChi().isEmpty()) {
                 String diaChi = nguoiThue.getDiaChi();
@@ -705,6 +731,10 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
             nguoiThue.setSoDienThoai(txtSDT.getText().trim());
             nguoiThue.setCccdCmnn(txtSoCCCDnCMND.getText().trim());
             nguoiThue.setEmail(txtEmail.getText().trim());
+            
+            // Xử lý ngày sinh
+            Date ngaySinh = dateNgaySinh.getDate();
+            nguoiThue.setNamSinh(ngaySinh);
             String password = txtMatKhau.getText().trim();
             if (!password.isEmpty() && !password.equals("••••••••")) {
                 nguoiThue.setMatKhau(password);
@@ -792,12 +822,12 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
             DefaultTableModel model = new DefaultTableModel() {
                 @Override
                 public boolean isCellEditable(int row, int column) {
-                    return column == 11; 
+                    return column == 12; // Cột "Chọn" là cột thứ 13 (index 12)
                 }
                 
                 @Override
                 public Class<?> getColumnClass(int columnIndex) {
-                    if (columnIndex == 11) { 
+                    if (columnIndex == 12) { // Cột "Chọn" là Boolean
                         return Boolean.class;
                     }
                     return String.class;
@@ -805,7 +835,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
             };
             
             String[] columnNames = {
-                "Mã người dùng", "Tên người dùng", "Số điện thoại", "Số CCCD/CMNN", "Email", 
+                "Mã người dùng", "Tên người dùng", "Số điện thoại", "Số CCCD/CMNN", "Email", "Ngày sinh",
                 "Địa chỉ", "Ảnh trước CCCD", "Ảnh sau CCCD", "Vai trò", "Trạng thái", "Mật khẩu", "Chọn"
             };
             model.setColumnIdentifiers(columnNames);
@@ -817,6 +847,8 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                     nguoiThue.getSoDienThoai() != null ? nguoiThue.getSoDienThoai() : "N/A",
                     nguoiThue.getCccdCmnn()!= null ? nguoiThue.getCccdCmnn(): "N/A",
                     nguoiThue.getEmail() != null ? nguoiThue.getEmail() : "N/A",
+                    // Thêm ngày sinh
+                    nguoiThue.getNamSinh() != null ? XDate.format(nguoiThue.getNamSinh(), "dd/MM/yyyy") : "N/A",
                     nguoiThue.getDiaChi() != null ? nguoiThue.getDiaChi() : "N/A",
                     nguoiThue.getAnhTruocCccd()!= null && !nguoiThue.getAnhTruocCccd().isEmpty() ? "Có ảnh" : "Chưa có",
                     nguoiThue.getAnhSauCccd()!= null && !nguoiThue.getAnhSauCccd().isEmpty() ? "Có ảnh" : "Chưa có",
@@ -990,9 +1022,9 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
     
     private void setCheckedAll(boolean checked) {
         try {
-            if (tblNguoiThue.getColumnCount() > 11) {
+            if (tblNguoiThue.getColumnCount() > 12) {
                 for (int i = 0; i < tblNguoiThue.getRowCount(); i++) {
-                    tblNguoiThue.setValueAt(checked, i, 11);
+                    tblNguoiThue.setValueAt(checked, i, 12);
                 }
             }
         } catch (Exception e) {
@@ -1014,8 +1046,8 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
             List<Integer> idsToDelete = new ArrayList<>();
             
             for (int i = 0; i < tblNguoiThue.getRowCount(); i++) {
-                if (tblNguoiThue.getColumnCount() > 11) {
-                    Boolean isChecked = (Boolean) tblNguoiThue.getValueAt(i, 11);
+                if (tblNguoiThue.getColumnCount() > 12) {
+                    Boolean isChecked = (Boolean) tblNguoiThue.getValueAt(i, 12);
                     if (isChecked != null && isChecked) {
                         Integer id = (Integer) tblNguoiThue.getValueAt(i, 0);
                         idsToDelete.add(id);

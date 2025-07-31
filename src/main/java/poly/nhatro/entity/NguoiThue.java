@@ -1,6 +1,7 @@
 package poly.nhatro.entity;
 
 import lombok.*;
+import java.util.Date;
 
 
 /**
@@ -23,5 +24,6 @@ public class NguoiThue {
     private String trangThai; // Match database column (String, not boolean)
     private String diaChi;
     private String vaiTro; // Match database column (String, not Boolean)
+    private Date namSinh; // Match database column namSinh
     
 }
