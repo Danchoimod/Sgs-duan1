@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package poly.nhatro.ui;
-
 import poly.nhatro.entity.DienNuoc;
 import poly.nhatro.dao.impl.DienNuocDAOImpl;
 import poly.nhatro.dao.DienNuocDAO;
@@ -30,15 +29,17 @@ import java.io.FileOutputStream;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.table.TableModel;
+import java.text.SimpleDateFormat; // Thêm import cho SimpleDateFormat
+import java.util.Date; // Thêm import cho Date
 
 public class DienNuocPanel extends javax.swing.JPanel implements dienNuocController {
-
     private DienNuocDAO dienNuocDao;
     private ChiNhanhDAO chiNhanhDao;
     private PhongDaoImpl phongDao;
     private Map<String, Integer> chiNhanhMap;
     private int currentIndex = -1;
     private List<DienNuoc> currentList;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Định dạng ngày tháng
 
     public DienNuocPanel() {
         initComponents();
@@ -70,16 +71,22 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         lblHopDong5 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        txtSoDien = new javax.swing.JTextField();
+        txtSoDienCu = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        txtSoNuoc = new javax.swing.JTextField();
+        txtSoNuocCu = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         cboChiNhanh = new javax.swing.JComboBox<>();
         btnLocTheoChiNhanh = new javax.swing.JButton();
         txtMaPhong = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         txtDienNuoc = new javax.swing.JTextField();
+        txtSoDienMoi = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        txtSoNuocMoi = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        txtThangNam = new javax.swing.JTextField();
         btnThem = new javax.swing.JButton();
         btnSua = new javax.swing.JButton();
         btnXoa = new javax.swing.JButton();
@@ -116,10 +123,10 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         jLabel2.setText("Mã phòng");
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel6.setText("Số nước");
+        jLabel6.setText("Số nước cũ");
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel7.setText("Số điện");
+        jLabel7.setText("Số điện cũ");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("Chi nhánh");
@@ -141,6 +148,15 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel8.setText("Mã Điện Nước");
 
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel9.setText("Số điện mới");
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel10.setText("Số nước mới");
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel3.setText("Tháng năm");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -159,16 +175,28 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                             .addComponent(jLabel6))
                         .addGap(12, 12, 12)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtSoNuoc)
+                            .addComponent(txtSoNuocCu)
                             .addComponent(txtMaPhong)
-                            .addComponent(txtSoDien, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(txtSoDienCu, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtDienNuoc, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnLocTheoChiNhanh)
-                .addGap(55, 55, 55))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(txtDienNuoc, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 312, Short.MAX_VALUE)
+                        .addComponent(btnLocTheoChiNhanh)
+                        .addGap(55, 55, 55))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtSoDienMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSoNuocMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtThangNam, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -183,15 +211,22 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                 .addGap(3, 3, 3)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
-                    .addComponent(txtMaPhong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtMaPhong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3)
+                        .addComponent(txtThangNam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(6, 6, 6)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(txtSoDien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtSoDienCu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSoDienMoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
                 .addGap(9, 9, 9)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtSoNuoc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
+                    .addComponent(txtSoNuocCu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel10)
+                    .addComponent(txtSoNuocMoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
@@ -225,15 +260,17 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
 
         tblDienNuoc.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Chi nhánh", "Mã điện nước", "Giá điện", "Giá nước", "Mã phòng"
+                "Chi nhánh", "Mã điện nước", "mã phòng", "Giá điện cũ", "Giá điện mới", "Giá nước cũ", "Giá nước mới", "Tháng năm"
             }
         ));
         tblDienNuoc.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -288,7 +325,7 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                 .addGap(26, 26, 26)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -328,7 +365,7 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
 
     private void cboChiNhanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboChiNhanhActionPerformed
         // TODO add your handling code here:
-      filterAndFillTable();
+     
     }//GEN-LAST:event_cboChiNhanhActionPerformed
 
 
@@ -341,10 +378,13 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     private javax.swing.JButton btnXoa;
     private javax.swing.JComboBox<String> cboChiNhanh;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
@@ -352,11 +392,14 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     private javax.swing.JTable tblDienNuoc;
     private javax.swing.JTextField txtDienNuoc;
     private javax.swing.JTextField txtMaPhong;
-    private javax.swing.JTextField txtSoDien;
-    private javax.swing.JTextField txtSoNuoc;
+    private javax.swing.JTextField txtSoDienCu;
+    private javax.swing.JTextField txtSoDienMoi;
+    private javax.swing.JTextField txtSoNuocCu;
+    private javax.swing.JTextField txtSoNuocMoi;
+    private javax.swing.JTextField txtThangNam;
     // End of variables declaration//GEN-END:variables
 
-    @Override
+   @Override
     public void open() {
 // Method can be used to open panel, no specific logic needed here
     }
@@ -375,8 +418,15 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             } else {
                 txtMaPhong.setText("");
             }
-            txtSoDien.setText(String.valueOf(entity.getGiaDien()));
-            txtSoNuoc.setText(String.valueOf(entity.getGiaNuoc()));
+            txtSoDienCu.setText(String.valueOf(entity.getSoDienCu())); // Đã sửa
+            txtSoDienMoi.setText(String.valueOf(entity.getSoDienMoi())); // Thêm
+            txtSoNuocCu.setText(String.valueOf(entity.getSoNuocCu()));   // Đã sửa
+            txtSoNuocMoi.setText(String.valueOf(entity.getSoNuocMoi())); // Thêm
+            if (entity.getThangNam() != null) {
+                txtThangNam.setText(dateFormat.format(entity.getThangNam())); // Thêm định dạng ngày tháng
+            } else {
+                txtThangNam.setText("");
+            }
         } else {
             clear();
         }
@@ -405,40 +455,109 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             e.printStackTrace();
             return false;
         }
-        if (txtSoDien.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Số điện không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtSoDien.requestFocusInWindow();
+        
+        // Validate soDienCu
+        if (txtSoDienCu.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Số điện cũ không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            txtSoDienCu.requestFocusInWindow();
             return false;
         }
         try {
-            int soDien = Integer.parseInt(txtSoDien.getText());
-            if (soDien < 0) {
-                JOptionPane.showMessageDialog(this, "Số điện phải là số nguyên không âm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                txtSoDien.requestFocusInWindow();
+            int soDienCu = Integer.parseInt(txtSoDienCu.getText());
+            if (soDienCu < 0) {
+                JOptionPane.showMessageDialog(this, "Số điện cũ phải là số nguyên không âm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                txtSoDienCu.requestFocusInWindow();
                 return false;
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Số điện phải là một số nguyên hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtSoDien.requestFocusInWindow();
+            JOptionPane.showMessageDialog(this, "Số điện cũ phải là một số nguyên hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            txtSoDienCu.requestFocusInWindow();
             return false;
         }
-        if (txtSoNuoc.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Số nước không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtSoNuoc.requestFocusInWindow();
+
+        // Validate soDienMoi
+        if (txtSoDienMoi.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Số điện mới không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            txtSoDienMoi.requestFocusInWindow();
             return false;
         }
         try {
-            int soNuoc = Integer.parseInt(txtSoNuoc.getText());
-            if (soNuoc < 0) {
-                JOptionPane.showMessageDialog(this, "Số nước phải là số nguyên không âm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                txtSoNuoc.requestFocusInWindow();
+            int soDienMoi = Integer.parseInt(txtSoDienMoi.getText());
+            if (soDienMoi < 0) {
+                JOptionPane.showMessageDialog(this, "Số điện mới phải là số nguyên không âm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                txtSoDienMoi.requestFocusInWindow();
+                return false;
+            }
+            // Thêm kiểm tra soDienMoi >= soDienCu
+            if (Integer.parseInt(txtSoDienCu.getText()) > soDienMoi) {
+                JOptionPane.showMessageDialog(this, "Số điện mới phải lớn hơn hoặc bằng số điện cũ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                txtSoDienMoi.requestFocusInWindow();
                 return false;
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Số nước phải là một số nguyên hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtSoNuoc.requestFocusInWindow();
+            JOptionPane.showMessageDialog(this, "Số điện mới phải là một số nguyên hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            txtSoDienMoi.requestFocusInWindow();
             return false;
         }
+
+        // Validate soNuocCu
+        if (txtSoNuocCu.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Số nước cũ không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            txtSoNuocCu.requestFocusInWindow();
+            return false;
+        }
+        try {
+            int soNuocCu = Integer.parseInt(txtSoNuocCu.getText());
+            if (soNuocCu < 0) {
+                JOptionPane.showMessageDialog(this, "Số nước cũ phải là số nguyên không âm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                txtSoNuocCu.requestFocusInWindow();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số nước cũ phải là một số nguyên hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            txtSoNuocCu.requestFocusInWindow();
+            return false;
+        }
+
+        // Validate soNuocMoi
+        if (txtSoNuocMoi.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Số nước mới không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            txtSoNuocMoi.requestFocusInWindow();
+            return false;
+        }
+        try {
+            int soNuocMoi = Integer.parseInt(txtSoNuocMoi.getText());
+            if (soNuocMoi < 0) {
+                JOptionPane.showMessageDialog(this, "Số nước mới phải là số nguyên không âm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                txtSoNuocMoi.requestFocusInWindow();
+                return false;
+            }
+            // Thêm kiểm tra soNuocMoi >= soNuocCu
+            if (Integer.parseInt(txtSoNuocCu.getText()) > soNuocMoi) {
+                JOptionPane.showMessageDialog(this, "Số nước mới phải lớn hơn hoặc bằng số nước cũ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                txtSoNuocMoi.requestFocusInWindow();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số nước mới phải là một số nguyên hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            txtSoNuocMoi.requestFocusInWindow();
+            return false;
+        }
+
+        // Validate thangNam
+        if (txtThangNam.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Tháng năm không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            txtThangNam.requestFocusInWindow();
+            return false;
+        }
+        try {
+            dateFormat.parse(txtThangNam.getText());
+        } catch (java.text.ParseException e) {
+            JOptionPane.showMessageDialog(this, "Tháng năm không hợp lệ. Vui lòng nhập theo định dạng YYYY-MM-DD.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            txtThangNam.requestFocusInWindow();
+            return false;
+        }
+
         return true;
     }
 
@@ -448,12 +567,11 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             return null;
         }
         DienNuoc dienNuoc = new DienNuoc();
-// Giữ lại ID_DienNuoc nếu đang ở chế độ sửa
+        // Giữ lại ID_DienNuoc nếu đang ở chế độ sửa
         if (currentIndex >= 0 && currentIndex < currentList.size()) {
             dienNuoc.setIdDienNuoc(currentList.get(currentIndex).getIdDienNuoc());
         }
-// ID_DienNuoc từ txtDienNuoc chỉ dùng để hiển thị, không dùng để tạo/cập nhật entity
-// nếu đang thêm mới, ID sẽ được DB tự động sinh.
+
         String soPhongText = txtMaPhong.getText();
         Integer idPhong = null;
         if (soPhongText != null && !soPhongText.isEmpty()) {
@@ -472,11 +590,18 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             return null;
         }
         dienNuoc.setIdPhong(idPhong);
+
         try {
-            dienNuoc.setGiaDien(Integer.parseInt(txtSoDien.getText()));
-            dienNuoc.setGiaNuoc(Integer.parseInt(txtSoNuoc.getText()));
+            dienNuoc.setSoDienCu(Integer.parseInt(txtSoDienCu.getText()));     // Đã sửa
+            dienNuoc.setSoDienMoi(Integer.parseInt(txtSoDienMoi.getText()));   // Thêm
+            dienNuoc.setSoNuocCu(Integer.parseInt(txtSoNuocCu.getText()));     // Đã sửa
+            dienNuoc.setSoNuocMoi(Integer.parseInt(txtSoNuocMoi.getText()));   // Thêm
+            dienNuoc.setThangNam(dateFormat.parse(txtThangNam.getText()));     // Thêm
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Giá điện hoặc giá nước không hợp lệ. Vui lòng nhập số nguyên.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Số điện hoặc số nước không hợp lệ. Vui lòng nhập số nguyên.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return null;
+        } catch (java.text.ParseException e) {
+            JOptionPane.showMessageDialog(this, "Tháng năm không hợp lệ. Vui lòng nhập theo định dạng YYYY-MM-DD.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return null;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi lấy dữ liệu từ form: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -498,6 +623,15 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                 return;
             }
             try {
+                // Kiểm tra xem đã tồn tại bản ghi điện nước cho phòng và tháng năm này chưa
+                DienNuoc existingDienNuoc = dienNuocDao.findByPhongThangNam(newDienNuoc.getIdPhong(), 
+                                                                              newDienNuoc.getThangNam().getMonth() + 1, // Calendar month is 0-indexed
+                                                                              newDienNuoc.getThangNam().getYear() + 1900); // Year is 1900-indexed
+                if (existingDienNuoc != null) {
+                    JOptionPane.showMessageDialog(this, "Đã tồn tại bản ghi điện nước cho phòng này trong tháng và năm đã chọn.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 dienNuocDao.create(newDienNuoc);
                 JOptionPane.showMessageDialog(this, "Thêm mới thành công!");
                 filterAndFillTable(); // Cập nhật lại bảng sau khi thêm
@@ -529,6 +663,16 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             }
             try {
                 updatedDienNuoc.setIdDienNuoc(currentList.get(currentIndex).getIdDienNuoc()); // Đảm bảo ID đúng
+                
+                // Kiểm tra trùng lặp tháng năm và phòng, nhưng bỏ qua bản ghi hiện tại đang sửa
+                DienNuoc existingDienNuoc = dienNuocDao.findByPhongThangNam(updatedDienNuoc.getIdPhong(), 
+                                                                              updatedDienNuoc.getThangNam().getMonth() + 1, 
+                                                                              updatedDienNuoc.getThangNam().getYear() + 1900);
+                if (existingDienNuoc != null && existingDienNuoc.getIdDienNuoc() != updatedDienNuoc.getIdDienNuoc()) {
+                    JOptionPane.showMessageDialog(this, "Đã tồn tại bản ghi điện nước cho phòng này trong tháng và năm đã chọn.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 dienNuocDao.update(updatedDienNuoc);
                 JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
                 filterAndFillTable(); // Cập nhật lại bảng sau khi sửa
@@ -570,10 +714,13 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     @Override
     public void clear() {
         cboChiNhanh.setSelectedIndex(0);
-        txtSoDien.setText("");
-        txtSoNuoc.setText("");
+        txtSoDienCu.setText("");
+        txtSoDienMoi.setText(""); // Thêm
+        txtSoNuocCu.setText("");
+        txtSoNuocMoi.setText(""); // Thêm
         txtDienNuoc.setText("");
         txtMaPhong.setText("");
+        txtThangNam.setText(""); // Thêm
         currentIndex = -1;
         setEditable(true);
         txtDienNuoc.setEditable(false); // Đảm bảo ID không sửa được
@@ -596,16 +743,19 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     @Override
     public void setEditable(boolean editable) {
         txtMaPhong.setEditable(editable);
-        txtSoDien.setEditable(editable);
-        txtSoNuoc.setEditable(editable);
+        txtSoDienCu.setEditable(editable);
+        txtSoDienMoi.setEditable(editable); // Thêm
+        txtSoNuocCu.setEditable(editable);
+        txtSoNuocMoi.setEditable(editable); // Thêm
+        txtThangNam.setEditable(editable); // Thêm
         cboChiNhanh.setEnabled(editable);
         btnThem.setEnabled(editable);
         btnSua.setEnabled(editable);
         btnXoa.setEnabled(editable);
         txtDienNuoc.setEditable(false); // Mã điện nước không cho sửa
     }
-// Phương thức mới để vừa lọc vừa điền dữ liệu vào bảng
 
+    // Phương thức mới để vừa lọc vừa điền dữ liệu vào bảng
     public void filterAndFillTable() {
         DefaultTableModel model = (DefaultTableModel) tblDienNuoc.getModel();
         model.setRowCount(0); // Xóa tất cả các hàng hiện có
@@ -619,31 +769,42 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                 if (idChiNhanh != null) {
                     filteredList = dienNuocDao.findByChiNhanhId(idChiNhanh); // Lọc theo ID chi nhánh
                 } else {
-// Trường hợp không tìm thấy ID chi nhánh (có thể xảy ra nếu dữ liệu bị lỗi)
+                    // Trường hợp không tìm thấy ID chi nhánh (có thể xảy ra nếu dữ liệu bị lỗi)
                     filteredList = new ArrayList<>(); // Trả về danh sách rỗng
                     JOptionPane.showMessageDialog(this, "Không tìm thấy ID cho chi nhánh đã chọn: " + selectedChiNhanhName, "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
             currentList = filteredList; // Cập nhật currentList
-// --- BẮT ĐẦU ĐOẠN MÃ DEBUG ---
+
+            // --- BẮT ĐẦU ĐOẠN MÃ DEBUG ---
             System.out.println("--- DEBUG: Kiểm tra giá trị ID_DienNuoc từ currentList sau khi lọc ---");
             if (currentList != null) {
                 for (DienNuoc dn : currentList) {
-                    System.out.println(" ID_DienNuoc: " + dn.getIdDienNuoc() + ", GiaDien: " + dn.getGiaDien() + ", GiaNuoc: " + dn.getGiaNuoc() + ", MaPhong: " + dn.getSoPhong() + ", TenChiNhanh: " + dn.getTenChiNhanh());
+                    System.out.println(" ID_DienNuoc: " + dn.getIdDienNuoc() + 
+                                       ", SoDienCu: " + dn.getSoDienCu() + 
+                                       ", SoDienMoi: " + dn.getSoDienMoi() +
+                                       ", SoNuocCu: " + dn.getSoNuocCu() + 
+                                       ", SoNuocMoi: " + dn.getSoNuocMoi() +
+                                       ", ThangNam: " + (dn.getThangNam() != null ? dateFormat.format(dn.getThangNam()) : "N/A") +
+                                       ", MaPhong: " + dn.getSoPhong() + 
+                                       ", TenChiNhanh: " + dn.getTenChiNhanh());
                 }
             } else {
                 System.out.println(" currentList is null or empty.");
             }
             System.out.println("--- KẾT THÚC ĐOẠN MÃ DEBUG ---");
-// --- KẾT THÚC ĐOẠN MÃ DEBUG ---
-// Điền dữ liệu vào bảng từ currentList đã lọc
+
+            // Điền dữ liệu vào bảng từ currentList đã lọc
             for (DienNuoc dn : currentList) {
                 Object[] row = {
                     dn.getTenChiNhanh(),
                     dn.getIdDienNuoc(),
-                    dn.getGiaDien(),
-                    dn.getGiaNuoc(),
-                    dn.getSoPhong()
+                    dn.getSoPhong(),
+                    dn.getSoDienCu(),
+                    dn.getSoDienMoi(),
+                    dn.getSoNuocCu(),
+                    dn.getSoNuocMoi(),
+                    dn.getThangNam() != null ? dateFormat.format(dn.getThangNam()) : "" // Định dạng ngày tháng
                 };
                 model.addRow(row);
             }
@@ -655,8 +816,8 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             e.printStackTrace();
         }
     }
-// fillToTable giờ chỉ gọi filterAndFillTable()
 
+    // fillToTable giờ chỉ gọi filterAndFillTable()
     @Override
     public void fillToTable() {
         filterAndFillTable();
@@ -698,7 +859,7 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa " + selectedRows.length + " bản ghi đã chọn?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             try {
-// Xóa từ dưới lên để tránh lỗi index khi xóa
+                // Xóa từ dưới lên để tránh lỗi index khi xóa
                 for (int i = selectedRows.length - 1; i >= 0; i--) {
                     int modelRow = tblDienNuoc.convertRowIndexToModel(selectedRows[i]);
                     int dienNuocIdToDelete = currentList.get(modelRow).getIdDienNuoc();
