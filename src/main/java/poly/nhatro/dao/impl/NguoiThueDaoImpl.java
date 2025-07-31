@@ -16,8 +16,9 @@ import poly.nhatro.util.XJdbc;
  */
 public class NguoiThueDaoImpl implements NguoiThueDAO, CrudDao<NguoiThue, Integer> {
 
-    String createSql = "INSERT INTO NguoiDung(tenNguoiDung, soDienThoai, email, matKhau, diaChi, cccdCmnn, anhTruocCccd, anhSauCccd, vaiTro, trangThai) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    String updateSql = "UPDATE NguoiDung SET tenNguoiDung = ?, soDienThoai = ?, email = ?, matKhau = ?, diaChi = ?, cccdCmnn = ?, anhTruocCccd = ?, anhSauCccd = ?, vaiTro = ?, trangThai = ? WHERE ID_NguoiDung = ?";
+    
+    String createSql = "INSERT INTO NguoiDung(tenNguoiDung, soDienThoai, email, matKhau, namSinh, diaChi, cccdCmnn, anhTruocCccd, anhSauCccd, vaiTro, trangThai) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String updateSql = "UPDATE NguoiDung SET tenNguoiDung = ?, soDienThoai = ?, email = ?, matKhau = ?, namSinh = ?, diaChi = ?, cccdCmnn = ?, anhTruocCccd = ?, anhSauCccd = ?, vaiTro = ?, trangThai = ? WHERE ID_NguoiDung = ?";
     String deleteSql = "DELETE FROM NguoiDung WHERE ID_NguoiDung = ?";
     String findAllSql = "SELECT * FROM NguoiDung";
     String findByIdSql = "SELECT * FROM NguoiDung WHERE ID_NguoiDung = ?";
@@ -43,6 +44,7 @@ public class NguoiThueDaoImpl implements NguoiThueDAO, CrudDao<NguoiThue, Intege
                 entity.getSoDienThoai(),
                 entity.getEmail(),
                 entity.getMatKhau(),
+                entity.getNamSinh(),
                 entity.getDiaChi(),
                 entity.getCccdCmnn(),
                 entity.getAnhTruocCccd(),
@@ -60,6 +62,7 @@ public class NguoiThueDaoImpl implements NguoiThueDAO, CrudDao<NguoiThue, Intege
                 entity.getSoDienThoai(),
                 entity.getEmail(),
                 entity.getMatKhau(),
+                entity.getNamSinh(),
                 entity.getDiaChi(),
                 entity.getCccdCmnn(),
                 entity.getAnhTruocCccd(),

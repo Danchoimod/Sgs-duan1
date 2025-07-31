@@ -4,7 +4,6 @@ DROP DATABASE QuanLyNhatro_SGS;
 
 CREATE DATABASE QuanLyNhatro_SGS;
 
-
 USE QuanLyNhatro_SGS;
 GO
 
@@ -15,6 +14,7 @@ CREATE TABLE NguoiDung
     soDienThoai VARCHAR(15) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     matKhau VARCHAR(255) NOT NULL,
+    namSinh DATE NOT NULL,
     diaChi NVARCHAR(255),
     cccdCmnn VARCHAR(20) UNIQUE NOT NULL,
     anhTruocCccd VARCHAR(255) NOT NULL,
@@ -115,20 +115,21 @@ CREATE TABLE OTP
 );
 INSERT INTO NguoiDung
     (
-    tenNguoiDung, soDienThoai, email, matKhau, diaChi, cccdCmnn,
+    tenNguoiDung, soDienThoai, email, matKhau, namSinh, diaChi, cccdCmnn,
     anhTruocCccd, anhSauCccd, vaiTro, trangThai
     )
 VALUES
-    (N'Nguyễn Văn A', '0901234567', 'nguyenvana@example.com', 'hashed_pass_A', N'Hà Nội', '123456789012', 'url_anh_truoc_A.jpg', 'url_anh_sau_A.jpg', N'Người thuê', N'Hoạt động'),
-    (N'Trần Thị B', '0902345678', 'tranthib@example.com', 'hashed_pass_B', N'Thành phố Hồ Chí Minh', '234567890123', 'url_anh_truoc_B.jpg', 'url_anh_sau_B.jpg', N'Người thuê', N'Hoạt động'),
-    (N'Lê Văn C', '0903456789', 'levanc@example.com', 'hashed_pass_C', N'Đà Nẵng', '345678901234', 'url_anh_truoc_C.jpg', 'url_anh_sau_C.jpg', N'Chủ trọ', N'Hoạt động'),
-    (N'Phạm Thị D', '0904567890', 'phamthid@example.com', 'hashed_pass_D', N'Cần Thơ', '456789012345', 'url_anh_truoc_D.jpg', 'url_anh_sau_D.jpg', N'Người thuê', N'Hoạt động'),
-    (N'Hoàng Văn E', '0905678901', 'hoangvane@example.com', 'hashed_pass_E', N'Hải Phòng', '567890123456', 'url_anh_truoc_E.jpg', 'url_anh_sau_E.jpg', N'Người thuê', N'Hoạt động'),
-    (N'Nguyễn Thị F', '0906789012', 'nguyenthif@example.com', 'hashed_pass_F', N'Khánh Hòa', '678901234567', 'url_anh_truoc_F.jpg', 'url_anh_sau_F.jpg', N'Người thuê', N'Hoạt động'),
-    (N'Trần Văn G', '0907890123', 'tranvang@example.com', 'hashed_pass_G', N'Đồng Nai', '789012345678', 'url_anh_truoc_G.jpg', 'url_anh_sau_G.jpg', N'Người thuê', N'Hoạt động'),
-    (N'Lê Thị H', '0908901234', 'lethih@example.com', 'hashed_pass_H', N'Gia Lai', '890123456789', 'url_anh_truoc_H.jpg', 'url_anh_sau_H.jpg', N'Người thuê', N'Hoạt động'),
-    (N'Phạm Văn I', '0909012345', 'phamvani@example.com', 'hashed_pass_I', N'An Giang', '901234567890', 'url_anh_truoc_I.jpg', 'url_anh_sau_I.jpg', N'Người thuê', N'Hoạt động'),
-    (N'Hoàng Thị K', '0900123456', 'hoangthik@example.com', 'hashed_pass_K', N'Thừa Thiên Huế', '012345678901', 'url_anh_truoc_K.jpg', 'url_anh_sau_K.jpg', N'Chủ trọ', N'Hoạt động');
+    (N'Nguyễn Văn A', '0901234567', 'nguyenvana@example.com', 'hashed_pass_A', '1990-01-01', N'Hà Nội', '123456789012', 'url_anh_truoc_A.jpg', 'url_anh_sau_A.jpg', N'Người thuê', N'Hoạt động'),
+    (N'Trần Thị B', '0902345678', 'tranthib@example.com', 'hashed_pass_B', '1992-03-15', N'TP. Hồ Chí Minh', '234567890123', 'url_anh_truoc_B.jpg', 'url_anh_sau_B.jpg', N'Người thuê', N'Hoạt động'),
+    (N'Lê Văn C', '0903456789', 'levanc@example.com', 'hashed_pass_C', '1988-07-20', N'Đà Nẵng', '345678901234', 'url_anh_truoc_C.jpg', 'url_anh_sau_C.jpg', N'Chủ trọ', N'Hoạt động'),
+    (N'Phạm Thị D', '0904567890', 'phamthid@example.com', 'hashed_pass_D', '1995-05-10', N'Cần Thơ', '456789012345', 'url_anh_truoc_D.jpg', 'url_anh_sau_D.jpg', N'Người thuê', N'Hoạt động'),
+    (N'Hoàng Văn E', '0905678901', 'hoangvane@example.com', 'hashed_pass_E', '1987-12-25', N'Hải Phòng', '567890123456', 'url_anh_truoc_E.jpg', 'url_anh_sau_E.jpg', N'Người thuê', N'Hoạt động'),
+    (N'Nguyễn Thị F', '0906789012', 'nguyenthif@example.com', 'hashed_pass_F', '1993-09-09', N'Khánh Hòa', '678901234567', 'url_anh_truoc_F.jpg', 'url_anh_sau_F.jpg', N'Người thuê', N'Hoạt động'),
+    (N'Trần Văn G', '0907890123', 'tranvang@example.com', 'hashed_pass_G', '1991-11-30', N'Đồng Nai', '789012345678', 'url_anh_truoc_G.jpg', 'url_anh_sau_G.jpg', N'Người thuê', N'Hoạt động'),
+    (N'Lê Thị H', '0908901234', 'lethih@example.com', 'hashed_pass_H', '1994-06-06', N'Gia Lai', '890123456789', 'url_anh_truoc_H.jpg', 'url_anh_sau_H.jpg', N'Người thuê', N'Hoạt động'),
+    (N'Phạm Văn I', '0909012345', 'phamvani@example.com', 'hashed_pass_I', '1989-10-01', N'An Giang', '901234567890', 'url_anh_truoc_I.jpg', 'url_anh_sau_I.jpg', N'Người thuê', N'Hoạt động'),
+    (N'Hoàng Thị K', '0900123456', 'hoangthik@example.com', 'hashed_pass_K', '1990-04-04', N'Thừa Thiên Huế', '012345678901', 'url_anh_truoc_K.jpg', 'url_anh_sau_K.jpg', N'Chủ trọ', N'Hoạt động');
+
 INSERT INTO ChiNhanh
     (tenChiNhanh, diaChi, giaDien, giaNuoc)
 VALUES
@@ -188,26 +189,29 @@ VALUES
     ('OTP003', 'phamthid@example.com', GETDATE()),
     ('OTP004', 'hoangvane@example.com', GETDATE());
 
+-- =====================================================
+-- QUERY ĐƠN GIẢN CHỈ LẤY CÁC TRƯỜNG CẦN THIẾT CHO DOANHTHU
+-- (Giống như bảng hóa đơn nhưng tập trung vào doanh thu)
+-- =====================================================
+
 SELECT
-    nd.tenNguoiDung,
+    hdon.ID_HoaDon,
     p.soPhong,
-    dn.soDienCu,
-    dn.soDienMoi,
-    dn.soNuocCu,
-    dn.soNuocMoi,
-    (dn.soDienMoi - dn.soDienCu) AS soDien,
-    (dn.soNuocMoi - dn.soNuocCu) AS soNuoc,
     (dn.soDienMoi - dn.soDienCu) * cn.giaDien AS tienDien,
     (dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc AS tienNuoc,
     p.giaPhong AS tienPhong,
-    ((dn.soDienMoi - dn.soDienCu) * cn.giaDien +
-     (dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc +
+    ((dn.soDienMoi - dn.soDienCu) * cn.giaDien + 
+     (dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc + 
      p.giaPhong) AS tongTien,
+    hdon.ngayTao AS ngayThanhToan,
     hdon.trangThai AS trangThaiThanhToan
-FROM HopDong hd
-    JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung
+FROM HoaDon hdon
+    JOIN HopDong hd ON hdon.ID_HopDong = hd.ID_HopDong
     JOIN Phong p ON hd.ID_Phong = p.ID_Phong
     JOIN DienNuoc dn ON p.ID_Phong = dn.ID_Phong
     JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh
-    JOIN HoaDon hdon ON hd.ID_HopDong = hdon.ID_HopDong;
+ORDER BY hdon.ngayTao DESC;
 
+
+
+SELECT * FROM NguoiDung
