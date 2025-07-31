@@ -4,11 +4,10 @@
  */
 package poly.nhatro.controller;
 
-
 /**
  *
  * @author THACH VAN BACH
  */
-public interface DangNhapController extends MainController{
-    void login();
+public interface NhapOTPController extends MainController{
+    
 }
