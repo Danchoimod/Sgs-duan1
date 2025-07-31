@@ -3,25 +3,31 @@ package poly.nhatro.dao.impl;
 import java.util.List;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import poly.nhatro.dao.CrudDao;
 import poly.nhatro.dao.DienNuocDAO;
 import poly.nhatro.entity.DienNuoc;
 import poly.nhatro.util.XJdbc;
 import poly.nhatro.util.XQuery;
+import java.util.Date;
+import java.util.Calendar;
 
 public class DienNuocDAOImpl implements DienNuocDAO, CrudDao<DienNuoc, Integer>{
+
     // Định nghĩa các câu lệnh SQL dưới dạng hằng số chuỗi
-    String createSql = "INSERT INTO DienNuoc (GiaDien, GiaNuoc, ID_Phong) VALUES (?, ?, ?)";
-    String updateSql = "UPDATE DienNuoc SET GiaDien = ?, GiaNuoc = ?, ID_Phong = ? WHERE ID_DienNuoc = ?";
+    String createSql = "INSERT INTO DienNuoc (soDienCu, soDienMoi, soNuocCu, soNuocMoi, thangNam, ID_Phong) VALUES (?, ?, ?, ?, ?, ?)";
+    String updateSql = "UPDATE DienNuoc SET soDienCu = ?, soDienMoi = ?, soNuocCu = ?, soNuocMoi = ?, thangNam = ?, ID_Phong = ? WHERE ID_DienNuoc = ?";
     String deleteSql = "DELETE FROM DienNuoc WHERE ID_DienNuoc = ?";
-    // Cập nhật câu lệnh SELECT để JOIN với bảng Phong và ChiNhanh để lấy soPhong và tenChiNhanh
+    
+    // Cập nhật câu lệnh SELECT để JOIN với bảng Phong và ChiNhanh để lấy soPhong, tenChiNhanh, giaDien, giaNuoc, giaPhong
     // QUAN TRỌNG: Thêm AS idDienNuoc để XQuery có thể ánh xạ đúng vào thuộc tính idDienNuoc
-    String findAllSql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.GiaDien, dn.GiaNuoc, dn.ID_Phong, p.soPhong, cn.tenChiNhanh " +
+    String findAllSql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.soDienCu, dn.soDienMoi, dn.soNuocCu, dn.soNuocMoi, dn.thangNam, dn.ID_Phong, " +
+                        "p.soPhong, p.giaPhong AS giaPhong, cn.tenChiNhanh, cn.giaDien AS giaDienChiNhanh, cn.giaNuoc AS giaNuocChiNhanh " +
                         "FROM DienNuoc dn " +
                         "JOIN Phong p ON dn.ID_Phong = p.ID_Phong " +
                         "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh";
-    String findByIdSql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.GiaDien, dn.GiaNuoc, dn.ID_Phong, p.soPhong, cn.tenChiNhanh " +
+    
+    String findByIdSql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.soDienCu, dn.soDienMoi, dn.soNuocCu, dn.soNuocMoi, dn.thangNam, dn.ID_Phong, " +
+                         "p.soPhong, p.giaPhong AS giaPhong, cn.tenChiNhanh, cn.giaDien AS giaDienChiNhanh, cn.giaNuoc AS giaNuocChiNhanh " +
                          "FROM DienNuoc dn " +
                          "JOIN Phong p ON dn.ID_Phong = p.ID_Phong " +
                          "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
@@ -30,14 +36,15 @@ public class DienNuocDAOImpl implements DienNuocDAO, CrudDao<DienNuoc, Integer>{
     @Override
     public DienNuoc create(DienNuoc entity) {
         try {
-            // Thay vì cố gắng lấy ID tự động tạo, chỉ thực hiện lệnh UPDATE
             XJdbc.executeUpdate(createSql,
-                    entity.getGiaDien(),
-                    entity.getGiaNuoc(),
+                    entity.getSoDienCu(),
+                    entity.getSoDienMoi(),
+                    entity.getSoNuocCu(),
+                    entity.getSoNuocMoi(),
+                    entity.getThangNam(),
                     entity.getIdPhong()
             );
             System.out.println("Thêm DienNuoc thành công. ID sẽ được hiển thị sau khi làm mới.");
-            // ID của entity này sẽ không được cập nhật ngay lập tức nếu không có cơ chế lấy generated keys từ XJdbc
             return entity;
         } catch (RuntimeException ex) {
             System.err.println("Lỗi khi thêm DienNuoc: " + ex.getMessage());
@@ -49,8 +56,11 @@ public class DienNuocDAOImpl implements DienNuocDAO, CrudDao<DienNuoc, Integer>{
     public void update(DienNuoc entity) {
         try {
             int rowsAffected = XJdbc.executeUpdate(updateSql,
-                    entity.getGiaDien(),
-                    entity.getGiaNuoc(),
+                    entity.getSoDienCu(),
+                    entity.getSoDienMoi(),
+                    entity.getSoNuocCu(),
+                    entity.getSoNuocMoi(),
+                    entity.getThangNam(),
                     entity.getIdPhong(),
                     entity.getIdDienNuoc()
             );
@@ -110,7 +120,8 @@ public class DienNuocDAOImpl implements DienNuocDAO, CrudDao<DienNuoc, Integer>{
 
     @Override
     public List<DienNuoc> findByChiNhanhId(Integer idChiNhanh) {
-        String sql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.GiaDien, dn.GiaNuoc, dn.ID_Phong, p.soPhong, cn.tenChiNhanh " +
+        String sql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.soDienCu, dn.soDienMoi, dn.soNuocCu, dn.soNuocMoi, dn.thangNam, dn.ID_Phong, " +
+                     "p.soPhong, p.giaPhong AS giaPhong, cn.tenChiNhanh, cn.giaDien AS giaDienChiNhanh, cn.giaNuoc AS giaNuocChiNhanh " +
                      "FROM DienNuoc dn " +
                      "JOIN Phong p ON dn.ID_Phong = p.ID_Phong " +
                      "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
@@ -132,6 +143,22 @@ public class DienNuocDAOImpl implements DienNuocDAO, CrudDao<DienNuoc, Integer>{
             return XJdbc.getValue(sql, soPhong);
         } catch (RuntimeException ex) {
             System.err.println("Lỗi khi tìm ID_Phong theo soPhong: " + ex.getMessage());
+            throw ex;
+        }
+    }
+
+    @Override
+    public DienNuoc findByPhongThangNam(Integer idPhong, int thang, int nam) {
+        String sql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.soDienCu, dn.soDienMoi, dn.soNuocCu, dn.soNuocMoi, dn.thangNam, dn.ID_Phong, " +
+                     "p.soPhong, p.giaPhong AS giaPhong, cn.tenChiNhanh, cn.giaDien AS giaDienChiNhanh, cn.giaNuoc AS giaNuocChiNhanh " +
+                     "FROM DienNuoc dn " +
+                     "JOIN Phong p ON dn.ID_Phong = p.ID_Phong " +
+                     "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
+                     "WHERE dn.ID_Phong = ? AND MONTH(dn.thangNam) = ? AND YEAR(dn.thangNam) = ?";
+        try {
+            return XQuery.getSingleBean(DienNuoc.class, sql, idPhong, thang, nam);
+        } catch (RuntimeException ex) {
+            System.err.println("Lỗi khi tìm DienNuoc theo Phòng, Tháng, Năm: " + ex.getMessage());
             throw ex;
         }
     }

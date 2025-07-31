@@ -17,4 +17,14 @@ public interface DienNuocDAO extends CrudDao<DienNuoc, Integer>{
      * @return The Phong ID if found, otherwise null.
      */
     Integer findPhongIdBySoPhong(String soPhong);
+
+    /**
+     * Finds a DienNuoc record by room ID, month, and year.
+     * Used to check for duplicates before adding a new record.
+     * @param idPhong The ID of the room.
+     * @param thang The month.
+     * @param nam The year.
+     * @return The DienNuoc object if found, otherwise null.
+     */
+    DienNuoc findByPhongThangNam(Integer idPhong, int thang, int nam);
 }
