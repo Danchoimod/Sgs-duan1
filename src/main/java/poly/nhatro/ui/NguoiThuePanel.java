@@ -90,8 +90,8 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
         btnMovePrev = new javax.swing.JButton();
         btnMoveNext = new javax.swing.JButton();
         btnUncheckAll = new javax.swing.JButton();
-        jLabel11 = new javax.swing.JLabel();
         btnXuatDanhSach = new javax.swing.JButton(new com.formdev.flatlaf.extras.FlatSVGIcon("icons/export.svg", 24, 24));
+        jLabel11 = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -381,10 +381,6 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
             }
         });
 
-        jLabel11.setFont(new java.awt.Font("Helvetica Neue", 3, 36)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(0, 0, 153));
-        jLabel11.setText("Quản Lý Người Thuê");
-
         btnXuatDanhSach.setFont(new java.awt.Font("Helvetica Neue", 3, 14)); // NOI18N
         btnXuatDanhSach.setText("Xuất danh sách");
         btnXuatDanhSach.addActionListener(new java.awt.event.ActionListener() {
@@ -429,17 +425,11 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                                 .addGap(12, 12, 12)
                                 .addComponent(btnXuatDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addContainerGap())))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMainLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel11)
-                .addGap(353, 353, 353))
         );
         pnlMainLayout.setVerticalGroup(
             pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlMainLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel11)
-                .addGap(18, 18, 18)
                 .addComponent(pnlInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -465,21 +455,31 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                 .addGap(48, 48, 48))
         );
 
+        jLabel11.setFont(new java.awt.Font("Helvetica Neue", 3, 36)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(0, 0, 153));
+        jLabel11.setText("Quản Lý Người Thuê");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(286, 286, 286)
+                        .addComponent(jLabel11)))
                 .addContainerGap(175, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         add(jPanel1, java.awt.BorderLayout.CENTER);

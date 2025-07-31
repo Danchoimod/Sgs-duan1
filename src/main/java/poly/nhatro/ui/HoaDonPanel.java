@@ -1328,7 +1328,6 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                 return;
             }
             
-            // Find room ID from room name
             int phongId = -1;
             String chiNhanhSelected = (String) cboChiNhanh.getSelectedItem();
             if(chiNhanhSelected != null && !chiNhanhSelected.isEmpty()){
