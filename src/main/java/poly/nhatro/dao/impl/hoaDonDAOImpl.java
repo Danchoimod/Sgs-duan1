@@ -17,53 +17,65 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
     String createSql = "INSERT INTO HoaDon(trangThai, ngayTao, ID_NguoiDung, ID_Phong, ID_HopDong, ID_ChiNhanh) VALUES(?, ?, ?, ?, ?, ?)";
     String updateSql = "UPDATE HoaDon SET trangThai = ?, ngayTao = ?, ID_NguoiDung = ?, ID_Phong = ?, ID_HopDong = ?, ID_ChiNhanh = ? WHERE ID_HoaDon = ?";
     String deleteSql = "DELETE FROM HoaDon WHERE ID_HoaDon = ?";
-    String findAllSql = "SELECT * FROM HoaDon";
-    String findById = "SELECT * FROM HoaDon WHERE ID_HoaDon = ?";
-    String findByTrangThai = "SELECT * FROM HoaDon WHERE trangThai = ?";
-    String selectWithDetailsSql = "SELECT "
-            + "hd.ID_HoaDon, hd.trangThai, hd.ngayTao, hd.ID_NguoiDung, hd.ID_Phong, "
-            + "hd.ID_HopDong, hd.ID_ChiNhanh, "
-            + "hop.ngayBatDau, hop.ngayKetThuc, "
-            + "p.soPhong, p.giaPhong, "
-            + "cn.tenChiNhanh, "
-            + "nd.tenNguoiDung, nd.soDienThoai "
-            + "FROM HoaDon hd "
-            + "JOIN HopDong hop ON hd.ID_HopDong = hop.ID_HopDong "
-            + "JOIN Phong p ON hop.ID_Phong = p.ID_Phong "
-            + "JOIN ChiNhanh cn ON hop.ID_ChiNhanh = cn.ID_ChiNhanh "
-            + "JOIN NguoiDung nd ON hop.ID_NguoiDung = nd.ID_NguoiDung";
-    
-    String selectDetailsByIdSql = "SELECT "
-            + "hd.ID_HoaDon, hd.soDienMoi, hd.soNuocMoi, hd.soDienCu, hd.soNuocCu, "
-            + "hd.tienDien, hd.tienNuoc, hd.tienPhong, hd.tongTien, "
-            + "hd.trangThaiThanhToan, hd.ngayThanhToan, "
-            + "hop.ngayBatDau, hop.ngayKetThuc, "
-            + "p.soPhong, p.giaPhong, "
-            + "cn.tenChiNhanh, "
-            + "nd.tenNguoiDung, nd.soDienThoai "
-            + "FROM HoaDon hd "
-            + "JOIN HopDong hop ON hd.ID_HopDong = hop.ID_HopDong "
-            + "JOIN Phong p ON hop.ID_Phong = p.ID_Phong "
-            + "JOIN ChiNhanh cn ON hop.ID_ChiNhanh = cn.ID_ChiNhanh "
-            + "JOIN NguoiDung nd ON hop.ID_NguoiDung = nd.ID_NguoiDung "
-            + "WHERE hd.ID_HoaDon = ?";
-    
-    String getHoTenSql = "SELECT nd.tenNguoiDung FROM HoaDon hd " +
-                        "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
-                        "WHERE hd.ID_HoaDon = ?";
-    
-    String getTenPhongSql = "SELECT p.soPhong FROM HoaDon hd " +
-                           "JOIN Phong p ON hd.ID_Phong = p.ID_Phong " +
-                           "WHERE hd.ID_HoaDon = ?";
-    
-    String getTenChiNhanhSql = "SELECT cn.tenChiNhanh FROM HoaDon hd " +
-                              "JOIN ChiNhanh cn ON hd.ID_ChiNhanh = cn.ID_ChiNhanh " +
-                              "WHERE hd.ID_HoaDon = ?";
-    
-    String getChiNhanhIdSql = "SELECT cn.ID_ChiNhanh FROM HoaDon hd " +
-                              "JOIN ChiNhanh cn ON hd.ID_ChiNhanh = cn.ID_ChiNhanh " +
-                              "WHERE hd.ID_HoaDon = ?";
-    
+    String findAllSql = "SELECT " +
+            "hdon.ID_HoaDon, " +
+            "hdon.trangThai, " +
+            "hdon.ngayTao, " +
+            "hdon.ID_NguoiDung, " +
+            "hdon.ID_Phong, " +
+            "hdon.ID_HopDong, " +
+            "hdon.ID_ChiNhanh, " +
+            "nd.tenNguoiDung, " +
+            "p.soPhong, " +
+            "dn.soDienCu, " +
+            "dn.soDienMoi, " +
+            "dn.soNuocCu, " +
+            "dn.soNuocMoi, " +
+            "(dn.soDienMoi - dn.soDienCu) AS soDien, " +
+            "(dn.soNuocMoi - dn.soNuocCu) AS soNuoc, " +
+            "(dn.soDienMoi - dn.soDienCu) * cn.giaDien AS tienDien, " +
+            "(dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc AS tienNuoc, " +
+            "p.giaPhong AS tienPhong, " +
+            "((dn.soDienMoi - dn.soDienCu) * cn.giaDien + " +
+            " (dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc + " +
+            " p.giaPhong) AS tongTien, " +
+            "hdon.trangThai AS trangThaiThanhToan " +
+            "FROM HoaDon hdon " +
+            "JOIN HopDong hd ON hdon.ID_HopDong = hd.ID_HopDong " +
+            "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
+            "JOIN Phong p ON hd.ID_Phong = p.ID_Phong " +
+            "JOIN DienNuoc dn ON p.ID_Phong = dn.ID_Phong " +
+            "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh";
+    String findByIdSql = "SELECT " +
+            "hdon.ID_HoaDon, " +
+            "hdon.trangThai, " +
+            "hdon.ngayTao, " +
+            "hdon.ID_NguoiDung, " +
+            "hdon.ID_Phong, " +
+            "hdon.ID_HopDong, " +
+            "hdon.ID_ChiNhanh, " +
+            "nd.tenNguoiDung, " +
+            "p.soPhong, " +
+            "dn.soDienCu, " +
+            "dn.soDienMoi, " +
+            "dn.soNuocCu, " +
+            "dn.soNuocMoi, " +
+            "(dn.soDienMoi - dn.soDienCu) AS soDien, " +
+            "(dn.soNuocMoi - dn.soNuocCu) AS soNuoc, " +
+            "(dn.soDienMoi - dn.soDienCu) * cn.giaDien AS tienDien, " +
+            "(dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc AS tienNuoc, " +
+            "p.giaPhong AS tienPhong, " +
+            "((dn.soDienMoi - dn.soDienCu) * cn.giaDien + " +
+            " (dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc + " +
+            " p.giaPhong) AS tongTien, " +
+            "hdon.trangThai AS trangThaiThanhToan " +
+            "FROM HoaDon hdon " +
+            "JOIN HopDong hd ON hdon.ID_HopDong = hd.ID_HopDong " +
+            "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
+            "JOIN Phong p ON hd.ID_Phong = p.ID_Phong " +
+            "JOIN DienNuoc dn ON p.ID_Phong = dn.ID_Phong " +
+            "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
+            "WHERE hdon.ID_HoaDon = ?";
     String getChiNhanhIdByHopDongSql = "SELECT p.ID_ChiNhanh FROM HopDong hd JOIN Phong p ON hd.ID_Phong = p.ID_Phong WHERE hd.ID_HopDong = ?";
 
     @Override
@@ -74,7 +86,7 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
 
     @Override
     public HoaDon findById(int id) {
-        return XQuery.getSingleBean(HoaDon.class, findById, id);
+        return XQuery.getSingleBean(HoaDon.class, findByIdSql, id);
     }
 
 
@@ -91,38 +103,6 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
     }
 
 
- 
-    @Override
-    public List<Object[]> selectWithDetals() {
-        List<Object[]> detailsList = new ArrayList<>();
-        try (ResultSet rs = XJdbc.executeQuery(selectWithDetailsSql)) {
-            while (rs.next()) {
-                Object[] details = new Object[18];
-                details[0] = rs.getInt("ID_HoaDon");
-                details[1] = rs.getInt("soDienMoi");
-                details[2] = rs.getInt("soNuocMoi");
-                details[3] = rs.getInt("soDienCu");
-                details[4] = rs.getInt("soNuocCu");
-                details[5] = rs.getDouble("tienDien");
-                details[6] = rs.getDouble("tienNuoc");
-                details[7] = rs.getDouble("tienPhong");
-                details[8] = rs.getDouble("tongTien");
-                details[9] = rs.getBoolean("trangThaiThanhToan");
-                details[10] = rs.getDate("ngayThanhToan");
-                details[11] = rs.getDate("ngayBatDau");
-                details[12] = rs.getDate("ngayKetThuc");
-                details[13] = rs.getString("soPhong");
-                details[14] = rs.getDouble("giaPhong");
-                details[15] = rs.getString("tenChiNhanh");
-                details[16] = rs.getString("tenNguoiDung");
-                details[17] = rs.getString("soDienThoai");
-                detailsList.add(details);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Lỗi khi truy vấn dữ liệu chi tiết: " + e.getMessage(), e);
-        }
-        return detailsList;
-    }
     
     @Override
     public HoaDon create(HoaDon entity) {
@@ -146,84 +126,6 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
         return findById(id.intValue()); 
     }
     
-    @Override
-    public Object[] getDetailsByHoaDonId(int hoaDonId) {
-        try (ResultSet rs = XJdbc.executeQuery(selectDetailsByIdSql, hoaDonId)) {
-            if (rs.next()) {
-                Object[] details = new Object[18];
-                details[0] = rs.getInt("ID_HoaDon");
-                details[1] = rs.getInt("soDienMoi");
-                details[2] = rs.getInt("soNuocMoi");
-                details[3] = rs.getInt("soDienCu");
-                details[4] = rs.getInt("soNuocCu");
-                details[5] = rs.getDouble("tienDien");
-                details[6] = rs.getDouble("tienNuoc");
-                details[7] = rs.getDouble("tienPhong");
-                details[8] = rs.getDouble("tongTien");
-                details[9] = rs.getBoolean("trangThaiThanhToan");
-                details[10] = rs.getDate("ngayThanhToan");
-                details[11] = rs.getDate("ngayBatDau");
-                details[12] = rs.getDate("ngayKetThuc");
-                details[13] = rs.getString("soPhong");
-                details[14] = rs.getDouble("giaPhong");
-                details[15] = rs.getString("tenChiNhanh");
-                details[16] = rs.getString("tenNguoiDung");
-                details[17] = rs.getString("soDienThoai");
-                return details;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Lỗi khi truy vấn thông tin chi tiết hóa đơn: " + e.getMessage(), e);
-        }
-        return null;
-    }
-    
-    @Override
-    public String getHoTenByHoaDonId(int hoaDonId) {
-        try (ResultSet rs = XJdbc.executeQuery(getHoTenSql, hoaDonId)) {
-            if (rs.next()) {
-                return rs.getString("tenNguoiDung");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Lỗi khi lấy họ tên khách hàng: " + e.getMessage(), e);
-        }
-        return null;
-    }
-    
-    @Override
-    public String getTenPhongByHoaDonId(int hoaDonId) {
-        try (ResultSet rs = XJdbc.executeQuery(getTenPhongSql, hoaDonId)) {
-            if (rs.next()) {
-                return rs.getString("soPhong");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Lỗi khi lấy tên phòng: " + e.getMessage(), e);
-        }
-        return null;
-    }
-    
-@Override
-    public String getTenChiNhanhByHoaDonId(int hoaDonId) {
-        try (ResultSet rs = XJdbc.executeQuery(getTenChiNhanhSql, hoaDonId)) {
-            if (rs.next()) {
-                return rs.getString("tenChiNhanh");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Lỗi khi lấy tên chi nhánh: " + e.getMessage(), e);
-        }
-        return null;
-    }
-
-    @Override
-    public Integer getChiNhanhIdByHoaDonId(int hoaDonId) {
-        try (ResultSet rs = XJdbc.executeQuery(getChiNhanhIdSql, hoaDonId)) {
-            if (rs.next()) {
-                return rs.getInt("ID_ChiNhanh");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Lỗi khi lấy ID chi nhánh: " + e.getMessage(), e);
-        }
-        return null;
-    }
     
     @Override
     public Integer getChiNhanhIdByHopDongId(int hopDongId) {
@@ -252,9 +154,174 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
         return 0;
     }
 
+    
     @Override
-    public List<HoaDon> findByTrangThai(String trangThai) {
-        return XQuery.getBeanList(HoaDon.class, findByTrangThai);
+    public List<Object[]> getDetailedBillingData() {
+        String sql = "SELECT " +
+                "hdon.ID_HoaDon, " +
+                "cn.tenChiNhanh, " +
+                "p.soPhong, " +
+                "nd.tenNguoiDung, " +
+                "dn.soDienCu, " +
+                "dn.soDienMoi, " +
+                "dn.soNuocCu, " +
+                "dn.soNuocMoi, " +
+                "(dn.soDienMoi - dn.soDienCu) AS soDien, " +
+                "(dn.soNuocMoi - dn.soNuocCu) AS soNuoc, " +
+                "(dn.soDienMoi - dn.soDienCu) * cn.giaDien AS tienDien, " +
+                "(dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc AS tienNuoc, " +
+                "p.giaPhong AS tienPhong, " +
+                "((dn.soDienMoi - dn.soDienCu) * cn.giaDien + " +
+                " (dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc + " +
+                " p.giaPhong) AS tongTien, " +
+                "hdon.trangThai AS trangThaiThanhToan " +
+                "FROM HopDong hd " +
+                "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
+                "JOIN Phong p ON hd.ID_Phong = p.ID_Phong " +
+                "JOIN DienNuoc dn ON p.ID_Phong = dn.ID_Phong " +
+                "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
+                "JOIN HoaDon hdon ON hd.ID_HopDong = hdon.ID_HopDong";
+        
+        List<Object[]> resultList = new ArrayList<>();
+        try (ResultSet rs = XJdbc.executeQuery(sql)) {
+            while (rs.next()) {
+                Object[] row = new Object[15];
+                row[0] = rs.getInt("ID_HoaDon");
+                row[1] = rs.getString("tenChiNhanh");
+                row[2] = rs.getString("soPhong");
+                row[3] = rs.getString("tenNguoiDung");
+                row[4] = rs.getInt("soDienCu");
+                row[5] = rs.getInt("soDienMoi");
+                row[6] = rs.getInt("soNuocCu");
+                row[7] = rs.getInt("soNuocMoi");
+                row[8] = rs.getInt("soDien");
+                row[9] = rs.getInt("soNuoc");
+                row[10] = rs.getDouble("tienDien");
+                row[11] = rs.getDouble("tienNuoc");
+                row[12] = rs.getDouble("tienPhong");
+                row[13] = rs.getDouble("tongTien");
+                row[14] = rs.getString("trangThaiThanhToan");
+                resultList.add(row);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi khi tải dữ liệu hóa đơn chi tiết: " + e.getMessage(), e);
+        }
+        return resultList;
+    }
+    
+    @Override
+    public List<Object[]> getRoomsByChiNhanh(int chiNhanhId) {
+        String sql = "SELECT ID_Phong, soPhong FROM Phong WHERE ID_ChiNhanh = ? AND trangThai = N'Đang thuê' ORDER BY soPhong";
+        List<Object[]> rooms = new ArrayList<>();
+        try (ResultSet rs = XJdbc.executeQuery(sql, chiNhanhId)) {
+            while (rs.next()) {
+                Object[] room = new Object[2];
+                room[0] = rs.getInt("ID_Phong");
+                room[1] = rs.getString("soPhong");
+                rooms.add(room);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi khi lấy danh sách phòng theo chi nhánh: " + e.getMessage(), e);
+        }
+        return rooms;
+    }
+    
+    @Override
+    public Object[] getRoomDetailData(int phongId) {
+        String sql = "SELECT " +
+                "nd.tenNguoiDung, " +
+                "dn.soDienCu, dn.soDienMoi, " +
+                "dn.soNuocCu, dn.soNuocMoi, " +
+                "(dn.soDienMoi - dn.soDienCu) AS soDien, " +
+                "(dn.soNuocMoi - dn.soNuocCu) AS soNuoc, " +
+                "(dn.soDienMoi - dn.soDienCu) * cn.giaDien AS tienDien, " +
+                "(dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc AS tienNuoc, " +
+                "p.giaPhong AS tienPhong, " +
+                "((dn.soDienMoi - dn.soDienCu) * cn.giaDien + " +
+                " (dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc + " +
+                " p.giaPhong) AS tongTien " +
+                "FROM Phong p " +
+                "JOIN HopDong hd ON p.ID_Phong = hd.ID_Phong " +
+                "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
+                "JOIN DienNuoc dn ON p.ID_Phong = dn.ID_Phong " +
+                "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
+                "WHERE p.ID_Phong = ?";
+        
+        try (ResultSet rs = XJdbc.executeQuery(sql, phongId)) {
+            if (rs.next()) {
+                Object[] data = new Object[11];
+                data[0] = rs.getString("tenNguoiDung");
+                data[1] = rs.getInt("soDienCu");
+                data[2] = rs.getInt("soDienMoi");
+                data[3] = rs.getInt("soNuocCu");
+                data[4] = rs.getInt("soNuocMoi");
+                data[5] = rs.getInt("soDien");
+                data[6] = rs.getInt("soNuoc");
+                data[7] = rs.getDouble("tienDien");
+                data[8] = rs.getDouble("tienNuoc");
+                data[9] = rs.getDouble("tienPhong");
+                data[10] = rs.getDouble("tongTien");
+                return data;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi khi lấy thông tin chi tiết phòng: " + e.getMessage(), e);
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Object[]> getDetailedBillingDataByStatus(String trangThai) {
+        String sql = "SELECT " +
+                "hdon.ID_HoaDon, " +
+                "cn.tenChiNhanh, " +
+                "p.soPhong, " +
+                "nd.tenNguoiDung, " +
+                "dn.soDienCu, " +
+                "dn.soDienMoi, " +
+                "dn.soNuocCu, " +
+                "dn.soNuocMoi, " +
+                "(dn.soDienMoi - dn.soDienCu) AS soDien, " +
+                "(dn.soNuocMoi - dn.soNuocCu) AS soNuoc, " +
+                "(dn.soDienMoi - dn.soDienCu) * cn.giaDien AS tienDien, " +
+                "(dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc AS tienNuoc, " +
+                "p.giaPhong AS tienPhong, " +
+                "((dn.soDienMoi - dn.soDienCu) * cn.giaDien + " +
+                " (dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc + " +
+                " p.giaPhong) AS tongTien, " +
+                "hdon.trangThai AS trangThaiThanhToan " +
+                "FROM HopDong hd " +
+                "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
+                "JOIN Phong p ON hd.ID_Phong = p.ID_Phong " +
+                "JOIN DienNuoc dn ON p.ID_Phong = dn.ID_Phong " +
+                "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
+                "JOIN HoaDon hdon ON hd.ID_HopDong = hdon.ID_HopDong " +
+                "WHERE hdon.trangThai = ?";
+        
+        List<Object[]> resultList = new ArrayList<>();
+        try (ResultSet rs = XJdbc.executeQuery(sql, trangThai)) {
+            while (rs.next()) {
+                Object[] row = new Object[15];
+                row[0] = rs.getInt("ID_HoaDon");
+                row[1] = rs.getString("tenChiNhanh");
+                row[2] = rs.getString("soPhong");
+                row[3] = rs.getString("tenNguoiDung");
+                row[4] = rs.getInt("soDienCu");
+                row[5] = rs.getInt("soDienMoi");
+                row[6] = rs.getInt("soNuocCu");
+                row[7] = rs.getInt("soNuocMoi");
+                row[8] = rs.getInt("soDien");
+                row[9] = rs.getInt("soNuoc");
+                row[10] = rs.getDouble("tienDien");
+                row[11] = rs.getDouble("tienNuoc");
+                row[12] = rs.getDouble("tienPhong");
+                row[13] = rs.getDouble("tongTien");
+                row[14] = rs.getString("trangThaiThanhToan");
+                resultList.add(row);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi khi tải dữ liệu hóa đơn theo trạng thái: " + e.getMessage(), e);
+        }
+        return resultList;
     }
     
 }

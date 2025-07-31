@@ -4,30 +4,52 @@
  */
 package poly.nhatro.ui;
 
+import java.awt.Color;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Timestamp;
+import java.util.Properties;
+import javax.mail.*;
+import javax.mail.internet.*;
 import javax.swing.JFrame;
-import poly.nhatro.controller.MainController;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import poly.nhatro.controller.NhapOTPController;
+import poly.nhatro.dao.OPTDAO;
+import poly.nhatro.dao.impl.OTPDAOImpl;
+import poly.nhatro.entity.EmailOTP;
+import poly.nhatro.entity.OTP;
+import static poly.nhatro.ui.QuenMatKhauJDiaLog.taoMaOTP;
 
 /**
  *
  * @author THACH VAN BACH
  */
-public class NhapOTPJDialog extends javax.swing.JDialog implements MainController {
+public class NhapOTPJDialog extends javax.swing.JDialog implements NhapOTPController {
+
+    private String emailDangXacNhan;
+    private String email;
 
     /**
      * Creates new form NhapOTPJDialog
      */
-    public NhapOTPJDialog(java.awt.Frame parent, boolean modal) {
+    public NhapOTPJDialog(java.awt.Frame parent, boolean modal, String email) {
         super(parent, modal);
         initComponents();
+        this.email = email;
+        this.emailDangXacNhan = email;
+        lbFalse.setVisible(false);
     }
 
-//    private JFrame parent;
-//
-//    public QuenMatKhauJDiaLog(JFrame parent, boolean modal) {
-//        super(parent, modal);
-//        this.parent = parent;
-//        initComponents();
-//    }
+    private JFrame parent;
+
+    public NhapOTPJDialog(JFrame parent, boolean modal) {
+        super(parent, modal);
+        this.parent = parent;
+        initComponents();
+    }
     int thoiGianDemNguoc = 60;
     javax.swing.Timer demNguocTimer;
 
@@ -48,17 +70,22 @@ public class NhapOTPJDialog extends javax.swing.JDialog implements MainControlle
         jPanel3 = new javax.swing.JPanel();
         TenDangNhap = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtTenDangNhap = new javax.swing.JTextField();
+        txtNhapOTP = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        btnDangNhap = new javax.swing.JButton();
+        lbFalse = new javax.swing.JLabel();
+        btnXacNhan = new javax.swing.JButton();
         btnThoat = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         lbReGive = new javax.swing.JLabel();
-        lbFalse = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -68,11 +95,14 @@ public class NhapOTPJDialog extends javax.swing.JDialog implements MainControlle
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setText("Nhập OTP:");
 
-        txtTenDangNhap.addActionListener(new java.awt.event.ActionListener() {
+        txtNhapOTP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTenDangNhapActionPerformed(evt);
+                txtNhapOTPActionPerformed(evt);
             }
         });
+
+        lbFalse.setForeground(new java.awt.Color(255, 0, 0));
+        lbFalse.setText("Mã OTP  sai hoặc hết hạn");
 
         javax.swing.GroupLayout TenDangNhapLayout = new javax.swing.GroupLayout(TenDangNhap);
         TenDangNhap.setLayout(TenDangNhapLayout);
@@ -81,33 +111,36 @@ public class NhapOTPJDialog extends javax.swing.JDialog implements MainControlle
             .addGroup(TenDangNhapLayout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbFalse, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(txtTenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(txtNhapOTP, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         TenDangNhapLayout.setVerticalGroup(
             TenDangNhapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(TenDangNhapLayout.createSequentialGroup()
                 .addGroup(TenDangNhapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(lbFalse))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtTenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(txtNhapOTP, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        btnDangNhap.setBackground(new java.awt.Color(0, 0, 0));
-        btnDangNhap.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnDangNhap.setForeground(new java.awt.Color(255, 255, 255));
-        btnDangNhap.setText("Xác nhận");
-        btnDangNhap.addActionListener(new java.awt.event.ActionListener() {
+        btnXacNhan.setBackground(new java.awt.Color(0, 0, 0));
+        btnXacNhan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnXacNhan.setForeground(new java.awt.Color(255, 255, 255));
+        btnXacNhan.setText("Xác nhận");
+        btnXacNhan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDangNhapActionPerformed(evt);
+                btnXacNhanActionPerformed(evt);
             }
         });
 
         btnThoat.setBackground(new java.awt.Color(0, 0, 0));
         btnThoat.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnThoat.setForeground(new java.awt.Color(255, 255, 255));
-        btnThoat.setText("Thoát");
+        btnThoat.setText("Quay Lại Đăng Nhập");
         btnThoat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnThoatActionPerformed(evt);
@@ -127,20 +160,12 @@ public class NhapOTPJDialog extends javax.swing.JDialog implements MainControlle
             }
         });
 
-        lbFalse.setForeground(new java.awt.Color(255, 0, 0));
-        lbFalse.setText("Sai mã OTP!");
-
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(90, 90, 90)
-                        .addComponent(btnDangNhap)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnThoat))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(103, 103, 103)
                         .addComponent(jLabel4))
@@ -149,15 +174,21 @@ public class NhapOTPJDialog extends javax.swing.JDialog implements MainControlle
                         .addComponent(jLabel3))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(26, 26, 26)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(btnXacNhan)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnThoat)))
+                .addContainerGap(21, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(lbReGive)
+                        .addGap(36, 36, 36))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(TenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                                .addComponent(lbFalse)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lbReGive)
-                                .addGap(9, 9, 9)))))
-                .addContainerGap(23, Short.MAX_VALUE))
+                            .addComponent(TenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(23, 23, 23))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -169,14 +200,12 @@ public class NhapOTPJDialog extends javax.swing.JDialog implements MainControlle
                 .addGap(71, 71, 71)
                 .addComponent(TenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbReGive)
-                    .addComponent(lbFalse))
-                .addGap(9, 9, 9)
+                .addComponent(lbReGive)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnDangNhap)
+                    .addComponent(btnXacNhan)
                     .addComponent(btnThoat))
                 .addContainerGap())
         );
@@ -188,7 +217,7 @@ public class NhapOTPJDialog extends javax.swing.JDialog implements MainControlle
             .addGroup(layout.createSequentialGroup()
                 .addGap(69, 69, 69)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(67, Short.MAX_VALUE))
+                .addContainerGap(66, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -201,32 +230,95 @@ public class NhapOTPJDialog extends javax.swing.JDialog implements MainControlle
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtTenDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenDangNhapActionPerformed
+    private void txtNhapOTPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNhapOTPActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenDangNhapActionPerformed
+    }//GEN-LAST:event_txtNhapOTPActionPerformed
 
-    private void btnDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangNhapActionPerformed
+    private void btnXacNhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXacNhanActionPerformed
+        String nhapOTP = txtNhapOTP.getText().trim();
+        String email = emailDangXacNhan; // biến bạn truyền từ màn hình trước (nơi gửi OTP)
 
-    }//GEN-LAST:event_btnDangNhapActionPerformed
+        if (nhapOTP.isEmpty()) {
+            lbFalse.setText("Vui lòng nhập mã OTP.");
+            lbFalse.setForeground(Color.RED);
+            lbFalse.setVisible(true);
+            return;
+        }
+
+        OTPDAOImpl otpDAO = new OTPDAOImpl();
+        OTP otp = otpDAO.findByEmailAndMaOTP(email, nhapOTP);
+
+        if (otp == null) {
+            lbFalse.setText("Mã OTP sai hoặc hết hạn");
+            lbFalse.setForeground(Color.RED);
+            lbFalse.setVisible(true);
+            return;
+        }
+
+        // Kiểm tra thời hạn (ví dụ: hết hạn sau 5 phút)
+        long millisNow = System.currentTimeMillis();
+        long millisOTP = otp.getNgayTao().getTime();
+        long chenhLechPhut = (millisNow - millisOTP) / (60 * 1000);
+
+        if (chenhLechPhut > 5) {
+            lbFalse.setText("Mã OTP đã hết hạn.");
+            lbFalse.setForeground(Color.RED);
+            lbFalse.setVisible(true);
+            otpDAO.deleteById(otp.getId()); // Xóa mã cũ luôn
+            return;
+        }
+
+        // Nếu đúng và chưa hết hạn
+        otpDAO.deleteById(otp.getId()); // ✅ Xóa sau khi sử dụng để không dùng lại được
+
+        JOptionPane.showMessageDialog(this, "Xác nhận OTP thành công!");
+        lbFalse.setVisible(false);
+        this.dispose();
+        DoiMatKhau doiMK = new DoiMatKhau((Frame) this.getParent(), true, emailDangXacNhan);
+        doiMK.setLocationRelativeTo(null);
+        doiMK.setVisible(true);
+    }//GEN-LAST:event_btnXacNhanActionPerformed
 
     private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
         // TODO add your handling code here:
+        this.dispose();
+        showLoginJDialog(parent);
     }//GEN-LAST:event_btnThoatActionPerformed
 
     private void lbReGiveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbReGiveMouseClicked
         // TODO add your handling code here:
         if (!lbReGive.isEnabled()) {
-            return; // Nếu đang đếm thì không cho bấm nữa
+            return; // Đang đếm ngược, không cho click
         }
-        guiLaiMaOTP(); // Gọi hàm gửi lại mã OTP
+
+        String maOTP = taoMaOTP();
+        Timestamp thoiGianTao = new Timestamp(System.currentTimeMillis());
+
+        OTP otp = OTP.builder()
+                .maOtp(maOTP)
+                .email(email) 
+                .ngayTao(thoiGianTao)
+                .build();
+
+        OPTDAO otpDAO = new OTPDAOImpl();
+        otpDAO.deleteByEmail(email);
+        otpDAO.insert(otp);
+
+        new Thread(() -> {
+            EmailOTP.guiOTPQuaEmail(email, maOTP);
+        }).start();
+
+        JOptionPane.showMessageDialog(this, "Mã OTP đã được gửi tới email.");
 
         // Bắt đầu đếm ngược
         thoiGianDemNguoc = 60;
-        lbReGive.setEnabled(false); // Khóa nhấn
-        lbReGive.setForeground(java.awt.Color.GRAY); // Đổi màu xám
+        lbReGive.setEnabled(false);
+        lbReGive.setForeground(Color.GRAY);
+        lbReGive.setText("Gửi lại sau 60s");
+        lbFalse.setVisible(false);
 
-        demNguocTimer = new javax.swing.Timer(1000, new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent e) {
+        demNguocTimer = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 thoiGianDemNguoc--;
                 lbReGive.setText("Gửi lại sau " + thoiGianDemNguoc + "s");
 
@@ -234,13 +326,19 @@ public class NhapOTPJDialog extends javax.swing.JDialog implements MainControlle
                     demNguocTimer.stop();
                     lbReGive.setText("Gửi lại mã OTP");
                     lbReGive.setEnabled(true);
-                    lbReGive.setForeground(java.awt.Color.BLUE); // Màu lại như cũ
+                    lbReGive.setForeground(Color.BLUE);
                 }
             }
         });
-
         demNguocTimer.start();
+
+
     }//GEN-LAST:event_lbReGiveMouseClicked
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -286,8 +384,8 @@ public class NhapOTPJDialog extends javax.swing.JDialog implements MainControlle
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel TenDangNhap;
-    private javax.swing.JButton btnDangNhap;
     private javax.swing.JButton btnThoat;
+    private javax.swing.JButton btnXacNhan;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -296,7 +394,7 @@ public class NhapOTPJDialog extends javax.swing.JDialog implements MainControlle
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel lbFalse;
     private javax.swing.JLabel lbReGive;
-    private javax.swing.JTextField txtTenDangNhap;
+    private javax.swing.JTextField txtNhapOTP;
     // End of variables declaration//GEN-END:variables
 
 }
