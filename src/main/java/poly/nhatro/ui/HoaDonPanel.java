@@ -554,6 +554,11 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
 
         btnLoc.setFont(new java.awt.Font("Helvetica Neue", 3, 14)); // NOI18N
         btnLoc.setText("Lọc");
+        btnLoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLocActionPerformed(evt);
+            }
+        });
 
         cboTimTheoTrangThai.setFont(new java.awt.Font("Helvetica Neue", 2, 14)); // NOI18N
         cboTimTheoTrangThai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tất cả", "Đã thanh toán", "Chưa thanh toán" }));
