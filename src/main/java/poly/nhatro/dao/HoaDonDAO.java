@@ -8,60 +8,40 @@ import poly.nhatro.entity.HoaDon;
  * @author tranthithuyngan
  */
 public interface HoaDonDAO extends CrudDao<HoaDon, Integer> {
-/**
-     * Lấy tất cả hóa đơn từ database
-     * @return List<HoaDon> danh sách tất cả hóa đơn
-     */
     List<HoaDon> findAll();
-        
+    
     HoaDon findById(int id);
     
-    List<HoaDon> findByTrangThai(String trangThai);
-    List<Object[]> selectWithDetals();
-    
-    /**
-     * Lấy thông tin chi tiết hóa đơn theo ID
-     * @param hoaDonId ID của hóa đơn
-     * @return Object[] chứa thông tin chi tiết
-     */
-    Object[] getDetailsByHoaDonId(int hoaDonId);
-    
-    /**
-     * Lấy họ tên khách hàng theo ID hóa đơn
-     * @param hoaDonId ID của hóa đơn
-     * @return Họ tên khách hàng
-     */
-    String getHoTenByHoaDonId(int hoaDonId);
-    
-    /**
-     * Lấy tên phòng theo ID hóa đơn
-     * @param hoaDonId ID của hóa đơn
-     * @return Tên phòng
-     */
-    String getTenPhongByHoaDonId(int hoaDonId);
-    
-    /**
-     * Lấy tên chi nhánh theo ID hóa đơn
-     * @param hoaDonId ID của hóa đơn
-     * @return Tên chi nhánh
-     */
-    String getTenChiNhanhByHoaDonId(int hoaDonId);
-    
-    /**
-     * Lấy ID chi nhánh theo ID hóa đơn
-     * @param hoaDonId ID của hóa đơn
-     * @return ID chi nhánh
-     */
-    Integer getChiNhanhIdByHoaDonId(int hoaDonId);
-    
-    /**
-     * Lấy ID chi nhánh theo ID hợp đồng
-     * @param hopDongId ID của hợp đồng
-     * @return ID chi nhánh
-     */
     Integer getChiNhanhIdByHopDongId(int hopDongId);
             
     double getGiaPhongByHopDongId(int hopDongId);
+    
+    /**
+     * Lấy danh sách chi tiết hóa đơn với đầy đủ thông tin từ các bảng liên quan
+     * @return List<Object[]> danh sách chi tiết hóa đơn
+     */
+    List<Object[]> getDetailedBillingData();
+    
+    /**
+     * Lấy danh sách phòng theo chi nhánh
+     * @param chiNhanhId ID chi nhánh
+     * @return List<Object[]> danh sách phòng [ID_Phong, soPhong]
+     */
+    List<Object[]> getRoomsByChiNhanh(int chiNhanhId);
+    
+    /**
+     * Lấy thông tin chi tiết phòng để fill form
+     * @param phongId ID phòng
+     * @return Object[] thông tin chi tiết phòng
+     */
+    Object[] getRoomDetailData(int phongId);
+    
+    /**
+     * Lấy danh sách chi tiết hóa đơn theo trạng thái thanh toán
+     * @param trangThai trạng thái thanh toán
+     * @return List<Object[]> danh sách chi tiết hóa đơn
+     */
+    List<Object[]> getDetailedBillingDataByStatus(String trangThai);
     
     
 };
