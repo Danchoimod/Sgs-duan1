@@ -4,8 +4,19 @@
  */
 package poly.nhatro.ui;
 
+import java.awt.Frame;
+import java.sql.Timestamp;
+import java.util.Random;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import poly.nhatro.dao.NguoiThueDAO;
+import poly.nhatro.dao.impl.NguoiThueDaoImpl;
 import poly.nhatro.controller.QuenMatKhauController;
+import poly.nhatro.dao.OPTDAO;
+import poly.nhatro.dao.impl.OTPDAOImpl;
+import poly.nhatro.entity.EmailOTP;
+import poly.nhatro.entity.OTP;
 
 /**
  *
@@ -41,21 +52,20 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
         jPanel3 = new javax.swing.JPanel();
         TenDangNhap = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtTenDangNhap = new javax.swing.JTextField();
+        txtTenNguoiDung = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         MatKhau = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        txtMatKhau = new javax.swing.JPasswordField();
+        txtMail = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         TenDangNhap1 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        txtTenDangNhap1 = new javax.swing.JTextField();
+        txtCMND = new javax.swing.JTextField();
         btnXacNhan = new javax.swing.JButton();
         btnQuayLai = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(427, 407));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -70,9 +80,9 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setText("Tên Người Dùng:");
 
-        txtTenDangNhap.addActionListener(new java.awt.event.ActionListener() {
+        txtTenNguoiDung.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTenDangNhapActionPerformed(evt);
+                txtTenNguoiDungActionPerformed(evt);
             }
         });
 
@@ -81,14 +91,14 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
         TenDangNhapLayout.setHorizontalGroup(
             TenDangNhapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel1)
-            .addComponent(txtTenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(txtTenNguoiDung, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         TenDangNhapLayout.setVerticalGroup(
             TenDangNhapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(TenDangNhapLayout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(txtTenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(txtTenNguoiDung, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
@@ -99,9 +109,9 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("Email:");
 
-        txtMatKhau.addActionListener(new java.awt.event.ActionListener() {
+        txtMail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMatKhauActionPerformed(evt);
+                txtMailActionPerformed(evt);
             }
         });
 
@@ -109,15 +119,18 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
         MatKhau.setLayout(MatKhauLayout);
         MatKhauLayout.setHorizontalGroup(
             MatKhauLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel2)
-            .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(MatKhauLayout.createSequentialGroup()
+                .addGroup(MatKhauLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(txtMail, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         MatKhauLayout.setVerticalGroup(
             MatKhauLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MatKhauLayout.createSequentialGroup()
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addComponent(txtMail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jLabel4.setForeground(new java.awt.Color(102, 204, 255));
@@ -128,9 +141,9 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setText("Số CMND:");
 
-        txtTenDangNhap1.addActionListener(new java.awt.event.ActionListener() {
+        txtCMND.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTenDangNhap1ActionPerformed(evt);
+                txtCMNDActionPerformed(evt);
             }
         });
 
@@ -139,14 +152,14 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
         TenDangNhap1Layout.setHorizontalGroup(
             TenDangNhap1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel5)
-            .addComponent(txtTenDangNhap1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(txtCMND, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         TenDangNhap1Layout.setVerticalGroup(
             TenDangNhap1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(TenDangNhap1Layout.createSequentialGroup()
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(txtTenDangNhap1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(txtCMND, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         btnXacNhan.setBackground(new java.awt.Color(0, 0, 0));
@@ -193,7 +206,7 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
                             .addComponent(TenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(MatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -224,34 +237,71 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
             .addGroup(layout.createSequentialGroup()
                 .addGap(69, 69, 69)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtTenDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenDangNhapActionPerformed
+    private void txtTenNguoiDungActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenNguoiDungActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenDangNhapActionPerformed
+    }//GEN-LAST:event_txtTenNguoiDungActionPerformed
 
-    private void txtMatKhauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMatKhauActionPerformed
+    private void txtCMNDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCMNDActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtMatKhauActionPerformed
-
-    private void txtTenDangNhap1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenDangNhap1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenDangNhap1ActionPerformed
+    }//GEN-LAST:event_txtCMNDActionPerformed
 
     private void btnXacNhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXacNhanActionPerformed
-        // TODO add your handling code here:
-        this.showNhapOTPJDialog(parent);
+        String tenNguoiDung = txtTenNguoiDung.getText().trim();
+        String cccd = txtCMND.getText().trim();
+        String email = txtMail.getText().trim();
+
+        if (tenNguoiDung.isEmpty() || cccd.isEmpty() || email.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
+            return;
+        }
+
+        NguoiThueDAO dao = new NguoiThueDaoImpl();
+
+        if (dao.kiemTraNguoiDungHopLe(tenNguoiDung, cccd, email)) {
+            String maOTP = taoMaOTP();
+            Timestamp thoiGianTao = new Timestamp(System.currentTimeMillis());
+
+            OTP otp = OTP.builder()
+                    .maOtp(maOTP)
+                    .email(email)
+                    .ngayTao(thoiGianTao)
+                    .build();
+
+            OPTDAO otpDAO = new OTPDAOImpl();
+            otpDAO.deleteByEmail(email); // xóa mã cũ nếu có
+            otpDAO.insert(otp);
+
+            // Gửi email trong luồng riêng để không bị lag
+            new Thread(() -> {
+                EmailOTP.guiOTPQuaEmail(email, maOTP);
+                SwingUtilities.invokeLater(() -> {   
+                });
+            }).start();
+            JOptionPane.showMessageDialog(this, "Mã OTP đã được gửi tới email.");
+
+            // Mở form nhập OTP
+            NhapOTPJDialog nhapOTP = new NhapOTPJDialog((Frame) this.getParent(), true, email);
+            this.dispose(); // đóng form hiện tại
+            nhapOTP.setLocationRelativeTo(null); // hiện giữa màn hình
+            nhapOTP.setVisible(true);
+
+        } else {
+            JOptionPane.showMessageDialog(this, "Thông tin không đúng hoặc không tồn tại.");
+        }
+
     }//GEN-LAST:event_btnXacNhanActionPerformed
 
     private void btnQuayLaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuayLaiActionPerformed
@@ -264,6 +314,10 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
         // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_formWindowClosing
+
+    private void txtMailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMailActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMailActionPerformed
 
     /**
      * @param args the command line arguments
@@ -320,8 +374,14 @@ public class QuenMatKhauJDiaLog extends javax.swing.JDialog implements QuenMatKh
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JPasswordField txtMatKhau;
-    private javax.swing.JTextField txtTenDangNhap;
-    private javax.swing.JTextField txtTenDangNhap1;
+    private javax.swing.JTextField txtCMND;
+    private javax.swing.JTextField txtMail;
+    private javax.swing.JTextField txtTenNguoiDung;
     // End of variables declaration//GEN-END:variables
+
+    public static String taoMaOTP() {
+        Random random = new Random();
+        int otp = 100000 + random.nextInt(900000); // 6 chữ số
+        return String.valueOf(otp);
+    }
 }
