@@ -768,6 +768,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
             }
             
             String phongName = (String) cboSoPhong.getSelectedItem();
+            int roomId = -1;
             if (phongName != null && !phongName.trim().isEmpty()) {
                 // Find room ID from room name
                 String chiNhanhSelected = (String) cboChiNhanh.getSelectedItem();
@@ -785,11 +786,24 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                         List<Object[]> rooms = dao.getRoomsByChiNhanh(chiNhanhId);
                         for (Object[] room : rooms) {
                             if (room[1].toString().equals(phongName)) {
-                                hoaDon.setID_Phong((int) room[0]);
+                                roomId = (int) room[0];
+                                hoaDon.setID_Phong(roomId);
                                 break;
                             }
                         }
                     }
+                }
+            }
+            
+            // Find ID_HopDong based on ID_Phong and ID_NguoiDung
+            if (roomId != -1 && hoaDon.getID_NguoiDung() != 0) {
+                try {
+                    int hopDongId = dao.getHopDongIdByPhongAndNguoiDung(roomId, hoaDon.getID_NguoiDung());
+                    if (hopDongId != -1) {
+                        hoaDon.setID_HopDong(hopDongId);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error getting HopDong ID: " + e.getMessage());
                 }
             }
                         
@@ -922,6 +936,18 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
         HoaDon entity = getForm();
         if(entity != null) {
             try {
+                // Set ID_ChiNhanh based on selected branch
+                String chiNhanhTen = (String) cboChiNhanh.getSelectedItem();
+                if (chiNhanhTen != null && !chiNhanhTen.trim().isEmpty()) {
+                    var chiNhanhList = chiNhanhDAO.getAll();
+                    for (var chiNhanh : chiNhanhList) {
+                        if (chiNhanh.getTenChiNhanh().equals(chiNhanhTen)) {
+                            entity.setID_ChiNhanh(chiNhanh.getID_ChiNhanh());
+                            break;
+                        }
+                    }
+                }
+                
                 dao.update(entity);
                 fillToTable();
                 setEditable(false); 
@@ -1044,26 +1070,14 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
             javax.swing.SwingUtilities.invokeLater(() -> {
                 if (soPhongValue != null && cboSoPhong != null) {
                     String soPhongToSelect = soPhongValue.toString().trim();
-                    System.out.println("Trying to select room: '" + soPhongToSelect + "'");
-                    System.out.println("Available items in combo: " + cboSoPhong.getItemCount());
                     
-                    boolean found = false;
                     for (int i = 0; i < cboSoPhong.getItemCount(); i++) {
                         String item = (String) cboSoPhong.getItemAt(i);
-                        System.out.println("Item " + i + ": '" + item + "'");
                         if (item != null && item.trim().equals(soPhongToSelect)) {
                             cboSoPhong.setSelectedIndex(i);
-                            System.out.println("Successfully selected room at index: " + i);
-                            found = true;
                             break;
                         }
                     }
-                    
-                    if (!found) {
-                        System.out.println("Room '" + soPhongToSelect + "' not found in combo box");
-                    }
-                } else {
-                    System.out.println("soPhongValue or cboSoPhong is null");
                 }
             });
 
@@ -1340,22 +1354,13 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                 cboSoPhong.removeAllItems();
                 cboSoPhong.addItem("");
                 
-                System.out.println("Loading rooms for chi nhanh ID: " + chiNhanhId);
-                System.out.println("Found " + rooms.size() + " rooms");
-                
                 for (Object[] room : rooms) {
                     String roomName = (String) room[1];
-                    System.out.println("Adding room: " + roomName);
                     cboSoPhong.addItem(roomName); 
                 }
-                
-                System.out.println("Total items in cboSoPhong: " + cboSoPhong.getItemCount());
-            } else {
-                System.out.println("Chi nhanh ID not found or cboSoPhong is null");
             }
             
         } catch (Exception e) {
-            System.err.println("Error in onChiNhanhSelected: " + e.getMessage());
             XDialog.alert("Lỗi khi tải danh sách phòng: " + e.getMessage());
             e.printStackTrace();
         }

@@ -180,21 +180,14 @@ public class DoanhThuImpl implements DoanhThuDao {
     @Override
     public List<DoanhThu> getAllSimple() {
         List<DoanhThu> list = new ArrayList<>();
-        System.out.println("[DEBUG] Executing QUERY_SIMPLE: " + QUERY_SIMPLE);
         try (ResultSet rs = XJdbc.executeQuery(QUERY_SIMPLE)) {
             while (rs.next()) {
-                DoanhThu dt = mapSimpleResult(rs);
-                System.out.println("[DEBUG] DoanhThu ID: " + dt.getIdHoaDon() + 
-                    ", TienDien: " + dt.getTienDien() + 
-                    ", TienNuoc: " + dt.getTienNuoc() + 
-                    ", TongTien: " + dt.getTongTien());
-                list.add(dt);
+                list.add(mapSimpleResult(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Lỗi khi lấy doanh thu đơn giản: " + e.getMessage(), e);
         }
-        System.out.println("[DEBUG] Total DoanhThu records: " + list.size());
         return list;
     }
 

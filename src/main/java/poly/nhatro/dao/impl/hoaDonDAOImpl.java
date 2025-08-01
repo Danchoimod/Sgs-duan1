@@ -336,4 +336,18 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
         return resultList;
     }
     
+    @Override
+    public int getHopDongIdByPhongAndNguoiDung(int phongId, int nguoiDungId) {
+        String sql = "SELECT ID_HopDong FROM HopDong WHERE ID_Phong = ? AND ID_NguoiDung = ?";
+        try (ResultSet rs = XJdbc.executeQuery(sql, phongId, nguoiDungId)) {
+            if (rs.next()) {
+                return rs.getInt("ID_HopDong");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting HopDong ID: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return -1; // Không tìm thấy
+    }
+    
 }
