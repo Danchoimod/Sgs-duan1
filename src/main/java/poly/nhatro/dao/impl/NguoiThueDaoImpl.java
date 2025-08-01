@@ -3,6 +3,7 @@ package poly.nhatro.dao.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 import poly.nhatro.dao.CrudDao;
 import poly.nhatro.dao.NguoiThueDAO;
@@ -106,4 +107,83 @@ public class NguoiThueDaoImpl implements NguoiThueDAO, CrudDao<NguoiThue, Intege
         }
     }
 
+    @Override
+    public List<Object[]> laySoLuongNguoiOTheoChiNhanh(int idChiNhanh) {
+        List<Object[]> list = new ArrayList<>();
+        String sql = """
+        SELECT P.soPhong, COUNT(NTHD.ID_NguoiDung)
+        FROM Phong P
+        JOIN HopDong HD ON P.ID_Phong = HD.ID_Phong
+        JOIN NguoiThue_HopDong NTHD ON HD.ID_HopDong = NTHD.ID_HopDong
+        WHERE P.ID_ChiNhanh = ?
+        GROUP BY P.soPhong
+        """;
+        try (ResultSet rs = XJdbc.executeQuery(sql, idChiNhanh)) {
+            while (rs.next()) {
+                list.add(new Object[]{rs.getString(1), rs.getInt(2)});
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
+    public List<Object[]> layDanhSachNguoiDungTheoSoPhongVaChiNhanh(String soPhong, int idChiNhanh) {
+        List<Object[]> list = new ArrayList<>();
+        String sql = """
+        SELECT ND.tenNguoiDung, P.soPhong
+        FROM NguoiDung ND
+        JOIN NguoiThue_HopDong NTHD ON ND.ID_NguoiDung = NTHD.ID_NguoiDung
+        JOIN HopDong HD ON HD.ID_HopDong = NTHD.ID_HopDong
+        JOIN Phong P ON P.ID_Phong = HD.ID_Phong
+        WHERE P.soPhong = ? AND P.ID_ChiNhanh = ?
+        """;
+        try (ResultSet rs = XJdbc.executeQuery(sql, soPhong, idChiNhanh)) {
+            while (rs.next()) {
+                list.add(new Object[]{rs.getString(1), rs.getString(2)});
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
+    public void themNguoiO(String tenNguoi, String soPhong, int idChiNhanh) {
+        try {
+            // Bắt đầu transaction
+            XJdbc.beginTransaction();
+
+            // 1. Thêm người vào bảng NguoiDung
+            String sql1 = "INSERT INTO NguoiDung (tenNguoiDung) VALUES (?)";
+            XJdbc.executeUpdate(sql1, tenNguoi);
+
+            // 2. Lấy ID người dùng vừa thêm
+            String sql2 = "SELECT TOP 1 ID_NguoiDung FROM NguoiDung ORDER BY ID_NguoiDung DESC";
+            int idNguoiDung = XJdbc.getValue(sql2);
+
+            // 3. Tìm ID_HopDong từ soPhong và chi nhánh
+            String sql3 = """
+            SELECT HD.ID_HopDong FROM HopDong HD
+            JOIN Phong P ON P.ID_Phong = HD.ID_Phong
+            WHERE P.soPhong = ? AND P.ID_ChiNhanh = ?
+        """;
+            Integer idHopDong = XJdbc.getValue(sql3, soPhong, idChiNhanh);
+            if (idHopDong == null) {
+                throw new RuntimeException("Không tìm thấy hợp đồng.");
+            }
+
+            // 4. Ghi vào bảng liên kết
+            String sql4 = "INSERT INTO NguoiThue_HopDong (ID_NguoiDung, ID_HopDong) VALUES (?, ?)";
+            XJdbc.executeUpdate(sql4, idNguoiDung, idHopDong);
+
+            // Thành công thì commit
+            XJdbc.commitTransaction();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            XJdbc.rollbackTransaction();
+            throw new RuntimeException("Thêm người ở thất bại: " + ex.getMessage());
+        }
+    }
 }
