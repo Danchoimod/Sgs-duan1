@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 public class Phong {
     private int idPhong;
     private BigDecimal giaPhong;
-    private boolean trangThai; // true: đã cho thuê, false: còn trống
+    private String trangThai; // "Đang thuê" or "Trống"
     private String soPhong;
     private String moTa;
     private String anhPhong;
@@ -20,7 +20,7 @@ public class Phong {
     public Phong() {
     }
 
-    public Phong(BigDecimal giaPhong, boolean trangThai, String soPhong, String moTa, String anhPhong, int idChiNhanh) {
+    public Phong(BigDecimal giaPhong, String trangThai, String soPhong, String moTa, String anhPhong, int idChiNhanh) {
         this.giaPhong = giaPhong;
         this.trangThai = trangThai;
         this.soPhong = soPhong;
@@ -46,11 +46,11 @@ public class Phong {
         this.giaPhong = giaPhong;
     }
 
-    public boolean isTrangThai() {
+    public String getTrangThai() {
         return trangThai;
     }
 
-    public void setTrangThai(boolean trangThai) {
+    public void setTrangThai(String trangThai) {
         this.trangThai = trangThai;
     }
 

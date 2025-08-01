@@ -101,7 +101,7 @@ CREATE TABLE GopY
     ID_GopY INT IDENTITY(1,1) PRIMARY KEY,
     noiDung NVARCHAR(200) NOT NULL,
     ID_NguoiDung INT NOT NULL,
-    ID_ChiNhanh INT NOT NULL,
+ID_ChiNhanh INT NOT NULL,
     FOREIGN KEY (ID_NguoiDung) REFERENCES NguoiDung(ID_NguoiDung),
     FOREIGN KEY (ID_ChiNhanh) REFERENCES ChiNhanh(ID_ChiNhanh)
 );
@@ -135,7 +135,9 @@ VALUES
 INSERT INTO ChiNhanh
     (tenChiNhanh, diaChi, giaDien, giaNuoc)
 VALUES
-    (N'Chi nhánh Quận 1', N'100 Đường Nguyễn Huệ, Quận 1', 3000, 15000),
+
+(N'Chi nhánh Quận 1', N'100 Đường Nguyễn Huệ, Quận 1', 3000, 15000),
+
     (N'Chi nhánh Quận 3', N'200 Đường Nam Kỳ Khởi Nghĩa, Quận 3', 3200, 16000),
     (N'Chi nhánh Quận 5', N'300 Đường Trần Hưng Đạo, Quận 5', 3100, 15500),
     (N'Chi nhánh Quận Bình Thạnh', N'400 Đường Điện Biên Phủ, Quận Bình Thạnh', 2900, 14500),
@@ -179,7 +181,9 @@ VALUES
     -- Pham Thi D (ID 4) thuê P202 (ID 4)
     ('2024-03-10 09:00:00', 12, 4500000, 12, 120, 5, 6),
     -- Hoang Van E (ID 5) thuê P302 (ID 6)
-    ('2024-04-05 14:00:00', 6, 2500000, 8, 80, 6, 8),
+
+('2024-04-05 14:00:00', 6, 2500000, 8, 80, 6, 8),
+
     -- Nguyen Thi F (ID 6) thuê P402 (ID 8)
     ('2024-05-20 16:00:00', 12, 6000000, 15, 150, 7, 10),
     -- Tran Van G (ID 7) thuê P502 (ID 10)
@@ -260,7 +264,8 @@ VALUES
     (N'Vị trí thuận tiện đi lại.', 8, 1),
     (N'Cần thêm chỗ để xe.', 9, 2),
     (N'An ninh tốt.', 1, 3),
-    (N'Đồ đạc trong phòng hơi cũ.', 2, 4),
+
+(N'Đồ đạc trong phòng hơi cũ.', 2, 4),
     (N'Hài lòng với trải nghiệm ở đây.', 4, 5);
 
 -- 8. Chèn dữ liệu vào bảng OTP (10 bản ghi) - Đã thêm cột ngayTao

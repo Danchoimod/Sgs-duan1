@@ -3,6 +3,17 @@ package poly.nhatro.ui;
 import poly.nhatro.dao.HopDongDAO;
 import poly.nhatro.dao.impl.HopDongImpl;
 import poly.nhatro.entity.HopDong;
+import poly.nhatro.dao.ChiNhanhDAO;
+import poly.nhatro.dao.impl.ChiNhanhDAOImpl;
+import poly.nhatro.entity.ChiNhanh;
+import poly.nhatro.dao.impl.PhongDaoImpl;
+import poly.nhatro.entity.Phong;
+import poly.nhatro.dao.NguoiDungDAO;
+import poly.nhatro.dao.impl.NguoiDungDAOImpl;
+import poly.nhatro.entity.NguoiDung;
+import poly.nhatro.dao.DienNuocDAO;
+import poly.nhatro.dao.impl.DienNuocDAOImpl;
+import poly.nhatro.entity.DienNuoc;
 // Removed HopDongService and HopDongServiceImpl imports
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -11,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Calendar; // Needed for calculateEndDate logic
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  *
@@ -20,6 +33,10 @@ public class HopDongPanel extends javax.swing.JPanel {
 
     // Thay đổi từ HopDongService sang HopDongDAO
     private HopDongDAO hopDongDAO; // Changed to HopDongDAO
+    private ChiNhanhDAO chiNhanhDAO; // Added ChiNhanhDAO
+    private PhongDaoImpl phongDAO; // Added PhongDAO
+    private NguoiDungDAO nguoiDungDAO; // Added NguoiDungDAO
+    private DienNuocDAO dienNuocDAO; // Added DienNuocDAO
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // Date format for text fields
 
     private int currentIndex = -1; // To keep track of selected row
@@ -35,14 +52,38 @@ public class HopDongPanel extends javax.swing.JPanel {
         initComponents();
         // Khởi tạo HopDongDAO thay vì HopDongService
         this.hopDongDAO = new HopDongImpl(); // Initialized HopDongDAO
+        this.chiNhanhDAO = new ChiNhanhDAOImpl(); // Initialize ChiNhanhDAO
+        this.phongDAO = new PhongDaoImpl(); // Initialize PhongDAO
+        this.nguoiDungDAO = new NguoiDungDAOImpl(); // Initialize NguoiDungDAO
+        this.dienNuocDAO = new DienNuocDAOImpl(); // Initialize DienNuocDAO
         init(); // Call custom initialization
     }
 
     private void init() {
-        // Load dummy data for ComboBoxes (These should ideally come from DB)
+        // Load data for ComboBoxes from database
         fillChiNhanhComboBox();
         fillNguoiDungComboBox();
         fillPhongComboBox();
+        
+        // Add event listener for chi nhanh selection
+        cboChiNhanh.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    onChiNhanhSelected();
+                }
+            }
+        });
+
+        // Add event listener for phong selection to auto-populate meter readings
+        cboSoPhong.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    onPhongSelected();
+                }
+            }
+        });
 
         // Setup table models and fill data
         // jTable3 is "CÒN HẠN" (lblHopDong2)
@@ -58,48 +99,130 @@ public class HopDongPanel extends javax.swing.JPanel {
 
     private void fillChiNhanhComboBox() {
         cboChiNhanh.removeAllItems();
-        // Trong một ứng dụng thực tế, bạn sẽ lấy dữ liệu này từ CSDL thông qua ChiNhanhDAO
-        // Ví dụ: List<ChiNhanh> chiNhanhs = chiNhanhDAO.findAll();
-        // for (ChiNhanh cn : chiNhanhs) { cboChiNhanh.addItem(cn.getID_ChiNhanh() + " (" + cn.getTenChiNhanh() + ")"); }
-        cboChiNhanh.addItem("1 (Quận Ninh Kiều)");
-        cboChiNhanh.addItem("2 (Quận Cái Răng)");
-        cboChiNhanh.addItem("3 (Quận Bình Thủy)");
-        // Add more dummy branches as needed
+        cboChiNhanh.addItem("Tất cả"); // Default selection showing all
+        
+        try {
+            List<ChiNhanh> chiNhanhs = chiNhanhDAO.getAll();
+            for (ChiNhanh cn : chiNhanhs) {
+                cboChiNhanh.addItem(cn.getTenChiNhanh());
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách chi nhánh: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 
     private void fillNguoiDungComboBox() {
         cboNguoiKiHopDong.removeAllItems();
-        // Trong một ứng dụng thực tế, bạn sẽ lấy dữ liệu này từ CSDL thông qua NguoiDungDAO
-        // Ví dụ: List<NguoiDung> nguoiDungs = nguoiDungDAO.findAll();
-        // for (NguoiDung nd : nguoiDungs) { cboNguoiKiHopDong.addItem(nd.getID_NguoiDung() + " (" + nd.getTenNguoiDung() + ")"); }
-        cboNguoiKiHopDong.addItem("1 (Nguyễn Văn A)");
-        cboNguoiKiHopDong.addItem("2 (Trần Thị B)");
-        cboNguoiKiHopDong.addItem("3 (Lê Văn C)");
-        cboNguoiKiHopDong.addItem("4 (Phạm Thị D)");
-        cboNguoiKiHopDong.addItem("5 (Hoàng Văn E)");
-        cboNguoiKiHopDong.addItem("6 (Vũ Thị F)");
-        cboNguoiKiHopDong.addItem("7 (Đặng Văn G)");
-        cboNguoiKiHopDong.addItem("8 (Bùi Thị H)");
-        cboNguoiKiHopDong.addItem("9 (Đỗ Văn I)");
-        // Add more dummy user IDs (adjust if your NguoiDung table has more)
+        cboNguoiKiHopDong.addItem("-- Chọn người dùng --"); // Default empty selection
+        
+        try {
+            // Chỉ lấy những người dùng chưa có hợp đồng đang hoạt động
+            List<NguoiDung> nguoiDungs = nguoiDungDAO.findAvailableForContract();
+            for (NguoiDung nd : nguoiDungs) {
+                cboNguoiKiHopDong.addItem(nd.getID_NguoiDung() + " (" + nd.getTenNguoiDung() + ")");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách người dùng: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Fill combo box for editing contract - includes all active users and the current contract user
+     */
+    private void fillNguoiDungComboBoxForEdit(int currentUserId) {
+        cboNguoiKiHopDong.removeAllItems();
+        cboNguoiKiHopDong.addItem("-- Chọn người dùng --"); // Default empty selection
+        
+        try {
+            // Lấy người dùng hiện tại của hợp đồng
+            NguoiDung currentUser = nguoiDungDAO.findById(currentUserId);
+            if (currentUser != null) {
+                cboNguoiKiHopDong.addItem(currentUser.getID_NguoiDung() + " (" + currentUser.getTenNguoiDung() + ")");
+            }
+
+            // Thêm những người dùng chưa có hợp đồng đang hoạt động
+            List<NguoiDung> availableUsers = nguoiDungDAO.findAvailableForContract();
+            for (NguoiDung nd : availableUsers) {
+                // Tránh thêm trùng lặp người dùng hiện tại
+                if (nd.getID_NguoiDung() != currentUserId) {
+                    cboNguoiKiHopDong.addItem(nd.getID_NguoiDung() + " (" + nd.getTenNguoiDung() + ")");
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách người dùng: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 
     private void fillPhongComboBox() {
         cboSoPhong.removeAllItems();
-        // Trong một ứng dụng thực tế, bạn sẽ lấy dữ liệu này từ CSDL thông qua PhongDAO
-        // Ví dụ: List<Phong> phongs = phongDAO.findAll();
-        // for (Phong p : phongs) { cboSoPhong.addItem(p.getID_Phong() + " (" + p.getSoPhong() + ")"); }
-        cboSoPhong.addItem("1 (P101)");
-        cboSoPhong.addItem("2 (P102)");
-        cboSoPhong.addItem("3 (P201)");
-        cboSoPhong.addItem("4 (P202)");
-        cboSoPhong.addItem("5 (P301)");
-        cboSoPhong.addItem("6 (P302)");
-        cboSoPhong.addItem("7 (P401)");
-        cboSoPhong.addItem("8 (P402)");
-        cboSoPhong.addItem("9 (P501)");
-        cboSoPhong.addItem("10 (P502)");
-        // Add more dummy room IDs
+        cboSoPhong.addItem("-- Chọn phòng --"); // Default empty selection
+        
+        // Initially load all available rooms (since chi nhanh defaults to "Tất cả")
+        try {
+            List<Phong> phongs = phongDAO.findAllAvailable(); // Get all available rooms
+            for (Phong p : phongs) {
+                cboSoPhong.addItem(p.getSoPhong());
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách phòng trống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Handle chi nhanh selection to filter phong list and update contract tables
+     */
+    private void onChiNhanhSelected() {
+        String selectedChiNhanh = (String) cboChiNhanh.getSelectedItem();
+        cboSoPhong.removeAllItems();
+        cboSoPhong.addItem("-- Chọn phòng --");
+        
+        if (selectedChiNhanh == null || selectedChiNhanh.equals("Tất cả")) {
+            // If "Tất cả" selected, show all contracts and all available rooms
+            fillTableActiveContracts();
+            fillTableExpiredContracts();
+            
+            // Load all available rooms when "Tất cả" is selected
+            try {
+                List<Phong> phongs = phongDAO.findAllAvailable();
+                for (Phong p : phongs) {
+                    cboSoPhong.addItem(p.getSoPhong());
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách tất cả phòng trống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+            return;
+        }
+        
+        try {
+            // Find the selected chi nhanh ID
+            List<ChiNhanh> chiNhanhs = chiNhanhDAO.getAll();
+            int selectedChiNhanhId = -1;
+            for (ChiNhanh cn : chiNhanhs) {
+                if (cn.getTenChiNhanh().equals(selectedChiNhanh)) {
+                    selectedChiNhanhId = cn.getID_ChiNhanh();
+                    break;
+                }
+            }
+            
+            if (selectedChiNhanhId != -1) {
+                // Load only available rooms for the selected chi nhanh
+                List<Phong> phongs = phongDAO.findAvailableByChiNhanh(selectedChiNhanhId);
+                for (Phong p : phongs) {
+                    cboSoPhong.addItem(p.getSoPhong());
+                }
+                
+                // Filter and display contracts by selected chi nhanh
+                fillTableByChiNhanh(selectedChiNhanhId);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách phòng trống theo chi nhánh: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 
     private void fillTableActiveContracts() {
@@ -154,6 +277,69 @@ public class HopDongPanel extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Fill tables with contracts filtered by chi nhanh
+     */
+    private void fillTableByChiNhanh(int chiNhanhId) {
+        // Clear both tables first
+        modelActive.setRowCount(0);
+        modelExpired.setRowCount(0);
+        
+        try {
+            // Get all active contracts
+            List<HopDong> activeContracts = hopDongDAO.selectActiveContracts();
+            // Get all expired contracts
+            List<HopDong> expiredContracts = hopDongDAO.selectExpiredContracts();
+            
+            // Filter active contracts by chi nhanh
+            for (HopDong hd : activeContracts) {
+                // Get room info to check chi nhanh
+                Phong phong = phongDAO.findById(hd.getID_Phong());
+                if (phong != null && phong.getIdChiNhanh() == chiNhanhId) {
+                    Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
+                    Object[] row = {
+                        hd.getID_HopDong(),
+                        sdf.format(hd.getNgayTao()),
+                        hd.getThoiHan(),
+                        ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A",
+                        hd.getTienCoc(),
+                        hd.getNuocBanDau(),
+                        hd.getDienBanDau(),
+                        hd.getID_NguoiDung(),
+                        hd.getID_Phong(),
+                        "CÒN HẠN"
+                    };
+                    modelActive.addRow(row);
+                }
+            }
+            
+            // Filter expired contracts by chi nhanh
+            for (HopDong hd : expiredContracts) {
+                // Get room info to check chi nhanh
+                Phong phong = phongDAO.findById(hd.getID_Phong());
+                if (phong != null && phong.getIdChiNhanh() == chiNhanhId) {
+                    Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
+                    Object[] row = {
+                        hd.getID_HopDong(),
+                        sdf.format(hd.getNgayTao()),
+                        hd.getThoiHan(),
+                        ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A",
+                        hd.getTienCoc(),
+                        hd.getNuocBanDau(),
+                        hd.getDienBanDau(),
+                        hd.getID_NguoiDung(),
+                        hd.getID_Phong(),
+                        "HẾT HẠN"
+                    };
+                    modelExpired.addRow(row);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi lọc hợp đồng theo chi nhánh: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
     // Phương thức tính toán ngày hết hạn hợp đồng (moved from service to panel)
     private Date calculateEndDate(Date ngayTao, int thoiHan) {
         if (ngayTao == null) {
@@ -184,8 +370,31 @@ public class HopDongPanel extends javax.swing.JPanel {
             int dienBanDau = Integer.parseInt(txtTimKiem5.getText().trim());
             
             // Extract ID from ComboBox string (e.g., "1 (Nguyễn Văn A)" -> "1")
-            int idNguoiDung = Integer.parseInt(((String) cboNguoiKiHopDong.getSelectedItem()).split(" ")[0]); 
-            int idPhong = Integer.parseInt(((String) cboSoPhong.getSelectedItem()).split(" ")[0]);
+            String selectedUser = (String) cboNguoiKiHopDong.getSelectedItem();
+            if (selectedUser == null || selectedUser.equals("-- Chọn người dùng --")) {
+                throw new IllegalArgumentException("Vui lòng chọn người dùng");
+            }
+            int idNguoiDung = Integer.parseInt(selectedUser.split(" ")[0]); 
+            
+            // Get room ID from room name (since we now store just room names in combo box)
+            String selectedRoomName = (String) cboSoPhong.getSelectedItem();
+            if (selectedRoomName == null || selectedRoomName.equals("-- Chọn phòng --")) {
+                throw new IllegalArgumentException("Vui lòng chọn phòng");
+            }
+            
+            // Find room ID by room name
+            int idPhong = -1;
+            List<Phong> phongs = phongDAO.findAll(); // Search in all rooms, not just available ones
+            for (Phong p : phongs) {
+                if (p.getSoPhong().equals(selectedRoomName)) {
+                    idPhong = p.getIdPhong();
+                    break;
+                }
+            }
+            
+            if (idPhong == -1) {
+                throw new IllegalArgumentException("Không tìm thấy phòng đã chọn");
+            }
 
             HopDong hopDong = new HopDong();
             // If txtTimKiem6 has a value, it means we are updating, otherwise adding
@@ -202,9 +411,6 @@ public class HopDongPanel extends javax.swing.JPanel {
             return hopDong;
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng số cho thời hạn, tiền cọc, chỉ số nước/điện và ID.", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
-            return null;
-        } catch (ParseException e) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng ngày (dd/MM/yyyy) cho 'Ngày tạo'.", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
             return null;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi lấy dữ liệu từ form: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -224,12 +430,49 @@ public class HopDongPanel extends javax.swing.JPanel {
         // Thiết lập txtTimKiem7 (Mã người dùng)
         txtTimKiem7.setText(String.valueOf(hd.getID_NguoiDung()));
 
-        // Set selected item in ComboBoxes based on ID (and possibly name part)
+        // Khi chỉnh sửa hợp đồng, cần load lại danh sách người dùng bao gồm cả người đã có hợp đồng
+        // để có thể chỉnh sửa hợp đồng hiện tại
+        fillNguoiDungComboBoxForEdit(hd.getID_NguoiDung());
+        
+        // Set selected item in ComboBoxes based on ID
         setComboBoxSelectedItem(cboNguoiKiHopDong, String.valueOf(hd.getID_NguoiDung()));
-        setComboBoxSelectedItem(cboSoPhong, String.valueOf(hd.getID_Phong()));
-        // cboChiNhanh is not directly set by HopDong, it's usually derived from Phong
-        // If you need to set cboChiNhanh based on the selected HopDong, you'd need to fetch Phong details
-        // and then ChiNhanh details. For now, it remains as is based on the provided code structure.
+        
+        // Set room selection by room name instead of ID
+        try {
+            Phong phong = phongDAO.findById(hd.getID_Phong());
+            if (phong != null) {
+                // Set the chi nhanh first
+                ChiNhanh chiNhanh = chiNhanhDAO.getById(phong.getIdChiNhanh());
+                if (chiNhanh != null) {
+                    for (int i = 0; i < cboChiNhanh.getItemCount(); i++) {
+                        if (cboChiNhanh.getItemAt(i).equals(chiNhanh.getTenChiNhanh())) {
+                            cboChiNhanh.setSelectedIndex(i);
+                            break;
+                        }
+                    }
+                    
+                    // Temporarily load all rooms for this branch to include the current room
+                    // even if it's rented (for editing existing contracts)
+                    cboSoPhong.removeAllItems();
+                    cboSoPhong.addItem("-- Chọn phòng --");
+                    List<Phong> allRoomsInBranch = phongDAO.findByChiNhanh(chiNhanh.getID_ChiNhanh());
+                    for (Phong p : allRoomsInBranch) {
+                        cboSoPhong.addItem(p.getSoPhong());
+                    }
+                }
+                
+                // Set the room
+                for (int i = 0; i < cboSoPhong.getItemCount(); i++) {
+                    if (cboSoPhong.getItemAt(i).equals(phong.getSoPhong())) {
+                        cboSoPhong.setSelectedIndex(i);
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi thiết lập thông tin phòng: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 
     // Helper method to set selected item for ComboBoxes that might have "ID (Name)" format
@@ -249,14 +492,24 @@ public class HopDongPanel extends javax.swing.JPanel {
         txtTimKiem2.setText(sdf.format(new Date())); // Set current date for ngayTao
         txtTimKiem1.setText(""); // Clear Thoi han
         txtTimKiem3.setText(""); // Clear Tien coc
-        txtTimKiem4.setText(""); // Clear Nuoc ban dau
-        txtTimKiem5.setText(""); // Clear Dien ban dau
+        txtTimKiem4.setText(""); // Clear Nuoc ban dau - will be auto-populated when room is selected
+        txtTimKiem5.setText(""); // Clear Dien ban dau - will be auto-populated when room is selected
         txtTimKiem7.setText(""); // Clear Mã người dùng
         txtTimKiem.setText(""); // Clear search field (if used)
 
+        // Reload the user combo box to show only available users for new contracts
+        fillNguoiDungComboBox();
+        
+        // Set to default selections (first item which should be "-- Chọn ... --")
         cboChiNhanh.setSelectedIndex(0);
-        cboNguoiKiHopDong.setSelectedIndex(0);
-        cboSoPhong.setSelectedIndex(0);
+        if (cboNguoiKiHopDong.getItemCount() > 0) {
+            cboNguoiKiHopDong.setSelectedIndex(0);
+        }
+        cboSoPhong.setSelectedIndex(0); // This will trigger onPhongSelected() and clear meter fields
+        
+        // Reset tables to show all contracts
+        fillTableActiveContracts();
+        fillTableExpiredContracts();
         
         currentIndex = -1;
         updateStatus();
@@ -271,7 +524,7 @@ public class HopDongPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Thêm hợp đồng thành công!");
             fillTableActiveContracts(); // Refresh tables
             fillTableExpiredContracts();
-            clearForm();
+            clearForm(); // This will reload the user combo box with available users
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(this, "Lỗi dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.WARNING_MESSAGE);
         } catch (Exception e) {
@@ -298,7 +551,7 @@ public class HopDongPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Cập nhật hợp đồng thành công!");
             fillTableActiveContracts(); // Refresh tables
             fillTableExpiredContracts();
-            clearForm();
+            clearForm(); // This will reload the user combo box with available users
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Mã hợp đồng không hợp lệ. Vui lòng chọn hợp đồng từ bảng.", "Lỗi", JOptionPane.ERROR_MESSAGE);
         } catch (IllegalArgumentException e) {
@@ -326,7 +579,7 @@ public class HopDongPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Xóa hợp đồng thành công!");
             fillTableActiveContracts(); // Refresh tables
             fillTableExpiredContracts();
-            clearForm();
+            clearForm(); // This will reload the user combo box with available users
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Mã hợp đồng không hợp lệ. Vui lòng chọn hợp đồng từ bảng.", "Lỗi", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
@@ -370,9 +623,32 @@ public class HopDongPanel extends javax.swing.JPanel {
     // New search method
     private void search() {
         String keyword = txtTimKiem.getText().trim();
+        String selectedChiNhanh = (String) cboChiNhanh.getSelectedItem();
+        
         if (keyword.isEmpty()) {
-            fillTableActiveContracts(); // If search box is empty, show all active contracts
-            fillTableExpiredContracts(); // If search box is empty, show all expired contracts
+            // If search box is empty, check if chi nhanh is selected
+            if (selectedChiNhanh != null && !selectedChiNhanh.equals("Tất cả")) {
+                // Filter by selected chi nhanh
+                try {
+                    List<ChiNhanh> chiNhanhs = chiNhanhDAO.getAll();
+                    int selectedChiNhanhId = -1;
+                    for (ChiNhanh cn : chiNhanhs) {
+                        if (cn.getTenChiNhanh().equals(selectedChiNhanh)) {
+                            selectedChiNhanhId = cn.getID_ChiNhanh();
+                            break;
+                        }
+                    }
+                    if (selectedChiNhanhId != -1) {
+                        fillTableByChiNhanh(selectedChiNhanhId);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                // Show all contracts if "Tất cả" selected and no search keyword
+                fillTableActiveContracts();
+                fillTableExpiredContracts();
+            }
             return;
         }
 
@@ -388,24 +664,51 @@ public class HopDongPanel extends javax.swing.JPanel {
                 return;
             }
 
+            // If chi nhanh is selected (not "Tất cả"), also filter by chi nhanh
+            int selectedChiNhanhId = -1;
+            if (selectedChiNhanh != null && !selectedChiNhanh.equals("Tất cả")) {
+                List<ChiNhanh> chiNhanhs = chiNhanhDAO.getAll();
+                for (ChiNhanh cn : chiNhanhs) {
+                    if (cn.getTenChiNhanh().equals(selectedChiNhanh)) {
+                        selectedChiNhanhId = cn.getID_ChiNhanh();
+                        break;
+                    }
+                }
+            }
+
             for (HopDong hd : searchResults) {
-                Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
-                Object[] row = {
-                    hd.getID_HopDong(),
-                    sdf.format(hd.getNgayTao()),
-                    hd.getThoiHan(),
-                    ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A",
-                    hd.getTienCoc(),
-                    hd.getNuocBanDau(),
-                    hd.getDienBanDau(),
-                    hd.getID_NguoiDung(),
-                    hd.getID_Phong(),
-                    ngayKetThuc != null && ngayKetThuc.after(new Date()) ? "CÒN HẠN" : "HẾT HẠN"
-                };
-                if (ngayKetThuc != null && ngayKetThuc.after(new Date())) {
-                    modelActive.addRow(row);
-                } else {
-                    modelExpired.addRow(row);
+                // Check if need to filter by chi nhanh
+                boolean includeContract = true;
+                if (selectedChiNhanhId != -1) {
+                    try {
+                        Phong phong = phongDAO.findById(hd.getID_Phong());
+                        if (phong == null || phong.getIdChiNhanh() != selectedChiNhanhId) {
+                            includeContract = false;
+                        }
+                    } catch (Exception e) {
+                        includeContract = false;
+                    }
+                }
+                
+                if (includeContract) {
+                    Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
+                    Object[] row = {
+                        hd.getID_HopDong(),
+                        sdf.format(hd.getNgayTao()),
+                        hd.getThoiHan(),
+                        ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A",
+                        hd.getTienCoc(),
+                        hd.getNuocBanDau(),
+                        hd.getDienBanDau(),
+                        hd.getID_NguoiDung(),
+                        hd.getID_Phong(),
+                        ngayKetThuc != null && ngayKetThuc.after(new Date()) ? "CÒN HẠN" : "HẾT HẠN"
+                    };
+                    if (ngayKetThuc != null && ngayKetThuc.after(new Date())) {
+                        modelActive.addRow(row);
+                    } else {
+                        modelExpired.addRow(row);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -789,6 +1092,63 @@ public class HopDongPanel extends javax.swing.JPanel {
     private void btnTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimKiemActionPerformed
       search();
     }//GEN-LAST:event_btnTimKiemActionPerformed
+
+    // Auto-populate meter readings when room is selected
+    private void onPhongSelected() {
+        String selectedPhong = (String) cboSoPhong.getSelectedItem();
+        if (selectedPhong == null || selectedPhong.equals("-- Chọn phòng --")) {
+            // Clear meter reading fields if no room selected
+            txtTimKiem4.setText(""); // Nước
+            txtTimKiem5.setText(""); // Điện
+            return;
+        }
+
+        try {
+            System.out.println("Auto-populating meter readings for room: " + selectedPhong);
+            
+            // Find the room by room number to get room ID
+            List<Phong> phongs = phongDAO.findAll();
+            Integer roomId = null;
+            for (Phong phong : phongs) {
+                if (phong.getSoPhong().equals(selectedPhong)) {
+                    roomId = phong.getIdPhong();
+                    break;
+                }
+            }
+
+            if (roomId != null) {
+                System.out.println("Found room ID: " + roomId + " for room: " + selectedPhong);
+                
+                // Get latest meter reading for this room
+                DienNuoc latestMeterReading = dienNuocDAO.findLatestByPhong(roomId);
+                if (latestMeterReading != null) {
+                    // Auto-populate with latest meter readings (soDienMoi and soNuocMoi from previous period)
+                    int latestWater = latestMeterReading.getSoNuocMoi();
+                    int latestElectric = latestMeterReading.getSoDienMoi();
+                    
+                    txtTimKiem4.setText(String.valueOf(latestWater)); // Nước ban đầu
+                    txtTimKiem5.setText(String.valueOf(latestElectric)); // Điện ban đầu
+                    
+                    System.out.println("Auto-populated: Water=" + latestWater + ", Electric=" + latestElectric);
+                } else {
+                    // No previous meter readings found, set to 0 or clear fields
+                    txtTimKiem4.setText("0");
+                    txtTimKiem5.setText("0");
+                    System.out.println("No previous meter readings found for room: " + selectedPhong + ", set to 0");
+                }
+            } else {
+                System.err.println("Could not find room ID for room: " + selectedPhong);
+                txtTimKiem4.setText("");
+                txtTimKiem5.setText("");
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tự động điền số điện nước: " + e.getMessage());
+            e.printStackTrace();
+            // On error, clear the fields but don't show error dialog to user
+            txtTimKiem4.setText("");
+            txtTimKiem5.setText("");
+        }
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
