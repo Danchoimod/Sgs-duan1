@@ -83,31 +83,17 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             
             String selectedSoPhong = cboMaPhong.getSelectedItem().toString();
             
-            // Kiểm tra phongMap có được khởi tạo chưa - chỉ tải lại khi thực sự cần thiết
+            // Kiểm tra phongMap có được khởi tạo chưa
             if (phongMap == null || phongMap.isEmpty()) {
-                System.err.println("CẢNH BÁO: phongMap chưa được khởi tạo hoặc rỗng. Đang tải lại dữ liệu phòng...");
-                loadPhongToComboBox();
-                // Kiểm tra lại sau khi tải
-                if (phongMap == null || phongMap.isEmpty()) {
-                    System.err.println("LỖI: Không thể tải dữ liệu phongMap!");
-                    return;
-                }
+                return; // Không thể xử lý nếu phongMap chưa sẵn sàng
             }
             
             Integer idPhong = phongMap.get(selectedSoPhong);
             
             if (idPhong == null) {
-                // Thử tải lại phongMap một lần nữa trước khi báo lỗi
-                System.err.println("Không tìm thấy ID cho phòng '" + selectedSoPhong + "'. Thử tải lại phongMap...");
-                loadPhongToComboBox();
-                idPhong = phongMap.get(selectedSoPhong);
-                
-                if (idPhong == null) {
-                    System.err.println("LỖI: Vẫn không tìm thấy ID cho phòng '" + selectedSoPhong + "' sau khi tải lại. PhongMap hiện tại: " + phongMap.keySet());
-                    txtSoDienCu.setText("");
-                    txtSoNuocCu.setText("");
-                    return;
-                }
+                txtSoDienCu.setText("");
+                txtSoNuocCu.setText("");
+                return;
             }
             
             // Lấy thời gian được chọn, nếu null thì dùng thời gian hiện tại
@@ -126,18 +112,14 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                 
                 txtSoDienCu.setText(String.valueOf(soDienCu));
                 txtSoNuocCu.setText(String.valueOf(soNuocCu));
-                System.out.println("Đã tự động điền số điện cũ: " + soDienCu + ", số nước cũ: " + soNuocCu + " cho phòng " + selectedSoPhong);
             } else {
                 // Nếu không có bản ghi tháng trước, fill số 0 (tháng đầu tiên)
                 txtSoDienCu.setText("0");
                 txtSoNuocCu.setText("0");
-                System.out.println("Đây là tháng đầu tiên cho phòng " + selectedSoPhong + ", đã đặt số điện/nước cũ = 0");
             }
             
         } catch (Exception e) {
             // Nếu có lỗi, đặt về 0
-            System.err.println("LỖI trong autoFillSoDienNuocCu: " + e.getMessage());
-            e.printStackTrace();
             txtSoDienCu.setText("0");
             txtSoNuocCu.setText("0");
         }
@@ -623,13 +605,13 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         }
         dienNuoc.setIdPhong(idPhong);
         try {
-            if (txtID_DienNuoc.getText() != null && !txtID_DienNuoc.getText().isEmpty()) {
-                dienNuoc.setIdDienNuoc(Integer.parseInt(txtID_DienNuoc.getText()));
+            if (txtID_DienNuoc.getText() != null && !txtID_DienNuoc.getText().trim().isEmpty()) {
+                dienNuoc.setIdDienNuoc(Integer.parseInt(txtID_DienNuoc.getText().trim()));
             }
-            dienNuoc.setSoDienCu((int) Double.parseDouble(txtSoDienCu.getText()));
-            dienNuoc.setSoDienMoi((int) Double.parseDouble(txtSoDienMoi.getText()));
-            dienNuoc.setSoNuocCu((int) Double.parseDouble(txtSoNuocCu.getText()));
-            dienNuoc.setSoNuocMoi((int) Double.parseDouble(txtSoNuocMoi.getText()));
+            dienNuoc.setSoDienCu((int) Double.parseDouble(txtSoDienCu.getText().trim()));
+            dienNuoc.setSoDienMoi((int) Double.parseDouble(txtSoDienMoi.getText().trim()));
+            dienNuoc.setSoNuocCu((int) Double.parseDouble(txtSoNuocCu.getText().trim()));
+            dienNuoc.setSoNuocMoi((int) Double.parseDouble(txtSoNuocMoi.getText().trim()));
             dienNuoc.setThangNam(dateThoiGianTao.getDate());
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Số điện hoặc số nước không hợp lệ. Vui lòng nhập số.", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -649,7 +631,7 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         }
         
         // Validation cho nút thêm
-        if (txtSoDienMoi.getText().isEmpty() || txtSoNuocMoi.getText().isEmpty()) {
+        if (txtSoDienMoi.getText().trim().isEmpty() || txtSoNuocMoi.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Số điện mới và Số nước mới không được để trống khi thêm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -730,8 +712,8 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             newDienNuoc.setIdPhong(idPhong);
             newDienNuoc.setSoDienCu(soDienCu);
             newDienNuoc.setSoNuocCu(soNuocCu);
-            newDienNuoc.setSoDienMoi((int) Double.parseDouble(txtSoDienMoi.getText()));
-            newDienNuoc.setSoNuocMoi((int) Double.parseDouble(txtSoNuocMoi.getText()));
+            newDienNuoc.setSoDienMoi((int) Double.parseDouble(txtSoDienMoi.getText().trim()));
+            newDienNuoc.setSoNuocMoi((int) Double.parseDouble(txtSoNuocMoi.getText().trim()));
             newDienNuoc.setThangNam(selectedDate);
             
             // Validation: số mới phải >= số cũ
@@ -764,7 +746,6 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             // Tải lại bảng để hiển thị bản ghi mới
             filterAndFillTable();
             
-            System.out.println(successMessage);
             JOptionPane.showMessageDialog(this, successMessage, "Thành công", JOptionPane.INFORMATION_MESSAGE);
             
             // Cập nhật hiển thị số điện/nước cũ trên form để người dùng thấy
@@ -989,8 +970,6 @@ public void update() {
 // Phương thức mới để tải mã phòng vào cboMaPhong dựa trên chi nhánh được chọn
 
     private void loadPhongToComboBox() {
-        System.out.println("DEBUG: loadPhongToComboBox() được gọi. Chi nhánh hiện tại: " + cboChiNhanh.getSelectedItem());
-        
         cboMaPhong.removeAllItems();
         phongMap.clear();
         String selectedChiNhanhName = (String) cboChiNhanh.getSelectedItem();
@@ -1001,44 +980,32 @@ public void update() {
         if (selectedChiNhanhName == null || selectedChiNhanhName.equals("Tất cả")) {
             try {
                 List<Phong> phongs = phongDao.findAll();
-                System.out.println("DEBUG: Tải tất cả phòng. Số lượng: " + phongs.size());
                 for (Phong p : phongs) {
                     // Chỉ thêm nếu chưa có trong Set (tránh duplicate)
                     if (!addedRooms.contains(p.getSoPhong())) {
                         cboMaPhong.addItem(p.getSoPhong());
                         phongMap.put(p.getSoPhong(), p.getIdPhong());
                         addedRooms.add(p.getSoPhong());
-                        System.out.println("DEBUG: Đã thêm phòng: " + p.getSoPhong() + " với ID: " + p.getIdPhong());
-                    } else {
-                        System.out.println("DEBUG: Bỏ qua phòng trùng lặp: " + p.getSoPhong());
                     }
                 }
-                System.out.println("DEBUG: PhongMap sau khi tải (đã loại bỏ duplicate): " + phongMap.keySet());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách phòng: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
             }
         } else {
             Integer idChiNhanh = chiNhanhMap.get(selectedChiNhanhName);
             if (idChiNhanh != null) {
                 try {
                     List<Phong> phongs = phongDao.findByChiNhanh(idChiNhanh);
-                    System.out.println("DEBUG: Tải phòng cho chi nhánh ID " + idChiNhanh + ". Số lượng: " + phongs.size());
                     for (Phong p : phongs) {
                         // Chỉ thêm nếu chưa có trong Set (tránh duplicate)
                         if (!addedRooms.contains(p.getSoPhong())) {
                             cboMaPhong.addItem(p.getSoPhong());
                             phongMap.put(p.getSoPhong(), p.getIdPhong());
                             addedRooms.add(p.getSoPhong());
-                            System.out.println("DEBUG: Đã thêm phòng: " + p.getSoPhong() + " với ID: " + p.getIdPhong());
-                        } else {
-                            System.out.println("DEBUG: Bỏ qua phòng trùng lặp: " + p.getSoPhong());
                         }
                     }
-                    System.out.println("DEBUG: PhongMap sau khi tải (đã loại bỏ duplicate): " + phongMap.keySet());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách phòng theo chi nhánh: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
                 }
             }
         }

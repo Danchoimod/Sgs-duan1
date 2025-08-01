@@ -55,7 +55,6 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
     public void taoVaDienMatKhauNgauNhien() {
         String matKhauMoi = taoMatKhauNgauNhien();
         txtMatKhau.setText(matKhauMoi);
-        XDialog.alert("Đã tạo mật khẩu ngẫu nhiên: " + matKhauMoi + "\nVui lòng lưu mật khẩu này!");
     }
 
     /**
@@ -1026,7 +1025,7 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
     }
 
     @Override
-    public void clear() {
+public void clear() {
         selectedId = null;
         txtHoTen.setText("");
         txtSDT.setText("");
@@ -1044,6 +1043,13 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
         if (cboVaiTro.getItemCount() > 0) {
             cboVaiTro.setSelectedIndex(1); 
         }
+        
+        lblAnhMatTruoc.setIcon(null);
+        lblAnhMatTruoc.setToolTipText(null);
+        lblAnhMatSau.setIcon(null);
+        lblAnhMatSau.setToolTipText(null);
+        
+        dateNgaySinh.setDate(null);
         
         tblNguoiThue.clearSelection();
         
@@ -1315,14 +1321,128 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
         }
 
         String email = txtEmail.getText().trim();
-        if (!email.isEmpty() && !email.matches("^[\\w\\.-]+@[a-zA-Z\\d\\.-]+\\.[a-zA-Z]{2,6}$")) {
+        if (email.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                "Định dạng email không hợp lệ!\nVí dụ: nguyenvana@gmail.com",
-                "Lỗi validation",
+                "📧 Email không được để trống!\n\n" +
+                "Email là thông tin bắt buộc để tạo tài khoản và nhận thông báo.",
+                "❌ Thiếu thông tin email",
                 javax.swing.JOptionPane.ERROR_MESSAGE);
             txtEmail.requestFocus();
             return false;
-        }     
+        }
+        
+        if (!email.matches("^[\\w\\.-]+@[a-zA-Z\\d\\.-]+\\.[a-zA-Z]{2,6}$")) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "📧 Định dạng email không hợp lệ!\n\n" +
+                "✅ Email hợp lệ phải có dạng: tên@domain.com\n" +
+                "📝 Ví dụ: nguyenvana@gmail.com, user123@company.vn",
+                "❌ Lỗi định dạng email",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            txtEmail.requestFocus();
+            return false;
+        }
+        
+        // Kiểm tra email đã tồn tại chưa
+        for (NguoiThue nt : allNguoiThue) {
+            if (nt.getEmail() != null && nt.getEmail().equalsIgnoreCase(email)) {
+                // Nếu đang edit người dùng hiện tại thì bỏ qua
+                if (selectedId != null && nt.getID_NguoiDung() == Integer.parseInt(selectedId)) {
+                    continue;
+                }
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "📧 Email đã được sử dụng!\n\n" +
+                    "🔍 Email \"" + email + "\" đã tồn tại trong hệ thống.\n" +
+                    "✅ Vui lòng sử dụng email khác hoặc kiểm tra lại thông tin.",
+                    "❌ Email trùng lặp",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                txtEmail.requestFocus();
+                return false;
+            }
+        }
+        
+        // Validation cho ảnh CCCD/CMND
+        String anhMatTruoc = lblAnhMatTruoc.getToolTipText();
+        String anhMatSau = lblAnhMatSau.getToolTipText();
+        
+        if (anhMatTruoc == null || anhMatTruoc.trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Vui lòng tải lên ảnh mặt trước CCCD/CMND!",
+                "Lỗi validation",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        if (anhMatSau == null || anhMatSau.trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Vui lòng tải lên ảnh mặt sau CCCD/CMND!",
+                "Lỗi validation",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+// Validate ngày sinh - bắt buộc phải nhập và không được trong tương lai
+        Date ngaySinh = dateNgaySinh.getDate();
+        if (ngaySinh == null) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "⚠️ Vui lòng chọn ngày sinh!\n\n" +
+                    "Ngày sinh là thông tin bắt buộc để tạo tài khoản.",
+                    "❌ Thiếu thông tin ngày sinh",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            dateNgaySinh.requestFocus();
+            return false;
+        }
+        
+        Date currentDate = new Date();
+        if (ngaySinh.after(currentDate)) {
+            @SuppressWarnings("deprecation")
+            int birthYear = ngaySinh.getYear() + 1900;
+            @SuppressWarnings("deprecation")
+            int currentYear = currentDate.getYear() + 1900;
+            
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "⚠️ Ngày sinh không hợp lệ!\n\n" +
+                    "📅 Ngày sinh bạn nhập: năm " + birthYear + "\n" +
+                    "📅 Năm hiện tại: " + currentYear + "\n\n" +
+                    "❌ Ngày sinh không thể là ngày trong tương lai.\n" +
+                    "✅ Vui lòng chọn ngày sinh trước ngày hôm nay.",
+                    "❌ Lỗi ngày sinh",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            dateNgaySinh.requestFocus();
+            return false;
+        }
+        
+        @SuppressWarnings("deprecation")
+        int birthYear = ngaySinh.getYear() + 1900;
+        @SuppressWarnings("deprecation")
+        int currentYear = currentDate.getYear() + 1900;
+        
+        if (birthYear >= currentYear) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "⚠️ Năm sinh không hợp lệ!\n\n" +
+                    "📅 Năm sinh bạn nhập: " + birthYear + "\n" +
+                    "📅 Năm hiện tại: " + currentYear + "\n\n" +
+                    "❌ Năm sinh không được là năm hiện tại hoặc tương lai.\n" +
+                    "✅ Vui lòng chọn năm sinh nhỏ hơn " + currentYear + ".",
+                    "❌ Lỗi năm sinh",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            dateNgaySinh.requestFocus();
+            return false;
+        }
+        
+        // Kiểm tra tuổi hợp lý (không quá 120 tuổi)
+        int age = currentYear - birthYear;
+        if (age > 120) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "⚠️ Năm sinh không hợp lý!\n\n" +
+                    "📅 Năm sinh: " + birthYear + "\n" +
+                    "🎂 Tuổi hiện tại: " + age + " tuổi\n\n" +
+                    "❌ Tuổi không được vượt quá 120 tuổi.\n" +
+                    "✅ Vui lòng kiểm tra lại năm sinh.",
+                    "❌ Tuổi không hợp lý",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            dateNgaySinh.requestFocus();
+            return false;
+        }
         return true;
     }
     
