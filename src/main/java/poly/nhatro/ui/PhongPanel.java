@@ -814,8 +814,8 @@ public class PhongPanel extends javax.swing.JPanel {
     // Hàm lấy dữ liệu từ form
     private Phong getFormData() {
         Phong phong = new Phong();
-        phong.setSoPhong(txtSoPhong.getText());
-        phong.setGiaPhong(new BigDecimal(txtGia.getText()));
+        phong.setSoPhong(txtSoPhong.getText().trim());
+        phong.setGiaPhong(new BigDecimal(txtGia.getText().trim()));
         
         // Set trạng thái dựa trên radio button
         if (rdoDaThue.isSelected()) {
@@ -824,11 +824,11 @@ public class PhongPanel extends javax.swing.JPanel {
             phong.setTrangThai("Trống");
         }
         
-        phong.setMoTa(txtMota.getText());
+        phong.setMoTa(txtMota.getText().trim());
         phong.setAnhPhong(imagePath);
 
         // Lấy ID chi nhánh từ combobox
-        String tenChiNhanh = cboChiNhanh.getSelectedItem().toString();
+        String tenChiNhanh = cboChiNhanh.getSelectedItem().toString().trim();
         ChiNhanh chiNhanh = new ChiNhanhDAOImpl().search(tenChiNhanh).get(0);
         phong.setIdChiNhanh(chiNhanh.getID_ChiNhanh());
 

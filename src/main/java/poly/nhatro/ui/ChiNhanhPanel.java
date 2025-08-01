@@ -77,10 +77,10 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
     private void add() {
         try {
             ChiNhanh cn = new ChiNhanh();
-            cn.setTenChiNhanh(btnTenChiNhanh.getText());
-            cn.setDiaChi(txtDiaChi.getText()); // Bạn cần thêm field địa chỉ vào form
-            cn.setGiaDien(new java.math.BigDecimal(txtGiaDien.getText()));
-            cn.setGiaNuoc(new java.math.BigDecimal(txtGiaNuoc.getText()));
+            cn.setTenChiNhanh(btnTenChiNhanh.getText().trim());
+            cn.setDiaChi(txtDiaChi.getText().trim()); // Bạn cần thêm field địa chỉ vào form
+            cn.setGiaDien(new java.math.BigDecimal(txtGiaDien.getText().trim()));
+            cn.setGiaNuoc(new java.math.BigDecimal(txtGiaNuoc.getText().trim()));
             if (chiNhanhService.add(cn)) {
                 JOptionPane.showMessageDialog(this, "Thêm thành công");
                 loadDataToTable();
@@ -104,10 +104,10 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
             int id = (int) tblChiNhanh.getValueAt(row, 0);
             ChiNhanh cn = new ChiNhanh();
             cn.setID_ChiNhanh(id);
-            cn.setTenChiNhanh(btnTenChiNhanh.getText());
-            cn.setDiaChi(txtDiaChi.getText()); // Bạn cần thêm field địa chỉ vào form
-            cn.setGiaDien(new java.math.BigDecimal(txtGiaDien.getText()));
-            cn.setGiaNuoc(new java.math.BigDecimal(txtGiaNuoc.getText()));
+            cn.setTenChiNhanh(btnTenChiNhanh.getText().trim());
+            cn.setDiaChi(txtDiaChi.getText().trim()); // Bạn cần thêm field địa chỉ vào form
+            cn.setGiaDien(new java.math.BigDecimal(txtGiaDien.getText().trim()));
+            cn.setGiaNuoc(new java.math.BigDecimal(txtGiaNuoc.getText().trim()));
 
             if (chiNhanhService.update(cn)) {
                 JOptionPane.showMessageDialog(this, "Cập nhật thành công");
