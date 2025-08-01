@@ -13,8 +13,8 @@ import javax.swing.JOptionPane;
  * @author Gia Bao
  */
 public class GopYJdilog extends javax.swing.JDialog {
+
     private GopYController gopYController; // Thay đổi kiểu dữ liệu thành Controller cụ thể
-    
 
     /**
      * Creates new form GopYJdilog
@@ -23,9 +23,8 @@ public class GopYJdilog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        // Khởi tạo Controller và truyền chính dialog này vào
-        // Đây là dòng quan trọng nhất gây lỗi trước đó nếu hàm tạo của Controller không nhận tham số
-        gopYController = new GopYController(this); // Dòng này là đúng
+
+        gopYController = new GopYController(this);
     }
 
     /**
@@ -50,8 +49,11 @@ public class GopYJdilog extends javax.swing.JDialog {
         lblIDChiNhanh = new javax.swing.JLabel();
         txtTenChiNhanh = new javax.swing.JTextField();
         btnXoa = new javax.swing.JButton();
+        txtTimKiem = new javax.swing.JTextField();
+        btnTimKiem = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Góp ý");
 
         pnlGopY.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -66,7 +68,7 @@ public class GopYJdilog extends javax.swing.JDialog {
                 {null, null, null, null}
             },
             new String [] {
-                "Góp ý", "Nội dung", "Người dùng", "Chi nhánh"
+                "Số thứ tự", "Nội dung", "Người dùng", "Chi nhánh"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -85,16 +87,16 @@ public class GopYJdilog extends javax.swing.JDialog {
         jScrollPane1.setViewportView(tblGopY);
 
         lblIDGopY.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        lblIDGopY.setText("Góp ý");
+        lblIDGopY.setText("Số thứ tự");
 
         lblNoiDung.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lblNoiDung.setText("Nội dung");
 
         lblIDNguoiDung.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        lblIDNguoiDung.setText("Tên người dùng");
+        lblIDNguoiDung.setText("Người dùng");
 
         lblIDChiNhanh.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        lblIDChiNhanh.setText("Tên chi nhánh");
+        lblIDChiNhanh.setText("Chi nhánh");
 
         btnXoa.setText("Xóa");
         btnXoa.addActionListener(new java.awt.event.ActionListener() {
@@ -103,53 +105,67 @@ public class GopYJdilog extends javax.swing.JDialog {
             }
         });
 
+        btnTimKiem.setText("Tìm kiếm");
+        btnTimKiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTimKiemActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlGopYLayout = new javax.swing.GroupLayout(pnlGopY);
         pnlGopY.setLayout(pnlGopYLayout);
         pnlGopYLayout.setHorizontalGroup(
             pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jScrollPane1)
             .addGroup(pnlGopYLayout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addGroup(pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblNoiDung)
+                    .addComponent(lblIDGopY))
+                .addGap(24, 24, 24)
                 .addGroup(pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlGopYLayout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addGroup(pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblNoiDung)
-                            .addGroup(pnlGopYLayout.createSequentialGroup()
-                                .addComponent(lblIDGopY)
-                                .addGap(24, 24, 24))))
-                    .addGroup(pnlGopYLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnXoa)))
-                .addGroup(pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlGopYLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtNoiDung, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
                             .addComponent(txtIDGopY))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 136, Short.MAX_VALUE)
+                        .addGap(43, 43, 43)
                         .addGroup(pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGopYLayout.createSequentialGroup()
-                                .addComponent(lblIDNguoiDung)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtTenNguoiDung, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGopYLayout.createSequentialGroup()
-                                .addComponent(lblIDChiNhanh)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtTenChiNhanh, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(lblIDNguoiDung)
+                            .addComponent(lblIDChiNhanh))
+                        .addGap(18, 18, 18)
+                        .addGroup(pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtTenChiNhanh, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtTenNguoiDung, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap())
                     .addGroup(pnlGopYLayout.createSequentialGroup()
                         .addGap(234, 234, 234)
-                        .addComponent(lblNameGopY, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(104, 104, 104))
+                        .addComponent(lblNameGopY, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 164, Short.MAX_VALUE)
+                        .addGroup(pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlGopYLayout.createSequentialGroup()
+                                .addComponent(btnXoa)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(pnlGopYLayout.createSequentialGroup()
+                                .addComponent(btnTimKiem)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(22, 22, 22))))))
         );
         pnlGopYLayout.setVerticalGroup(
             pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlGopYLayout.createSequentialGroup()
-                .addGroup(pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblNameGopY)
+                .addGroup(pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(pnlGopYLayout.createSequentialGroup()
+                        .addComponent(lblNameGopY)
+                        .addGap(32, 32, 32))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGopYLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(btnXoa)))
-                .addGap(32, 32, 32)
+                        .addComponent(btnXoa)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnTimKiem))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                 .addGroup(pnlGopYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblIDGopY)
                     .addComponent(txtIDGopY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -187,10 +203,15 @@ public class GopYJdilog extends javax.swing.JDialog {
 
     private void tblGopYMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblGopYMouseClicked
         // TODO add your handling code here:
-         if (evt.getClickCount() == 1) { // Chỉ xử lý click chuột trái 1 lần
+        if (evt.getClickCount() == 1) { // Chỉ xử lý click chuột trái 1 lần
             gopYController.edit(); // Gọi phương thức edit trong controller
         }
     }//GEN-LAST:event_tblGopYMouseClicked
+
+    private void btnTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimKiemActionPerformed
+        // TODO add your handling code here:
+        gopYController.search();
+    }//GEN-LAST:event_btnTimKiemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -235,6 +256,7 @@ public class GopYJdilog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnTimKiem;
     public javax.swing.JButton btnXoa;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblIDChiNhanh;
@@ -248,5 +270,6 @@ public class GopYJdilog extends javax.swing.JDialog {
     public javax.swing.JTextField txtNoiDung;
     public javax.swing.JTextField txtTenChiNhanh;
     public javax.swing.JTextField txtTenNguoiDung;
+    public javax.swing.JTextField txtTimKiem;
     // End of variables declaration//GEN-END:variables
 }
