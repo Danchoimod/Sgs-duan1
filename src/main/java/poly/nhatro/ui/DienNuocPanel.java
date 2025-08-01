@@ -422,7 +422,7 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         JDialog dialog = new JDialog((Frame)null, "Chọn ngày", true); // Tạo JDialog với modal là true
         dialog.getContentPane().add(dateChooser, BorderLayout.CENTER);
         dialog.pack();
-        dialog.setLocationRelativeTo(this); // Hiển thị dialog ở giữa panel
+        dialog.setLocationRelativeTo(this); 
         dialog.setVisible(true);
 
         // Sau khi dialog đóng, lấy ngày đã chọn và cập nhật txtThangNam

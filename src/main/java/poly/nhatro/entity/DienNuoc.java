@@ -16,7 +16,7 @@ public class DienNuoc {
     private String tenChiNhanh;
     private double giaDienChiNhanh; // To store giaDien from ChiNhanh for calculation
     private double giaNuocChiNhanh; // To store giaNuoc from ChiNhanh for calculation
-    private double giaPhong; // To store giaPhong from Phong for calculation
+    private double giaPhong;
 
     public DienNuoc() {
     }
