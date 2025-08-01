@@ -9,6 +9,8 @@ import poly.nhatro.entity.ChiNhanh;
 import poly.nhatro.dao.impl.PhongDaoImpl;
 import poly.nhatro.entity.Phong;
 import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
 import org.apache.poi.ss.usermodel.*;
@@ -190,7 +192,6 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         txtSoDienCu = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        txtSoNuocCu = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         cboChiNhanh = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
@@ -202,6 +203,7 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         jLabel3 = new javax.swing.JLabel();
         cboMaPhong = new javax.swing.JComboBox<>();
         dateThoiGianTao = new com.toedter.calendar.JDateChooser();
+        txtSoNuocCu = new javax.swing.JTextField();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -348,19 +350,17 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(dateThoiGianTao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(82, 82, 82)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtSoDienMoi)
-                            .addComponent(txtSoDienCu, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
-                            .addComponent(txtSoNuocMoi))
-                        .addGap(5, 5, 5))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(txtSoDienMoi)
+                        .addComponent(txtSoDienCu, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                        .addComponent(txtSoNuocMoi))
                     .addComponent(txtSoNuocCu, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -373,36 +373,33 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                         .addGap(43, 43, 43)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
-                            .addComponent(txtSoDienCu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtSoNuocCu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel9)
-                            .addComponent(txtSoDienMoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel10)
-                            .addComponent(txtSoNuocMoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(40, Short.MAX_VALUE))
+                        .addComponent(txtSoDienMoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(75, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel1)
                                 .addComponent(cboChiNhanh, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(txtSoNuocCu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel7)))
+                                .addComponent(jLabel7)
+                                .addComponent(txtSoDienCu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
                             .addComponent(cboMaPhong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(dateThoiGianTao, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(dateThoiGianTao, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addGap(26, 26, 26)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtID_DienNuoc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8))
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel10)
+                            .addComponent(txtSoNuocMoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(20, 20, 20))))
         );
 
@@ -998,15 +995,25 @@ public void update() {
         phongMap.clear();
         String selectedChiNhanhName = (String) cboChiNhanh.getSelectedItem();
         
+        // Sử dụng Set để tránh duplicate
+        Set<String> addedRooms = new HashSet<>();
+        
         if (selectedChiNhanhName == null || selectedChiNhanhName.equals("Tất cả")) {
             try {
                 List<Phong> phongs = phongDao.findAll();
                 System.out.println("DEBUG: Tải tất cả phòng. Số lượng: " + phongs.size());
                 for (Phong p : phongs) {
-                    cboMaPhong.addItem(p.getSoPhong());
-                    phongMap.put(p.getSoPhong(), p.getIdPhong());
+                    // Chỉ thêm nếu chưa có trong Set (tránh duplicate)
+                    if (!addedRooms.contains(p.getSoPhong())) {
+                        cboMaPhong.addItem(p.getSoPhong());
+                        phongMap.put(p.getSoPhong(), p.getIdPhong());
+                        addedRooms.add(p.getSoPhong());
+                        System.out.println("DEBUG: Đã thêm phòng: " + p.getSoPhong() + " với ID: " + p.getIdPhong());
+                    } else {
+                        System.out.println("DEBUG: Bỏ qua phòng trùng lặp: " + p.getSoPhong());
+                    }
                 }
-                System.out.println("DEBUG: PhongMap sau khi tải: " + phongMap.keySet());
+                System.out.println("DEBUG: PhongMap sau khi tải (đã loại bỏ duplicate): " + phongMap.keySet());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách phòng: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
@@ -1018,10 +1025,17 @@ public void update() {
                     List<Phong> phongs = phongDao.findByChiNhanh(idChiNhanh);
                     System.out.println("DEBUG: Tải phòng cho chi nhánh ID " + idChiNhanh + ". Số lượng: " + phongs.size());
                     for (Phong p : phongs) {
-                        cboMaPhong.addItem(p.getSoPhong());
-                        phongMap.put(p.getSoPhong(), p.getIdPhong());
+                        // Chỉ thêm nếu chưa có trong Set (tránh duplicate)
+                        if (!addedRooms.contains(p.getSoPhong())) {
+                            cboMaPhong.addItem(p.getSoPhong());
+                            phongMap.put(p.getSoPhong(), p.getIdPhong());
+                            addedRooms.add(p.getSoPhong());
+                            System.out.println("DEBUG: Đã thêm phòng: " + p.getSoPhong() + " với ID: " + p.getIdPhong());
+                        } else {
+                            System.out.println("DEBUG: Bỏ qua phòng trùng lặp: " + p.getSoPhong());
+                        }
                     }
-                    System.out.println("DEBUG: PhongMap sau khi tải: " + phongMap.keySet());
+                    System.out.println("DEBUG: PhongMap sau khi tải (đã loại bỏ duplicate): " + phongMap.keySet());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách phòng theo chi nhánh: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
