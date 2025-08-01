@@ -397,6 +397,8 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         if (evt.getClickCount() == 1) { // Chỉ xử lý khi là một click đơn
             edit(); // Gọi phương thức edit() để hiển thị dữ liệu lên form
         }
+        txtSoDienCu.setEditable(false);
+    txtSoNuocCu.setEditable(false);
     }//GEN-LAST:event_tblDienNuocMouseClicked
 
     private void cboChiNhanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboChiNhanhActionPerformed
