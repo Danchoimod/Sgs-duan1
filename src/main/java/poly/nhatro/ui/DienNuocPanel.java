@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package poly.nhatro.ui;
 
 import poly.nhatro.entity.DienNuoc;
@@ -10,46 +6,140 @@ import poly.nhatro.dao.DienNuocDAO;
 import poly.nhatro.dao.ChiNhanhDAO;
 import poly.nhatro.dao.impl.ChiNhanhDAOImpl;
 import poly.nhatro.entity.ChiNhanh;
-import poly.nhatro.dao.impl.PhongDaoImpl; // Đảm bảo import đúng PhongDaoImpl
+import poly.nhatro.dao.impl.PhongDaoImpl;
 import poly.nhatro.entity.Phong;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
-import java.awt.event.MouseEvent;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.FileOutputStream;
-import java.io.File;
-import java.io.IOException;
-import javax.swing.table.TableModel;
-import java.text.SimpleDateFormat; // Thêm import cho SimpleDateFormat
-import java.util.Date; // Thêm import cho Date
-import com.toedter.calendar.JDateChooser; // Thêm import cho JDateChooser
-import javax.swing.JButton; // Thêm import cho JButton
-import javax.swing.JDialog; // Thêm import cho JDialog
-import java.awt.BorderLayout;
-import java.awt.Frame;
-import javax.swing.ImageIcon; // Thêm import cho ImageIcon
+import java.io.*;
+import java.text.SimpleDateFormat;
 
 public class DienNuocPanel extends javax.swing.JPanel implements dienNuocController {
 
     private DienNuocDAO dienNuocDao;
     private ChiNhanhDAO chiNhanhDao;
-    private PhongDaoImpl phongDao; // Đảm bảo sử dụng PhongDaoImpl
+    private PhongDaoImpl phongDao;
     private Map<String, Integer> chiNhanhMap;
-    private Map<String, Integer> phongMap; // Thêm map để lưu trữ mã phòng và ID phòng
+    private Map<String, Integer> phongMap;
     private int currentIndex = -1;
     private List<DienNuoc> currentList;
-// Định dạng ngày tháng theo yêu cầu: "Aug 1, 2025"
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private boolean isSettingForm = false; // Flag để tránh trigger events khi đang set form
+    
+    /**
+     * Tìm bản ghi điện nước của tháng trước cho phòng được chỉ định
+     * @param idPhong ID phòng
+     * @param currentDate Ngày tháng hiện tại
+     * @return Bản ghi điện nước tháng trước, null nếu không tìm thấy
+     */
+    private DienNuoc findPreviousMonthRecord(Integer idPhong, Date currentDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.MONTH, -1); // Lùi về tháng trước
+        
+        int previousMonth = calendar.get(Calendar.MONTH) + 1; // Calendar.MONTH starts from 0
+        int previousYear = calendar.get(Calendar.YEAR);
+        
+        return dienNuocDao.findByPhongThangNam(idPhong, previousMonth, previousYear);
+    }
+    
+    /**
+     * Kiểm tra xem có bản ghi nào tồn tại cho phòng được chỉ định
+     * @param idPhong ID phòng
+     * @return true nếu có ít nhất 1 bản ghi, false nếu không có
+     */
+    private boolean hasAnyRecordForRoom(Integer idPhong) {
+        try {
+            // Sử dụng SQL để đếm số bản ghi
+            List<DienNuoc> allRecords = dienNuocDao.findAll();
+            return allRecords.stream().anyMatch(record -> record.getIdPhong() == idPhong);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Tự động fill số điện nước cũ dựa trên phòng và thời gian được chọn
+     */
+    private void autoFillSoDienNuocCu() {
+        // Tránh gọi nhiều lần khi đang thiết lập form
+        if (isSettingForm) {
+            return;
+        }
+        
+        try {
+            // Lấy thông tin phòng được chọn
+            if (cboMaPhong.getSelectedItem() == null || cboMaPhong.getSelectedItem().toString().isEmpty()) {
+                // Nếu chưa chọn phòng thì xóa số điện nước cũ
+                txtSoDienCu.setText("");
+                txtSoNuocCu.setText("");
+                return;
+            }
+            
+            String selectedSoPhong = cboMaPhong.getSelectedItem().toString();
+            
+            // Kiểm tra phongMap có được khởi tạo chưa - chỉ tải lại khi thực sự cần thiết
+            if (phongMap == null || phongMap.isEmpty()) {
+                System.err.println("CẢNH BÁO: phongMap chưa được khởi tạo hoặc rỗng. Đang tải lại dữ liệu phòng...");
+                loadPhongToComboBox();
+                // Kiểm tra lại sau khi tải
+                if (phongMap == null || phongMap.isEmpty()) {
+                    System.err.println("LỖI: Không thể tải dữ liệu phongMap!");
+                    return;
+                }
+            }
+            
+            Integer idPhong = phongMap.get(selectedSoPhong);
+            
+            if (idPhong == null) {
+                // Thử tải lại phongMap một lần nữa trước khi báo lỗi
+                System.err.println("Không tìm thấy ID cho phòng '" + selectedSoPhong + "'. Thử tải lại phongMap...");
+                loadPhongToComboBox();
+                idPhong = phongMap.get(selectedSoPhong);
+                
+                if (idPhong == null) {
+                    System.err.println("LỖI: Vẫn không tìm thấy ID cho phòng '" + selectedSoPhong + "' sau khi tải lại. PhongMap hiện tại: " + phongMap.keySet());
+                    txtSoDienCu.setText("");
+                    txtSoNuocCu.setText("");
+                    return;
+                }
+            }
+            
+            // Lấy thời gian được chọn, nếu null thì dùng thời gian hiện tại
+            Date selectedDate = dateThoiGianTao.getDate();
+            if (selectedDate == null) {
+                selectedDate = new Date();
+            }
+            
+            // Tìm bản ghi tháng trước
+            DienNuoc previousMonthRecord = findPreviousMonthRecord(idPhong, selectedDate);
+            
+            if (previousMonthRecord != null) {
+                // Nếu có bản ghi tháng trước, fill số điện/nước cũ = số điện/nước mới tháng trước
+                int soDienCu = previousMonthRecord.getSoDienMoi();
+                int soNuocCu = previousMonthRecord.getSoNuocMoi();
+                
+                txtSoDienCu.setText(String.valueOf(soDienCu));
+                txtSoNuocCu.setText(String.valueOf(soNuocCu));
+                System.out.println("Đã tự động điền số điện cũ: " + soDienCu + ", số nước cũ: " + soNuocCu + " cho phòng " + selectedSoPhong);
+            } else {
+                // Nếu không có bản ghi tháng trước, fill số 0 (tháng đầu tiên)
+                txtSoDienCu.setText("0");
+                txtSoNuocCu.setText("0");
+                System.out.println("Đây là tháng đầu tiên cho phòng " + selectedSoPhong + ", đã đặt số điện/nước cũ = 0");
+            }
+            
+        } catch (Exception e) {
+            // Nếu có lỗi, đặt về 0
+            System.err.println("LỖI trong autoFillSoDienNuocCu: " + e.getMessage());
+            e.printStackTrace();
+            txtSoDienCu.setText("0");
+            txtSoNuocCu.setText("0");
+        }
+    }
 
     public DienNuocPanel() {
         initComponents();
@@ -59,15 +149,18 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         this.chiNhanhMap = new HashMap<>();
         this.phongMap = new HashMap<>(); // Khởi tạo phongMap
         init();
-        txtSoDienCu.setEditable(false); // Vô hiệu hóa nhập liệu
-        txtSoNuocCu.setEditable(false); // Vô hiệu hóa nhập liệu
+        // Vô hiệu hóa các trường tự động tính
+        txtSoDienCu.setEditable(false);
+        txtSoNuocCu.setEditable(false);
+        txtSoDienCu.setEnabled(false); // Hoàn toàn vô hiệu hóa
+        txtSoNuocCu.setEnabled(false); // Hoàn toàn vô hiệu hóa
     }
 
     @Override
     public void init() {
         loadChiNhanhToComboBox();
-        txtDienNuoc.setEditable(false); // ID Điện nước không cho sửa
-        txtThangNam.setText(dateFormat.format(new Date())); // Đặt ngày hiện tại làm mặc định cho JTextField
+        txtID_DienNuoc.setEditable(false); // ID Điện nước không cho sửa
+        dateThoiGianTao.setDate(new Date()); // Đặt ngày hiện tại làm mặc định cho JDateChooser
         filterAndFillTable(); // Gọi phương thức này để lọc và điền dữ liệu ban đầu
         clear();
     }
@@ -84,6 +177,14 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
 
         jPanel3 = new javax.swing.JPanel();
         lblHopDong5 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblDienNuoc = new javax.swing.JTable();
+        btnThem = new javax.swing.JButton();
+        btnSua = new javax.swing.JButton();
+        btnXoa = new javax.swing.JButton();
+        btnLamMoi = new javax.swing.JButton();
+        btnExcel = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         txtSoDienCu = new javax.swing.JTextField();
@@ -92,27 +193,20 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         txtSoNuocCu = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         cboChiNhanh = new javax.swing.JComboBox<>();
-        btnLocTheoChiNhanh = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
-        txtDienNuoc = new javax.swing.JTextField();
+        txtID_DienNuoc = new javax.swing.JTextField();
         txtSoDienMoi = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         txtSoNuocMoi = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        txtThangNam = new javax.swing.JTextField();
         cboMaPhong = new javax.swing.JComboBox<>();
-        btnThem = new javax.swing.JButton();
-        btnSua = new javax.swing.JButton();
-        btnXoa = new javax.swing.JButton();
-        btnLamMoi = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblDienNuoc = new javax.swing.JTable();
-        btnExcel = new javax.swing.JButton();
+        dateThoiGianTao = new com.toedter.calendar.JDateChooser();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
-        lblHopDong5.setFont(new java.awt.Font("Segoe UI Black", 0, 24)); // NOI18N
+        lblHopDong5.setFont(new java.awt.Font("Segoe UI Black", 3, 36)); // NOI18N
+        lblHopDong5.setForeground(new java.awt.Color(0, 0, 255));
         lblHopDong5.setText("Điện nước");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -120,9 +214,9 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(443, 443, 443)
-                .addComponent(lblHopDong5)
-                .addContainerGap(530, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(lblHopDong5, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -132,19 +226,78 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.setBackground(new java.awt.Color(102, 255, 255));
+        tblDienNuoc.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                " Tên chi nhánh", "Mã điện nước", "Tên phòng", "Số điện cũ", "Số điện mới", "Số nước cũ", "Số nước mới", "Thời gian tạo"
+            }
+        ));
+        tblDienNuoc.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDienNuocMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblDienNuoc);
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel2.setText("Mã phòng");
+        btnThem.setFont(new java.awt.Font("Helvetica Neue", 3, 14)); // NOI18N
+        btnThem.setText("Thêm");
+        btnThem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemActionPerformed(evt);
+            }
+        });
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        btnSua.setFont(new java.awt.Font("Helvetica Neue", 3, 14)); // NOI18N
+        btnSua.setText("Sửa");
+        btnSua.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSuaActionPerformed(evt);
+            }
+        });
+
+        btnXoa.setFont(new java.awt.Font("Helvetica Neue", 3, 14)); // NOI18N
+        btnXoa.setText("Xóa");
+        btnXoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXoaActionPerformed(evt);
+            }
+        });
+
+        btnLamMoi.setFont(new java.awt.Font("Helvetica Neue", 3, 14)); // NOI18N
+        btnLamMoi.setText("Làm mới");
+        btnLamMoi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLamMoiActionPerformed(evt);
+            }
+        });
+
+        btnExcel.setFont(new java.awt.Font("Helvetica Neue", 3, 14)); // NOI18N
+        btnExcel.setText("Xuất Excel");
+        btnExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcelActionPerformed(evt);
+            }
+        });
+
+        jPanel1.setBackground(new java.awt.Color(153, 218, 250));
+
+        jLabel2.setFont(new java.awt.Font("Helvetica Neue", 3, 18)); // NOI18N
+        jLabel2.setText("Tên phòng");
+
+        jLabel6.setFont(new java.awt.Font("Helvetica Neue", 3, 18)); // NOI18N
         jLabel6.setText("Số nước cũ");
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel7.setFont(jLabel7.getFont().deriveFont((jLabel7.getFont().getStyle() | java.awt.Font.ITALIC) | java.awt.Font.BOLD, jLabel7.getFont().getSize()+5));
         jLabel7.setText("Số điện cũ");
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel1.setText("Chi nhánh");
+        jLabel1.setFont(new java.awt.Font("Helvetica Neue", 3, 18)); // NOI18N
+        jLabel1.setText("Tên chi nhánh");
 
         cboChiNhanh.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cboChiNhanh.addActionListener(new java.awt.event.ActionListener() {
@@ -153,35 +306,17 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             }
         });
 
-        btnLocTheoChiNhanh.setText("Lọc theo chi nhánh");
-        btnLocTheoChiNhanh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLocTheoChiNhanhActionPerformed(evt);
-            }
-        });
-
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel8.setFont(new java.awt.Font("Helvetica Neue", 3, 18)); // NOI18N
         jLabel8.setText("Mã Điện Nước");
 
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel9.setFont(new java.awt.Font("Helvetica Neue", 3, 18)); // NOI18N
         jLabel9.setText("Số điện mới");
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel10.setFont(new java.awt.Font("Helvetica Neue", 3, 18)); // NOI18N
         jLabel10.setText("Số nước mới");
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel3.setText("Tháng năm");
-
-        txtThangNam.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                txtThangNamMouseClicked(evt);
-            }
-        });
-        txtThangNam.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtThangNamActionPerformed(evt);
-            }
-        });
+        jLabel3.setFont(new java.awt.Font("Helvetica Neue", 3, 18)); // NOI18N
+        jLabel3.setText("Thời gian tạo");
 
         cboMaPhong.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cboMaPhong.addActionListener(new java.awt.event.ActionListener() {
@@ -194,174 +329,138 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(104, 104, 104)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(15, 15, 15)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtID_DienNuoc)
+                    .addComponent(cboMaPhong, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cboChiNhanh, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(cboChiNhanh, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(dateThoiGianTao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(82, 82, 82)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel6)
                             .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6))
-                        .addGap(12, 12, 12)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtSoNuocCu)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txtSoDienCu, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(cboMaPhong, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(txtDienNuoc, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 312, Short.MAX_VALUE)
-                        .addComponent(btnLocTheoChiNhanh)
-                        .addGap(55, 55, 55))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtSoDienMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtSoNuocMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtThangNam, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtSoDienMoi)
+                            .addComponent(txtSoDienCu, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                            .addComponent(txtSoNuocMoi))
+                        .addGap(5, 5, 5))
+                    .addComponent(txtSoNuocCu, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(cboChiNhanh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnLocTheoChiNhanh)
-                    .addComponent(jLabel8)
-                    .addComponent(txtDienNuoc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(3, 3, 3)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(cboMaPhong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel3)
-                        .addComponent(txtThangNam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(6, 6, 6)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(txtSoDienCu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSoDienMoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
-                .addGap(9, 9, 9)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtSoNuocCu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel10)
-                    .addComponent(txtSoNuocMoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(17, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(43, 43, 43)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(txtSoDienCu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9)
+                            .addComponent(txtSoDienMoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel10)
+                            .addComponent(txtSoNuocMoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(40, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel1)
+                                .addComponent(cboChiNhanh, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtSoNuocCu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel7)))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(cboMaPhong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(dateThoiGianTao, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(26, 26, 26)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtID_DienNuoc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8))
+                        .addGap(20, 20, 20))))
         );
 
-        btnThem.setText("Thêm");
-        btnThem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnThemActionPerformed(evt);
-            }
-        });
-
-        btnSua.setText("Sửa");
-        btnSua.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSuaActionPerformed(evt);
-            }
-        });
-
-        btnXoa.setText("Xóa");
-        btnXoa.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnXoaActionPerformed(evt);
-            }
-        });
-
-        btnLamMoi.setText("Làm mới");
-        btnLamMoi.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLamMoiActionPerformed(evt);
-            }
-        });
-
-        tblDienNuoc.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "Chi nhánh", "Mã điện nước", "mã phòng", "Giá điện cũ", "Giá điện mới", "Giá nước cũ", "Giá nước mới", "Tháng năm"
-            }
-        ));
-        tblDienNuoc.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tblDienNuocMouseClicked(evt);
-            }
-        });
-        jScrollPane1.setViewportView(tblDienNuoc);
-
-        btnExcel.setText("Xuất Excel");
-        btnExcel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnExcelActionPerformed(evt);
-            }
-        });
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(btnSua, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(39, 39, 39)
+                        .addComponent(btnLamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 231, Short.MAX_VALUE)
+                        .addComponent(btnExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnLamMoi, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
+                        .addComponent(btnExcel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnXoa, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnSua, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnThem, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(21, 21, 21)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnExcel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnThem)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnSua)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnXoa)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnLamMoi)
-                        .addGap(137, 137, 137))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnThem)
-                    .addComponent(btnSua)
-                    .addComponent(btnXoa)
-                    .addComponent(btnLamMoi)
-                    .addComponent(btnExcel))
-                .addGap(26, 26, 26)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -370,10 +469,6 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         // TODO add your handling code here:
         this.create();
     }//GEN-LAST:event_btnThemActionPerformed
-
-    private void btnLocTheoChiNhanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLocTheoChiNhanhActionPerformed
-        filterAndFillTable();
-    }//GEN-LAST:event_btnLocTheoChiNhanhActionPerformed
 
     private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
         this.update();
@@ -402,55 +497,28 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     }//GEN-LAST:event_tblDienNuocMouseClicked
 
     private void cboChiNhanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboChiNhanhActionPerformed
-        loadPhongToComboBox();
-        filterAndFillTable();
+        if (!isSettingForm) { // Chỉ xử lý khi không phải đang set form
+            loadPhongToComboBox();
+            filterAndFillTable();
+        }
     }//GEN-LAST:event_cboChiNhanhActionPerformed
 
-    private void txtThangNamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtThangNamActionPerformed
-
-    }//GEN-LAST:event_txtThangNamActionPerformed
-
-    private void txtThangNamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtThangNamMouseClicked
-        // TODO add your handling code here:
-        // TODO add your handling code here:
-        JDateChooser dateChooser = new JDateChooser();
-        dateChooser.setDateFormatString("MMM d, yyyy"); // Định dạng hiển thị trong JDateChooser
-
-        // Cố gắng phân tích ngày hiện có trong txtThangNam để đặt cho JDateChooser
-        try {
-            Date currentDate = dateFormat.parse(txtThangNam.getText());
-            dateChooser.setDate(currentDate);
-        } catch (java.text.ParseException ex) {
-            // Nếu không thể phân tích, đặt ngày hiện tại
-            dateChooser.setDate(new Date());
-        }
-
-        JDialog dialog = new JDialog((Frame) null, "Chọn ngày", true); // Tạo JDialog với modal là true
-        dialog.getContentPane().add(dateChooser, BorderLayout.CENTER);
-        dialog.pack();
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
-
-        // Sau khi dialog đóng, lấy ngày đã chọn và cập nhật txtThangNam
-        if (dateChooser.getDate() != null) {
-            txtThangNam.setText(dateFormat.format(dateChooser.getDate()));
-        }
-    }//GEN-LAST:event_txtThangNamMouseClicked
-
     private void cboMaPhongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboMaPhongActionPerformed
-
+        if (!isSettingForm) { // Chỉ xử lý khi không phải đang set form
+            autoFillSoDienNuocCu();
+        }
     }//GEN-LAST:event_cboMaPhongActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExcel;
     private javax.swing.JButton btnLamMoi;
-    private javax.swing.JButton btnLocTheoChiNhanh;
     private javax.swing.JButton btnSua;
     private javax.swing.JButton btnThem;
     private javax.swing.JButton btnXoa;
     private javax.swing.JComboBox<String> cboChiNhanh;
     private javax.swing.JComboBox<String> cboMaPhong;
+    private com.toedter.calendar.JDateChooser dateThoiGianTao;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -460,16 +528,16 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblHopDong5;
     private javax.swing.JTable tblDienNuoc;
-    private javax.swing.JTextField txtDienNuoc;
+    private javax.swing.JTextField txtID_DienNuoc;
     private javax.swing.JTextField txtSoDienCu;
     private javax.swing.JTextField txtSoDienMoi;
     private javax.swing.JTextField txtSoNuocCu;
     private javax.swing.JTextField txtSoNuocMoi;
-    private javax.swing.JTextField txtThangNam;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -479,30 +547,37 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
 
     @Override
     public void setForm(DienNuoc entity) {
-        if (entity != null) {
-            txtDienNuoc.setText(String.valueOf(entity.getIdDienNuoc()));
-            if (entity.getTenChiNhanh() != null) {
-                cboChiNhanh.setSelectedItem(entity.getTenChiNhanh());
+        isSettingForm = true; // Bật flag để tránh trigger events
+        try {
+            if (entity != null) {
+                txtID_DienNuoc.setText(String.valueOf(entity.getIdDienNuoc()));
+                if (entity.getTenChiNhanh() != null) {
+                    cboChiNhanh.setSelectedItem(entity.getTenChiNhanh());
+                    // Load phòng theo chi nhánh được chọn để đảm bảo có đủ dữ liệu
+                    loadPhongToComboBox();
+                } else {
+                    cboChiNhanh.setSelectedIndex(0);
+                }
+    // Đặt mã phòng vào cboMaPhong
+                if (entity.getSoPhong() != null) {
+                    cboMaPhong.setSelectedItem(entity.getSoPhong()); // Sử dụng soPhong để chọn item
+                } else {
+                    cboMaPhong.setSelectedIndex(0);
+                }
+                txtSoDienCu.setText(String.valueOf(entity.getSoDienCu()));
+                txtSoDienMoi.setText(String.valueOf(entity.getSoDienMoi()));
+                txtSoNuocCu.setText(String.valueOf(entity.getSoNuocCu()));
+                txtSoNuocMoi.setText(String.valueOf(entity.getSoNuocMoi()));
+                if (entity.getThangNam() != null) {
+                    dateThoiGianTao.setDate(entity.getThangNam());
+                } else {
+                    dateThoiGianTao.setDate(new Date());
+                }
             } else {
-                cboChiNhanh.setSelectedIndex(0);
+                clear();
             }
-// Đặt mã phòng vào cboMaPhong
-            if (entity.getSoPhong() != null) {
-                cboMaPhong.setSelectedItem(entity.getSoPhong()); // Sử dụng soPhong để chọn item
-            } else {
-                cboMaPhong.setSelectedIndex(0);
-            }
-            txtSoDienCu.setText(String.valueOf(entity.getSoDienCu()));
-            txtSoDienMoi.setText(String.valueOf(entity.getSoDienMoi()));
-            txtSoNuocCu.setText(String.valueOf(entity.getSoNuocCu()));
-            txtSoNuocMoi.setText(String.valueOf(entity.getSoNuocMoi()));
-            if (entity.getThangNam() != null) {
-                txtThangNam.setText(dateFormat.format(entity.getThangNam()));
-            } else {
-                txtThangNam.setText("");
-            }
-        } else {
-            clear();
+        } finally {
+            isSettingForm = false; // Tắt flag sau khi hoàn thành
         }
     }
 
@@ -551,19 +626,16 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         }
         dienNuoc.setIdPhong(idPhong);
         try {
-            if (txtDienNuoc.getText() != null && !txtDienNuoc.getText().isEmpty()) {
-                dienNuoc.setIdDienNuoc(Integer.parseInt(txtDienNuoc.getText()));
+            if (txtID_DienNuoc.getText() != null && !txtID_DienNuoc.getText().isEmpty()) {
+                dienNuoc.setIdDienNuoc(Integer.parseInt(txtID_DienNuoc.getText()));
             }
             dienNuoc.setSoDienCu((int) Double.parseDouble(txtSoDienCu.getText()));
             dienNuoc.setSoDienMoi((int) Double.parseDouble(txtSoDienMoi.getText()));
             dienNuoc.setSoNuocCu((int) Double.parseDouble(txtSoNuocCu.getText()));
             dienNuoc.setSoNuocMoi((int) Double.parseDouble(txtSoNuocMoi.getText()));
-            dienNuoc.setThangNam(dateFormat.parse(txtThangNam.getText()));
+            dienNuoc.setThangNam(dateThoiGianTao.getDate());
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Số điện hoặc số nước không hợp lệ. Vui lòng nhập số.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return null;
-        } catch (java.text.ParseException e) {
-            JOptionPane.showMessageDialog(this, "Tháng năm không hợp lệ. Vui lòng nhập theo định dạng YYYY-MM-DD.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return null;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi lấy dữ liệu từ form: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -578,47 +650,135 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         if (!validateForm()) {
             return;
         }
-// Thêm validation mới cho nút thêm
+        
+        // Validation cho nút thêm
         if (txtSoDienMoi.getText().isEmpty() || txtSoNuocMoi.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Số điện mới và Số nước mới không được để trống khi thêm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn thêm mới bản ghi này?", "Xác nhận thêm mới", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
-            DienNuoc newDienNuoc = new DienNuoc();
-            String selectedSoPhong = cboMaPhong.getSelectedItem().toString();
-            Integer idPhong = phongMap.get(selectedSoPhong);
-            if (idPhong == null) {
-                JOptionPane.showMessageDialog(this, "Mã phòng không hợp lệ hoặc không tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        
+        String selectedSoPhong = cboMaPhong.getSelectedItem().toString();
+        Integer idPhong = phongMap.get(selectedSoPhong);
+        if (idPhong == null) {
+            JOptionPane.showMessageDialog(this, "Mã phòng không hợp lệ hoặc không tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        Date selectedDate = dateThoiGianTao.getDate();
+        if (selectedDate == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn thời gian tạo hóa đơn.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        try {
+            // Kiểm tra trùng lặp bản ghi cho tháng hiện tại
+            DienNuoc existingDienNuoc = dienNuocDao.findByPhongThangNam(idPhong,
+                    selectedDate.getMonth() + 1, selectedDate.getYear() + 1900);
+            if (existingDienNuoc != null) {
+                JOptionPane.showMessageDialog(this, "Đã tồn tại bản ghi điện nước cho phòng này trong tháng và năm đã chọn.", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            newDienNuoc.setIdPhong(idPhong);
-            try {
-                newDienNuoc.setSoDienCu((int) Double.parseDouble(txtSoDienMoi.getText()));
-                newDienNuoc.setSoNuocCu((int) Double.parseDouble(txtSoNuocMoi.getText()));
-                newDienNuoc.setSoDienMoi((int) 0.0);
-                newDienNuoc.setSoNuocMoi((int) 0.0);
-                newDienNuoc.setThangNam(dateFormat.parse(txtThangNam.getText()));
-// Kiểm tra trùng lặp bản ghi
-                DienNuoc existingDienNuoc = dienNuocDao.findByPhongThangNam(newDienNuoc.getIdPhong(),
-                        newDienNuoc.getThangNam().getMonth() + 1,
-                        newDienNuoc.getThangNam().getYear() + 1900);
-                if (existingDienNuoc != null) {
-                    JOptionPane.showMessageDialog(this, "Đã tồn tại bản ghi điện nước cho phòng này trong tháng và năm đã chọn.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            
+            // Tìm bản ghi tháng trước để lấy số điện/nước cũ
+            DienNuoc previousMonthRecord = findPreviousMonthRecord(idPhong, selectedDate);
+            
+            int soDienCu = 0;
+            int soNuocCu = 0;
+            
+            if (previousMonthRecord != null) {
+                // Nếu có bản ghi tháng trước, số điện/nước cũ = số điện/nước mới tháng trước
+                soDienCu = previousMonthRecord.getSoDienMoi();
+                soNuocCu = previousMonthRecord.getSoNuocMoi();
+                
+                // Kiểm tra tính liên tục tháng (không được bỏ qua tháng nào)
+                Calendar prevCal = Calendar.getInstance();
+                prevCal.setTime(previousMonthRecord.getThangNam());
+                prevCal.add(Calendar.MONTH, 1); // Tháng kế tiếp sau tháng trước
+                
+                Calendar currentCal = Calendar.getInstance();
+                currentCal.setTime(selectedDate);
+                
+                // So sánh tháng và năm (bỏ qua ngày)
+                if (prevCal.get(Calendar.YEAR) != currentCal.get(Calendar.YEAR) || 
+                    prevCal.get(Calendar.MONTH) != currentCal.get(Calendar.MONTH)) {
+                    String expectedMonth = String.format("%02d/%d", 
+                        prevCal.get(Calendar.MONTH) + 1, prevCal.get(Calendar.YEAR));
+                    String actualMonth = String.format("%02d/%d", 
+                        currentCal.get(Calendar.MONTH) + 1, currentCal.get(Calendar.YEAR));
+                    
+                    JOptionPane.showMessageDialog(this, 
+                        "Không thể bỏ qua tháng! Tháng tiếp theo phải là " + expectedMonth + 
+                        " thay vì " + actualMonth + ".\n" +
+                        "Vui lòng tạo hóa đơn theo thứ tự tháng liên tục.", 
+                        "Lỗi tính liên tục", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                dienNuocDao.create(newDienNuoc);
-                JOptionPane.showMessageDialog(this, "Thêm mới thành công!");
-                filterAndFillTable(); // Cập nhật lại bảng sau khi thêm
-                clear();
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Số điện hoặc số nước không hợp lệ. Vui lòng nhập số.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            } catch (java.text.ParseException e) {
-                JOptionPane.showMessageDialog(this, "Tháng năm không hợp lệ. Vui lòng nhập đúng định dạng.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            } catch (RuntimeException e) {
-                JOptionPane.showMessageDialog(this, "Lỗi khi thêm mới: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+            } else {
+                // Nếu không có bản ghi tháng trước, kiểm tra xem có bản ghi nào cho phòng này không
+                if (hasAnyRecordForRoom(idPhong)) {
+                    JOptionPane.showMessageDialog(this, 
+                        "Phòng này đã có các bản ghi điện nước từ trước. \n" +
+                        "Bạn phải tạo hóa đơn liên tục theo tháng, không được bỏ qua tháng nào.\n" +
+                        "Vui lòng tạo hóa đơn cho tháng tiếp theo sau tháng cuối cùng đã có.", 
+                        "Lỗi tính liên tục", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                // Nếu đây là tháng đầu tiên cho phòng này thì số cũ = 0
+                soDienCu = 0;
+                soNuocCu = 0;
             }
+            
+            // Tạo bản ghi mới
+            DienNuoc newDienNuoc = new DienNuoc();
+            newDienNuoc.setIdPhong(idPhong);
+            newDienNuoc.setSoDienCu(soDienCu);
+            newDienNuoc.setSoNuocCu(soNuocCu);
+            newDienNuoc.setSoDienMoi((int) Double.parseDouble(txtSoDienMoi.getText()));
+            newDienNuoc.setSoNuocMoi((int) Double.parseDouble(txtSoNuocMoi.getText()));
+            newDienNuoc.setThangNam(selectedDate);
+            
+            // Validation: số mới phải >= số cũ
+            if (newDienNuoc.getSoDienMoi() < newDienNuoc.getSoDienCu()) {
+                JOptionPane.showMessageDialog(this, 
+                    "Số điện mới (" + newDienNuoc.getSoDienMoi() + ") không thể nhỏ hơn số điện cũ (" + newDienNuoc.getSoDienCu() + ")!", 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (newDienNuoc.getSoNuocMoi() < newDienNuoc.getSoNuocCu()) {
+                JOptionPane.showMessageDialog(this, 
+                    "Số nước mới (" + newDienNuoc.getSoNuocMoi() + ") không thể nhỏ hơn số nước cũ (" + newDienNuoc.getSoNuocCu() + ")!", 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // Tạo mới và lấy ID tự động từ DAO
+            DienNuoc createdDienNuoc = dienNuocDao.create(newDienNuoc);
+            
+            // Hiển thị ID trên form ngay lập tức
+            String successMessage = "Thêm DienNuoc thành công.";
+            if (createdDienNuoc != null && createdDienNuoc.getIdDienNuoc() > 0) {
+                txtID_DienNuoc.setText(String.valueOf(createdDienNuoc.getIdDienNuoc()));
+                successMessage += " ID: " + createdDienNuoc.getIdDienNuoc();
+            } else {
+                txtID_DienNuoc.setText("");
+                successMessage += " ID sẽ được hiển thị sau khi làm mới.";
+            }
+            
+            // Tải lại bảng để hiển thị bản ghi mới
+            filterAndFillTable();
+            
+            System.out.println(successMessage);
+            JOptionPane.showMessageDialog(this, successMessage, "Thành công", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Cập nhật hiển thị số điện/nước cũ trên form để người dùng thấy
+            txtSoDienCu.setText(String.valueOf(soDienCu));
+            txtSoNuocCu.setText(String.valueOf(soNuocCu));
+            
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số điện hoặc số nước không hợp lệ. Vui lòng nhập số.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } catch (RuntimeException e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi thêm mới: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
 
@@ -648,47 +808,40 @@ public void update() {
         return;
     }
 
-    int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn cập nhật bản ghi này?", "Xác nhận cập nhật", JOptionPane.YES_NO_OPTION);
-    if (confirm == JOptionPane.YES_OPTION) {
-        try {
-            DienNuoc updatedDienNuoc = currentList.get(currentIndex);
-            
-            // Cập nhật ID_Phong mới nhất
-            updatedDienNuoc.setIdPhong(idPhong);
-            
-            // Cập nhật giá trị mới từ các trường văn bản
-            updatedDienNuoc.setSoDienMoi((int) Double.parseDouble(soDienMoiStr));
-            updatedDienNuoc.setSoNuocMoi((int) Double.parseDouble(soNuocMoiStr));
-            updatedDienNuoc.setSoDienCu((int) Double.parseDouble(soDienCuStr));
-            updatedDienNuoc.setSoNuocCu((int) Double.parseDouble(soNuocCuStr));
-            
-            // Cập nhật ngày tháng
-            if (txtThangNam.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Tháng năm không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            Date newThangNam = dateFormat.parse(txtThangNam.getText());
-            updatedDienNuoc.setThangNam(newThangNam);
-
-            // Kiểm tra trùng lặp tháng năm và phòng, nhưng bỏ qua bản ghi hiện tại đang sửa
-            DienNuoc existingDienNuoc = dienNuocDao.findByPhongThangNam(updatedDienNuoc.getIdPhong(), updatedDienNuoc.getThangNam().getMonth() + 1, updatedDienNuoc.getThangNam().getYear() + 1900);
-            if (existingDienNuoc != null && existingDienNuoc.getIdDienNuoc() != updatedDienNuoc.getIdDienNuoc()) {
-                JOptionPane.showMessageDialog(this, "Đã tồn tại bản ghi điện nước cho phòng này trong tháng và năm đã chọn.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            dienNuocDao.update(updatedDienNuoc);
-            JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
-            filterAndFillTable(); // Cập nhật lại bảng sau khi sửa
-            clear();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Số điện hoặc số nước không hợp lệ. Vui lòng chỉ nhập số.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        } catch (java.text.ParseException e) {
-            JOptionPane.showMessageDialog(this, "Tháng năm không hợp lệ. Vui lòng nhập đúng định dạng.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        } catch (RuntimeException e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+    try {
+        DienNuoc updatedDienNuoc = currentList.get(currentIndex);
+        
+        // Cập nhật ID_Phong mới nhất
+        updatedDienNuoc.setIdPhong(idPhong);
+        
+        // Cập nhật giá trị mới từ các trường văn bản
+        updatedDienNuoc.setSoDienMoi((int) Double.parseDouble(soDienMoiStr));
+        updatedDienNuoc.setSoNuocMoi((int) Double.parseDouble(soNuocMoiStr));
+        updatedDienNuoc.setSoDienCu((int) Double.parseDouble(soDienCuStr));
+        updatedDienNuoc.setSoNuocCu((int) Double.parseDouble(soNuocCuStr));
+        
+        // Cập nhật ngày tháng
+        if (dateThoiGianTao.getDate() == null) {
+            JOptionPane.showMessageDialog(this, "Tháng năm không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+        updatedDienNuoc.setThangNam(dateThoiGianTao.getDate());
+
+        // Kiểm tra trùng lặp tháng năm và phòng, nhưng bỏ qua bản ghi hiện tại đang sửa
+        DienNuoc existingDienNuoc = dienNuocDao.findByPhongThangNam(updatedDienNuoc.getIdPhong(), updatedDienNuoc.getThangNam().getMonth() + 1, updatedDienNuoc.getThangNam().getYear() + 1900);
+        if (existingDienNuoc != null && existingDienNuoc.getIdDienNuoc() != updatedDienNuoc.getIdDienNuoc()) {
+            JOptionPane.showMessageDialog(this, "Đã tồn tại bản ghi điện nước cho phòng này trong tháng và năm đã chọn.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        dienNuocDao.update(updatedDienNuoc);
+        filterAndFillTable(); // Cập nhật lại bảng sau khi sửa
+        clear();
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Số điện hoặc số nước không hợp lệ. Vui lòng chỉ nhập số.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+    } catch (RuntimeException e) {
+        JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
     }
 }
 
@@ -724,11 +877,11 @@ public void update() {
         txtSoDienMoi.setText("");
         txtSoNuocCu.setText("");
         txtSoNuocMoi.setText("");
-        txtDienNuoc.setText("");
-        txtThangNam.setText(dateFormat.format(new Date())); // Đặt lại ngày hiện tại cho JTextField
+        txtID_DienNuoc.setText("");
+        dateThoiGianTao.setDate(new Date()); // Đặt lại ngày hiện tại cho JDateChooser
         currentIndex = -1;
         setEditable(true);
-        txtDienNuoc.setEditable(false); // Đảm bảo ID không sửa được
+        txtID_DienNuoc.setEditable(false); // Đảm bảo ID không sửa được
     }
 
     @Override
@@ -738,8 +891,13 @@ public void update() {
             currentIndex = selectedRow;
             DienNuoc selectedDienNuoc = currentList.get(selectedRow);
             setForm(selectedDienNuoc);
-            setEditable(true);
-            txtDienNuoc.setEditable(false); // Mã điện nước thường không được sửa
+            // Không cần gọi setEditable(true) vì setForm() đã thiết lập đúng rồi
+            // Chỉ đảm bảo ID Điện nước và các trường tự động tính không được sửa
+            txtID_DienNuoc.setEditable(false);
+            txtSoDienCu.setEditable(false);
+            txtSoDienCu.setEnabled(false);
+            txtSoNuocCu.setEditable(false);
+            txtSoNuocCu.setEnabled(false);
         } else {
             clear();
         }
@@ -748,16 +906,20 @@ public void update() {
     @Override
     public void setEditable(boolean editable) {
         cboMaPhong.setEnabled(editable); // Điều khiển cboMaPhong
+        // Các trường tự động tính luôn bị vô hiệu hóa
         txtSoDienCu.setEditable(false);
-        txtSoDienMoi.setEditable(editable);
+        txtSoDienCu.setEnabled(false);
         txtSoNuocCu.setEditable(false);
+        txtSoNuocCu.setEnabled(false);
+        // Các trường có thể nhập
+        txtSoDienMoi.setEditable(editable);
         txtSoNuocMoi.setEditable(editable);
-        txtThangNam.setEditable(editable); // txtThangNam có thể chỉnh sửa
+        dateThoiGianTao.setEnabled(editable); // dateThoiGianTao có thể chỉnh sửa
         cboChiNhanh.setEnabled(editable);
         btnThem.setEnabled(editable);
         btnSua.setEnabled(editable);
         btnXoa.setEnabled(editable);
-        txtDienNuoc.setEditable(false); // Mã điện nước không cho sửa
+        txtID_DienNuoc.setEditable(false); // Mã điện nước không cho sửa
     }
 // Phương thức mới để vừa lọc vừa điền dữ liệu vào bảng
 
@@ -779,25 +941,9 @@ public void update() {
                     JOptionPane.showMessageDialog(this, "Không tìm thấy ID cho chi nhánh đã chọn: " + selectedChiNhanhName, "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
-            currentList = filteredList; // Cập nhật currentList
-// --- BẮT ĐẦU ĐOẠN MÃ DEBUG ---
-            System.out.println("--- DEBUG: Kiểm tra giá trị ID_DienNuoc từ currentList sau khi lọc ---");
-            if (currentList != null) {
-                for (DienNuoc dn : currentList) {
-                    System.out.println(" ID_DienNuoc: " + dn.getIdDienNuoc()
-                            + ", SoDienCu: " + dn.getSoDienCu()
-                            + ", SoDienMoi: " + dn.getSoDienMoi()
-                            + ", SoNuocCu: " + dn.getSoNuocCu()
-                            + ", SoNuocMoi: " + dn.getSoNuocMoi()
-                            + ", ThangNam: " + (dn.getThangNam() != null ? dateFormat.format(dn.getThangNam()) : "N/A")
-                            + ", MaPhong: " + dn.getSoPhong()
-                            + ", TenChiNhanh: " + dn.getTenChiNhanh());
-                }
-            } else {
-                System.out.println(" currentList is null or empty.");
-            }
-            System.out.println("--- KẾT THÚC ĐOẠN MÃ DEBUG ---");
-// Điền dữ liệu vào bảng từ currentList đã lọc
+            currentList = filteredList;
+            
+            // Điền dữ liệu vào bảng từ currentList đã lọc
             for (DienNuoc dn : currentList) {
                 Object[] row = {
                     dn.getTenChiNhanh(),
@@ -846,44 +992,40 @@ public void update() {
 // Phương thức mới để tải mã phòng vào cboMaPhong dựa trên chi nhánh được chọn
 
     private void loadPhongToComboBox() {
+        System.out.println("DEBUG: loadPhongToComboBox() được gọi. Chi nhánh hiện tại: " + cboChiNhanh.getSelectedItem());
+        
         cboMaPhong.removeAllItems();
         phongMap.clear();
         String selectedChiNhanhName = (String) cboChiNhanh.getSelectedItem();
-        System.out.println("DEBUG: Selected ChiNhanh: " + selectedChiNhanhName); // Debug
+        
         if (selectedChiNhanhName == null || selectedChiNhanhName.equals("Tất cả")) {
-// Nếu chọn "Tất cả" chi nhánh, tải tất cả các phòng
             try {
-                List<Phong> phongs = phongDao.findAll(); // Sử dụng findAll từ CrudDao
-                System.out.println("DEBUG: Loading all rooms. Found " + phongs.size() + " rooms."); // Debug
+                List<Phong> phongs = phongDao.findAll();
+                System.out.println("DEBUG: Tải tất cả phòng. Số lượng: " + phongs.size());
                 for (Phong p : phongs) {
                     cboMaPhong.addItem(p.getSoPhong());
                     phongMap.put(p.getSoPhong(), p.getIdPhong());
-                    System.out.println("DEBUG: Added room (All): " + p.getSoPhong() + " (ID: " + p.getIdPhong() + ", ChiNhanhID: " + p.getIdChiNhanh() + ")");
-// Debug
                 }
+                System.out.println("DEBUG: PhongMap sau khi tải: " + phongMap.keySet());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách phòng: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
         } else {
             Integer idChiNhanh = chiNhanhMap.get(selectedChiNhanhName);
-            System.out.println("DEBUG: Selected ChiNhanh ID: " + idChiNhanh); // Debug
             if (idChiNhanh != null) {
                 try {
-                    List<Phong> phongs = phongDao.findByChiNhanh(idChiNhanh); // Gọi phương thức findByChiNhanh
-                    System.out.println("DEBUG: Loading rooms for ChiNhanh ID " + idChiNhanh + ". Found " + phongs.size() + " rooms."); // Debug
+                    List<Phong> phongs = phongDao.findByChiNhanh(idChiNhanh);
+                    System.out.println("DEBUG: Tải phòng cho chi nhánh ID " + idChiNhanh + ". Số lượng: " + phongs.size());
                     for (Phong p : phongs) {
                         cboMaPhong.addItem(p.getSoPhong());
                         phongMap.put(p.getSoPhong(), p.getIdPhong());
-                        System.out.println("DEBUG: Added room (Filtered): " + p.getSoPhong() + " (ID: " + p.getIdPhong() + ", ChiNhanhID: " + p.getIdChiNhanh() + ")");
-// Debug
                     }
+                    System.out.println("DEBUG: PhongMap sau khi tải: " + phongMap.keySet());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách phòng theo chi nhánh: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
-            } else {
-                System.out.println("DEBUG: ChiNhanh ID is null for selected name: " + selectedChiNhanhName); // Debug
             }
         }
     }

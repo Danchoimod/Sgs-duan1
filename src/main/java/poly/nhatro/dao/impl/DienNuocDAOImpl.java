@@ -19,14 +19,14 @@ public class DienNuocDAOImpl implements DienNuocDAO, CrudDao<DienNuoc, Integer>{
     String deleteSql = "DELETE FROM DienNuoc WHERE ID_DienNuoc = ?";
     
     // Cập nhật câu lệnh SELECT để JOIN với bảng Phong và ChiNhanh để lấy soPhong, tenChiNhanh, giaDien, giaNuoc, giaPhong
-    // QUAN TRỌNG: Thêm AS idDienNuoc để XQuery có thể ánh xạ đúng vào thuộc tính idDienNuoc
-    String findAllSql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.soDienCu, dn.soDienMoi, dn.soNuocCu, dn.soNuocMoi, dn.thangNam, dn.ID_Phong, " +
+    // QUAN TRỌNG: Thêm AS idDienNuoc và AS idPhong để XQuery có thể ánh xạ đúng vào thuộc tính
+    String findAllSql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.soDienCu, dn.soDienMoi, dn.soNuocCu, dn.soNuocMoi, dn.thangNam, dn.ID_Phong AS idPhong, " +
                         "p.soPhong, p.giaPhong AS giaPhong, cn.tenChiNhanh, cn.giaDien AS giaDienChiNhanh, cn.giaNuoc AS giaNuocChiNhanh " +
                         "FROM DienNuoc dn " +
                         "JOIN Phong p ON dn.ID_Phong = p.ID_Phong " +
                         "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh";
     
-    String findByIdSql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.soDienCu, dn.soDienMoi, dn.soNuocCu, dn.soNuocMoi, dn.thangNam, dn.ID_Phong, " +
+    String findByIdSql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.soDienCu, dn.soDienMoi, dn.soNuocCu, dn.soNuocMoi, dn.thangNam, dn.ID_Phong AS idPhong, " +
                          "p.soPhong, p.giaPhong AS giaPhong, cn.tenChiNhanh, cn.giaDien AS giaDienChiNhanh, cn.giaNuoc AS giaNuocChiNhanh " +
                          "FROM DienNuoc dn " +
                          "JOIN Phong p ON dn.ID_Phong = p.ID_Phong " +
@@ -36,19 +36,31 @@ public class DienNuocDAOImpl implements DienNuocDAO, CrudDao<DienNuoc, Integer>{
     @Override
     public DienNuoc create(DienNuoc entity) {
         try {
-            XJdbc.executeUpdate(createSql,
-                    entity.getSoDienCu(),
-                    entity.getSoDienMoi(),
-                    entity.getSoNuocCu(),
-                    entity.getSoNuocMoi(),
-                    entity.getThangNam(),
-                    entity.getIdPhong()
-            );
-            System.out.println("Thêm DienNuoc thành công. ID sẽ được hiển thị sau khi làm mới.");
+            String sql = "INSERT INTO DienNuoc (soDienCu, soDienMoi, soNuocCu, soNuocMoi, thangNam, ID_Phong) VALUES (?, ?, ?, ?, ?, ?)";
+            java.sql.PreparedStatement stmt = XJdbc.openConnection().prepareStatement(sql, java.sql.PreparedStatement.RETURN_GENERATED_KEYS);
+            
+            stmt.setInt(1, entity.getSoDienCu());
+            stmt.setInt(2, entity.getSoDienMoi());
+            stmt.setInt(3, entity.getSoNuocCu());
+            stmt.setInt(4, entity.getSoNuocMoi());
+            stmt.setDate(5, new java.sql.Date(entity.getThangNam().getTime()));
+            stmt.setInt(6, entity.getIdPhong());
+            
+            int affectedRows = stmt.executeUpdate();
+            
+            if (affectedRows > 0) {
+                try (java.sql.ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        entity.setIdDienNuoc(rs.getInt(1));
+                        System.out.println("Thêm DienNuoc thành công với ID: " + entity.getIdDienNuoc());
+                    }
+                }
+            }
+            
             return entity;
-        } catch (RuntimeException ex) {
+        } catch (java.sql.SQLException ex) {
             System.err.println("Lỗi khi thêm DienNuoc: " + ex.getMessage());
-            throw ex;
+            throw new RuntimeException("Error when creating DienNuoc: " + ex.getMessage(), ex);
         }
     }
 
@@ -120,7 +132,7 @@ public class DienNuocDAOImpl implements DienNuocDAO, CrudDao<DienNuoc, Integer>{
 
     @Override
     public List<DienNuoc> findByChiNhanhId(Integer idChiNhanh) {
-        String sql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.soDienCu, dn.soDienMoi, dn.soNuocCu, dn.soNuocMoi, dn.thangNam, dn.ID_Phong, " +
+        String sql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.soDienCu, dn.soDienMoi, dn.soNuocCu, dn.soNuocMoi, dn.thangNam, dn.ID_Phong AS idPhong, " +
                      "p.soPhong, p.giaPhong AS giaPhong, cn.tenChiNhanh, cn.giaDien AS giaDienChiNhanh, cn.giaNuoc AS giaNuocChiNhanh " +
                      "FROM DienNuoc dn " +
                      "JOIN Phong p ON dn.ID_Phong = p.ID_Phong " +
@@ -149,7 +161,7 @@ public class DienNuocDAOImpl implements DienNuocDAO, CrudDao<DienNuoc, Integer>{
 
     @Override
     public DienNuoc findByPhongThangNam(Integer idPhong, int thang, int nam) {
-        String sql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.soDienCu, dn.soDienMoi, dn.soNuocCu, dn.soNuocMoi, dn.thangNam, dn.ID_Phong, " +
+        String sql = "SELECT dn.ID_DienNuoc AS idDienNuoc, dn.soDienCu, dn.soDienMoi, dn.soNuocCu, dn.soNuocMoi, dn.thangNam, dn.ID_Phong AS idPhong, " +
                      "p.soPhong, p.giaPhong AS giaPhong, cn.tenChiNhanh, cn.giaDien AS giaDienChiNhanh, cn.giaNuoc AS giaNuocChiNhanh " +
                      "FROM DienNuoc dn " +
                      "JOIN Phong p ON dn.ID_Phong = p.ID_Phong " +
