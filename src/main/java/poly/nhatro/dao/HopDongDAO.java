@@ -80,4 +80,7 @@ public interface HopDongDAO {
      * @return A list of HopDong objects for the specified room.
      */
     List<HopDong> selectByRoom(int ID_Phong);
+    
+    int timIdHopDongTheoSoPhongVaChiNhanh(String soPhong, int idChiNhanh);
+
 }
