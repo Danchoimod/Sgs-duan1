@@ -99,7 +99,7 @@ public class HopDongPanel extends javax.swing.JPanel {
 
     private void fillChiNhanhComboBox() {
         cboChiNhanh.removeAllItems();
-        cboChiNhanh.addItem("-- Chọn chi nhánh --"); // Default empty selection
+        cboChiNhanh.addItem("Tất cả"); // Default selection showing all
         
         try {
             List<ChiNhanh> chiNhanhs = chiNhanhDAO.getAll();
@@ -160,9 +160,9 @@ public class HopDongPanel extends javax.swing.JPanel {
         cboSoPhong.removeAllItems();
         cboSoPhong.addItem("-- Chọn phòng --"); // Default empty selection
         
-        // Initially load only available rooms (trangThai = "Trống")
+        // Initially load all available rooms (since chi nhanh defaults to "Tất cả")
         try {
-            List<Phong> phongs = phongDAO.findAllAvailable(); // Only get available rooms
+            List<Phong> phongs = phongDAO.findAllAvailable(); // Get all available rooms
             for (Phong p : phongs) {
                 cboSoPhong.addItem(p.getSoPhong());
             }
@@ -173,14 +173,28 @@ public class HopDongPanel extends javax.swing.JPanel {
     }
     
     /**
-     * Handle chi nhanh selection to filter phong list
+     * Handle chi nhanh selection to filter phong list and update contract tables
      */
     private void onChiNhanhSelected() {
         String selectedChiNhanh = (String) cboChiNhanh.getSelectedItem();
         cboSoPhong.removeAllItems();
         cboSoPhong.addItem("-- Chọn phòng --");
         
-        if (selectedChiNhanh == null || selectedChiNhanh.equals("-- Chọn chi nhánh --")) {
+        if (selectedChiNhanh == null || selectedChiNhanh.equals("Tất cả")) {
+            // If "Tất cả" selected, show all contracts and all available rooms
+            fillTableActiveContracts();
+            fillTableExpiredContracts();
+            
+            // Load all available rooms when "Tất cả" is selected
+            try {
+                List<Phong> phongs = phongDAO.findAllAvailable();
+                for (Phong p : phongs) {
+                    cboSoPhong.addItem(p.getSoPhong());
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách tất cả phòng trống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
             return;
         }
         
@@ -201,6 +215,9 @@ public class HopDongPanel extends javax.swing.JPanel {
                 for (Phong p : phongs) {
                     cboSoPhong.addItem(p.getSoPhong());
                 }
+                
+                // Filter and display contracts by selected chi nhanh
+                fillTableByChiNhanh(selectedChiNhanhId);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách phòng trống theo chi nhánh: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -256,6 +273,69 @@ public class HopDongPanel extends javax.swing.JPanel {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi tải dữ liệu hợp đồng hết hạn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Fill tables with contracts filtered by chi nhanh
+     */
+    private void fillTableByChiNhanh(int chiNhanhId) {
+        // Clear both tables first
+        modelActive.setRowCount(0);
+        modelExpired.setRowCount(0);
+        
+        try {
+            // Get all active contracts
+            List<HopDong> activeContracts = hopDongDAO.selectActiveContracts();
+            // Get all expired contracts
+            List<HopDong> expiredContracts = hopDongDAO.selectExpiredContracts();
+            
+            // Filter active contracts by chi nhanh
+            for (HopDong hd : activeContracts) {
+                // Get room info to check chi nhanh
+                Phong phong = phongDAO.findById(hd.getID_Phong());
+                if (phong != null && phong.getIdChiNhanh() == chiNhanhId) {
+                    Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
+                    Object[] row = {
+                        hd.getID_HopDong(),
+                        sdf.format(hd.getNgayTao()),
+                        hd.getThoiHan(),
+                        ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A",
+                        hd.getTienCoc(),
+                        hd.getNuocBanDau(),
+                        hd.getDienBanDau(),
+                        hd.getID_NguoiDung(),
+                        hd.getID_Phong(),
+                        "CÒN HẠN"
+                    };
+                    modelActive.addRow(row);
+                }
+            }
+            
+            // Filter expired contracts by chi nhanh
+            for (HopDong hd : expiredContracts) {
+                // Get room info to check chi nhanh
+                Phong phong = phongDAO.findById(hd.getID_Phong());
+                if (phong != null && phong.getIdChiNhanh() == chiNhanhId) {
+                    Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
+                    Object[] row = {
+                        hd.getID_HopDong(),
+                        sdf.format(hd.getNgayTao()),
+                        hd.getThoiHan(),
+                        ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A",
+                        hd.getTienCoc(),
+                        hd.getNuocBanDau(),
+                        hd.getDienBanDau(),
+                        hd.getID_NguoiDung(),
+                        hd.getID_Phong(),
+                        "HẾT HẠN"
+                    };
+                    modelExpired.addRow(row);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi lọc hợp đồng theo chi nhánh: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -331,9 +411,6 @@ public class HopDongPanel extends javax.swing.JPanel {
             return hopDong;
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng số cho thời hạn, tiền cọc, chỉ số nước/điện và ID.", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
-            return null;
-        } catch (ParseException e) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng ngày (dd/MM/yyyy) cho 'Ngày tạo'.", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
             return null;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi lấy dữ liệu từ form: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -429,6 +506,10 @@ public class HopDongPanel extends javax.swing.JPanel {
             cboNguoiKiHopDong.setSelectedIndex(0);
         }
         cboSoPhong.setSelectedIndex(0); // This will trigger onPhongSelected() and clear meter fields
+        
+        // Reset tables to show all contracts
+        fillTableActiveContracts();
+        fillTableExpiredContracts();
         
         currentIndex = -1;
         updateStatus();
@@ -542,9 +623,32 @@ public class HopDongPanel extends javax.swing.JPanel {
     // New search method
     private void search() {
         String keyword = txtTimKiem.getText().trim();
+        String selectedChiNhanh = (String) cboChiNhanh.getSelectedItem();
+        
         if (keyword.isEmpty()) {
-            fillTableActiveContracts(); // If search box is empty, show all active contracts
-            fillTableExpiredContracts(); // If search box is empty, show all expired contracts
+            // If search box is empty, check if chi nhanh is selected
+            if (selectedChiNhanh != null && !selectedChiNhanh.equals("Tất cả")) {
+                // Filter by selected chi nhanh
+                try {
+                    List<ChiNhanh> chiNhanhs = chiNhanhDAO.getAll();
+                    int selectedChiNhanhId = -1;
+                    for (ChiNhanh cn : chiNhanhs) {
+                        if (cn.getTenChiNhanh().equals(selectedChiNhanh)) {
+                            selectedChiNhanhId = cn.getID_ChiNhanh();
+                            break;
+                        }
+                    }
+                    if (selectedChiNhanhId != -1) {
+                        fillTableByChiNhanh(selectedChiNhanhId);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                // Show all contracts if "Tất cả" selected and no search keyword
+                fillTableActiveContracts();
+                fillTableExpiredContracts();
+            }
             return;
         }
 
@@ -560,24 +664,51 @@ public class HopDongPanel extends javax.swing.JPanel {
                 return;
             }
 
+            // If chi nhanh is selected (not "Tất cả"), also filter by chi nhanh
+            int selectedChiNhanhId = -1;
+            if (selectedChiNhanh != null && !selectedChiNhanh.equals("Tất cả")) {
+                List<ChiNhanh> chiNhanhs = chiNhanhDAO.getAll();
+                for (ChiNhanh cn : chiNhanhs) {
+                    if (cn.getTenChiNhanh().equals(selectedChiNhanh)) {
+                        selectedChiNhanhId = cn.getID_ChiNhanh();
+                        break;
+                    }
+                }
+            }
+
             for (HopDong hd : searchResults) {
-                Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
-                Object[] row = {
-                    hd.getID_HopDong(),
-                    sdf.format(hd.getNgayTao()),
-                    hd.getThoiHan(),
-                    ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A",
-                    hd.getTienCoc(),
-                    hd.getNuocBanDau(),
-                    hd.getDienBanDau(),
-                    hd.getID_NguoiDung(),
-                    hd.getID_Phong(),
-                    ngayKetThuc != null && ngayKetThuc.after(new Date()) ? "CÒN HẠN" : "HẾT HẠN"
-                };
-                if (ngayKetThuc != null && ngayKetThuc.after(new Date())) {
-                    modelActive.addRow(row);
-                } else {
-                    modelExpired.addRow(row);
+                // Check if need to filter by chi nhanh
+                boolean includeContract = true;
+                if (selectedChiNhanhId != -1) {
+                    try {
+                        Phong phong = phongDAO.findById(hd.getID_Phong());
+                        if (phong == null || phong.getIdChiNhanh() != selectedChiNhanhId) {
+                            includeContract = false;
+                        }
+                    } catch (Exception e) {
+                        includeContract = false;
+                    }
+                }
+                
+                if (includeContract) {
+                    Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
+                    Object[] row = {
+                        hd.getID_HopDong(),
+                        sdf.format(hd.getNgayTao()),
+                        hd.getThoiHan(),
+                        ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A",
+                        hd.getTienCoc(),
+                        hd.getNuocBanDau(),
+                        hd.getDienBanDau(),
+                        hd.getID_NguoiDung(),
+                        hd.getID_Phong(),
+                        ngayKetThuc != null && ngayKetThuc.after(new Date()) ? "CÒN HẠN" : "HẾT HẠN"
+                    };
+                    if (ngayKetThuc != null && ngayKetThuc.after(new Date())) {
+                        modelActive.addRow(row);
+                    } else {
+                        modelExpired.addRow(row);
+                    }
                 }
             }
         } catch (Exception e) {
