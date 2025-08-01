@@ -211,18 +211,30 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
     
     @Override
     public List<Object[]> getRoomsByChiNhanh(int chiNhanhId) {
-        String sql = "SELECT ID_Phong, soPhong FROM Phong WHERE ID_ChiNhanh = ? AND trangThai = N'Đang thuê' ORDER BY soPhong";
+        // Get all rooms that have existing hop dong (both active and inactive)
+        String sql = "SELECT DISTINCT p.ID_Phong, p.soPhong " +
+                     "FROM Phong p " +
+                     "JOIN HopDong hd ON p.ID_Phong = hd.ID_Phong " +
+                     "WHERE p.ID_ChiNhanh = ? " +
+                     "ORDER BY p.soPhong";
         List<Object[]> rooms = new ArrayList<>();
+        
+        System.out.println("Executing SQL: " + sql + " with chiNhanhId: " + chiNhanhId);
+        
         try (ResultSet rs = XJdbc.executeQuery(sql, chiNhanhId)) {
             while (rs.next()) {
                 Object[] room = new Object[2];
                 room[0] = rs.getInt("ID_Phong");
                 room[1] = rs.getString("soPhong");
                 rooms.add(room);
+                System.out.println("Found room: ID=" + room[0] + ", Name=" + room[1]);
             }
         } catch (SQLException e) {
+            System.err.println("SQL Error in getRoomsByChiNhanh: " + e.getMessage());
             throw new RuntimeException("Lỗi khi lấy danh sách phòng theo chi nhánh: " + e.getMessage(), e);
         }
+        
+        System.out.println("Total rooms found: " + rooms.size());
         return rooms;
     }
     

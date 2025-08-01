@@ -96,18 +96,32 @@ public class DoanhThuImpl implements DoanhThuDao {
              COALESCE((dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc, 0) + 
              p.giaPhong) AS tongTien,
             hdon.ngayTao AS ngayThanhToan,
-            hdon.trangThai AS trangThaiThanhToan
+            hdon.trangThai AS trangThaiThanhToan,
+            dn.soDienCu,
+            dn.soDienMoi,
+            dn.soNuocCu,
+            dn.soNuocMoi,
+            cn.giaDien,
+            cn.giaNuoc
         FROM HoaDon hdon
             JOIN HopDong hd ON hdon.ID_HopDong = hd.ID_HopDong
             JOIN Phong p ON hd.ID_Phong = p.ID_Phong
-            LEFT JOIN DienNuoc dn ON p.ID_Phong = dn.ID_Phong 
-                AND dn.thangNam = (
-                    SELECT MAX(dn2.thangNam) 
-                    FROM DienNuoc dn2 
-                    WHERE dn2.ID_Phong = p.ID_Phong 
-                    AND dn2.thangNam <= hdon.ngayTao
-                )
             JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh
+            LEFT JOIN (
+                SELECT 
+                    dn1.ID_Phong,
+                    dn1.soDienCu,
+                    dn1.soDienMoi,
+                    dn1.soNuocCu,
+                    dn1.soNuocMoi,
+                    dn1.thangNam
+                FROM DienNuoc dn1
+                WHERE dn1.thangNam = (
+                    SELECT MAX(dn2.thangNam)
+                    FROM DienNuoc dn2
+                    WHERE dn2.ID_Phong = dn1.ID_Phong
+                )
+            ) dn ON p.ID_Phong = dn.ID_Phong
         WHERE hdon.trangThai IS NOT NULL
         ORDER BY hdon.ngayTao DESC
         """;
@@ -166,14 +180,21 @@ public class DoanhThuImpl implements DoanhThuDao {
     @Override
     public List<DoanhThu> getAllSimple() {
         List<DoanhThu> list = new ArrayList<>();
+        System.out.println("[DEBUG] Executing QUERY_SIMPLE: " + QUERY_SIMPLE);
         try (ResultSet rs = XJdbc.executeQuery(QUERY_SIMPLE)) {
             while (rs.next()) {
-                list.add(mapSimpleResult(rs));
+                DoanhThu dt = mapSimpleResult(rs);
+                System.out.println("[DEBUG] DoanhThu ID: " + dt.getIdHoaDon() + 
+                    ", TienDien: " + dt.getTienDien() + 
+                    ", TienNuoc: " + dt.getTienNuoc() + 
+                    ", TongTien: " + dt.getTongTien());
+                list.add(dt);
             }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Lỗi khi lấy doanh thu đơn giản: " + e.getMessage(), e);
         }
+        System.out.println("[DEBUG] Total DoanhThu records: " + list.size());
         return list;
     }
 
