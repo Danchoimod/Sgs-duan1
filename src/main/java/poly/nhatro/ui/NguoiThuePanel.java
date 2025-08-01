@@ -19,6 +19,8 @@ import java.io.File;
 import poly.nhatro.util.ExcelOutput;
 import poly.nhatro.util.XDate;
 import java.util.Date;
+import java.util.Random;
+import poly.nhatro.entity.EmailOTP;
 
 
 /**
@@ -31,6 +33,63 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
     private List<ProvinceApiService.Province> provinces = new ArrayList<>();
     private int index = 0;
 
+    /**
+     * Tạo mật khẩu ngẫu nhiên 8 ký tự
+     */
+    private String taoMatKhauNgauNhien() {
+        String kyTu = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder matKhau = new StringBuilder();
+        
+        for (int i = 0; i < 8; i++) {
+            int index = random.nextInt(kyTu.length());
+            matKhau.append(kyTu.charAt(index));
+        }
+        
+        return matKhau.toString();
+    }
+
+    /**
+     * Phương thức public để tạo mật khẩu ngẫu nhiên và điền vào trường mật khẩu
+     */
+    public void taoVaDienMatKhauNgauNhien() {
+        String matKhauMoi = taoMatKhauNgauNhien();
+        txtMatKhau.setText(matKhauMoi);
+        XDialog.alert("Đã tạo mật khẩu ngẫu nhiên: " + matKhauMoi + "\nVui lòng lưu mật khẩu này!");
+    }
+
+    /**
+     * Gửi mật khẩu qua email
+     */
+    private void guiMatKhauQuaEmail(String email, String matKhau, String tenNguoiDung) {
+        new Thread(() -> {
+            try {
+                String noiDung = String.format(
+                    "Chào %s,\n\n" +
+                    "Tài khoản của bạn đã được tạo thành công!\n" +
+                    "Thông tin đăng nhập:\n" +
+                    "Email: %s\n" +
+                    "Mật khẩu: %s\n\n" +
+                    "Vui lòng đổi mật khẩu sau lần đăng nhập đầu tiên.\n\n" +
+                    "Trân trọng,\n" +
+                    "Hệ thống quản lý nhà trọ SGS",
+                    tenNguoiDung, email, matKhau
+                );
+                
+                EmailOTP.guiEmailThongBao(email, "Thông tin tài khoản mới", noiDung);
+                
+                SwingUtilities.invokeLater(() -> {
+                    XDialog.alert("Tài khoản đã được tạo và thông tin đã được gửi qua email!");
+                });
+            } catch (Exception e) {
+                SwingUtilities.invokeLater(() -> {
+                    XDialog.alert("Tài khoản đã được tạo nhưng không thể gửi email: " + e.getMessage());
+                });
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
 
     /**
      * Creates new form NguoiThuePanel
@@ -39,6 +98,17 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
         initComponents();
         init(); // Load dữ liệu ban đầu
         loadProvinces();
+        
+        // Thêm FocusListener cho txtMatKhau để tự động tạo mật khẩu khi focus
+        txtMatKhau.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                // Chỉ tạo mật khẩu mới nếu field đang trống
+                if (txtMatKhau.getText().trim().isEmpty()) {
+                    taoVaDienMatKhauNgauNhien();
+                }
+            }
+        });
     }
 
     /**
@@ -892,12 +962,22 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                 return;
             }
             
+            // Tạo mật khẩu ngẫu nhiên và set vào text field
+            String matKhauNgauNhien = taoMatKhauNgauNhien();
+            txtMatKhau.setText(matKhauNgauNhien);
+            
             NguoiThue entity = this.getForm();
             if (entity != null) {
+                // Lưu thông tin email và tên để gửi mail
+                String email = entity.getEmail();
+                String tenNguoiDung = entity.getTenNguoiDung();
+                
                 dao.create(entity);
                 this.fillToTable();
                 this.clear();
-                XDialog.alert("Tạo mới người thuê thành công!");
+                
+                // Gửi mật khẩu qua email trong luồng riêng
+                guiMatKhauQuaEmail(email, matKhauNgauNhien, tenNguoiDung);
             }
         } catch (Exception e) {
             XDialog.alert("Lỗi khi tạo mới người thuê: " + e.getMessage());   
