@@ -1,5 +1,7 @@
 package poly.nhatro.dao.impl;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import poly.nhatro.dao.HopDongDAO;
 import poly.nhatro.entity.HopDong;
 import poly.nhatro.util.XJdbc; // Using the provided XJdbc utility
@@ -109,10 +111,10 @@ public class HopDongImpl implements HopDongDAO {
 
     @Override
     public List<HopDong> searchContracts(String keyword) {
-        String sql = "SELECT hd.* FROM HopDong hd " +
-                     "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
-                     "JOIN Phong p ON hd.ID_Phong = p.ID_Phong " +
-                     "WHERE hd.ID_HopDong LIKE ? OR nd.tenNguoiDung LIKE ? OR p.soPhong LIKE ?";
+        String sql = "SELECT hd.* FROM HopDong hd "
+                + "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung "
+                + "JOIN Phong p ON hd.ID_Phong = p.ID_Phong "
+                + "WHERE hd.ID_HopDong LIKE ? OR nd.tenNguoiDung LIKE ? OR p.soPhong LIKE ?";
         String searchPattern = "%" + keyword + "%";
         return select(sql, searchPattern, searchPattern, searchPattern);
     }
@@ -134,4 +136,33 @@ public class HopDongImpl implements HopDongDAO {
         String sql = "SELECT * FROM HopDong WHERE ID_Phong = ?";
         return select(sql, ID_Phong);
     }
+
+    @Override
+    public int timIdHopDongTheoSoPhongVaChiNhanh(String soPhong, int idChiNhanh) {
+        int idHopDong = -1;
+        String sql = """
+        SELECT hd.ID_HopDong
+        FROM HopDong hd
+        JOIN Phong p ON p.ID_Phong = hd.ID_Phong
+        WHERE p.soPhong = ? AND p.ID_ChiNhanh = ?
+    """;
+
+        try (Connection con = XJdbc.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, soPhong);
+            ps.setInt(2, idChiNhanh);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                idHopDong = rs.getInt("ID_HopDong");
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return idHopDong;
+    }
+
 }
