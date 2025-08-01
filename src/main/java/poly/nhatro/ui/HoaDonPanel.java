@@ -57,16 +57,15 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                 cboChiNhanh.addItem("");
                 var chiNhanhList = chiNhanhDAO.getAll();
                 for (var chiNhanh : chiNhanhList) {
-                    cboChiNhanh.addItem(chiNhanh.getTenChiNhanh());                }
+                    cboChiNhanh.addItem(chiNhanh.getTenChiNhanh());
+                }
             }
             
-            // Removed cboTenNguoiDung - now using only txtTenNguoiDung
-            
+            // Initialize room combo box
             if (cboSoPhong != null) {
                 cboSoPhong.removeAllItems();
                 cboSoPhong.addItem("");
             }
-            
             
             if (cboTrangThaiThanhToan != null) {
                 cboTrangThaiThanhToan.removeAllItems();
@@ -962,10 +961,16 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
     public void clear() {
         currentHoaDon = null; 
         
-        // Removed cboTenNguoiDung - now using only txtTenNguoiDung
+        // Clear chi nhanh selection first
+        if (cboChiNhanh != null && cboChiNhanh.getItemCount() > 0) {
+            cboChiNhanh.setSelectedIndex(0);
+        }
+        
+        // Clear room selection
         if (cboSoPhong != null && cboSoPhong.getItemCount() > 0) {
             cboSoPhong.setSelectedIndex(0);
         }
+        
         if (cboTrangThaiThanhToan != null && cboTrangThaiThanhToan.getItemCount() > 0) {
             cboTrangThaiThanhToan.setSelectedIndex(0);
         }
@@ -1032,18 +1037,35 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                 cboChiNhanh.setSelectedItem(chiNhanhValue.toString());
             }
             
+            // Wait for chi nhanh selection to load rooms first
             onChiNhanhSelected();
             
-            if (soPhongValue != null && cboSoPhong != null) {
-                String soPhongToSelect = soPhongValue.toString();
-                for (int i = 0; i < cboSoPhong.getItemCount(); i++) {
-                    String item = (String) cboSoPhong.getItemAt(i);
-                    if (item != null && item.trim().equals(soPhongToSelect.trim())) {
-                        cboSoPhong.setSelectedIndex(i);
-                        break;
+            // Add a small delay to ensure rooms are loaded
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                if (soPhongValue != null && cboSoPhong != null) {
+                    String soPhongToSelect = soPhongValue.toString().trim();
+                    System.out.println("Trying to select room: '" + soPhongToSelect + "'");
+                    System.out.println("Available items in combo: " + cboSoPhong.getItemCount());
+                    
+                    boolean found = false;
+                    for (int i = 0; i < cboSoPhong.getItemCount(); i++) {
+                        String item = (String) cboSoPhong.getItemAt(i);
+                        System.out.println("Item " + i + ": '" + item + "'");
+                        if (item != null && item.trim().equals(soPhongToSelect)) {
+                            cboSoPhong.setSelectedIndex(i);
+                            System.out.println("Successfully selected room at index: " + i);
+                            found = true;
+                            break;
+                        }
                     }
+                    
+                    if (!found) {
+                        System.out.println("Room '" + soPhongToSelect + "' not found in combo box");
+                    }
+                } else {
+                    System.out.println("soPhongValue or cboSoPhong is null");
                 }
-            }
+            });
 
             if (tenNguoiDung != null) {
                 // Fill vào text field
@@ -1295,8 +1317,10 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
         try {
             String selectedValue = (String) cboChiNhanh.getSelectedItem();
             if (selectedValue == null || selectedValue.trim().isEmpty()) {
-                cboSoPhong.removeAllItems();
-                cboSoPhong.addItem("");
+                if (cboSoPhong != null) {
+                    cboSoPhong.removeAllItems();
+                    cboSoPhong.addItem("");
+                }
                 clearRoomDetails();
                 return;
             }
@@ -1310,18 +1334,28 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
                 }
             }
 
-            if (chiNhanhId != -1) {
+            if (chiNhanhId != -1 && cboSoPhong != null) {
                 List<Object[]> rooms = dao.getRoomsByChiNhanh(chiNhanhId);
                 
                 cboSoPhong.removeAllItems();
                 cboSoPhong.addItem("");
                 
+                System.out.println("Loading rooms for chi nhanh ID: " + chiNhanhId);
+                System.out.println("Found " + rooms.size() + " rooms");
+                
                 for (Object[] room : rooms) {
-                    cboSoPhong.addItem((String) room[1]); 
+                    String roomName = (String) room[1];
+                    System.out.println("Adding room: " + roomName);
+                    cboSoPhong.addItem(roomName); 
                 }
+                
+                System.out.println("Total items in cboSoPhong: " + cboSoPhong.getItemCount());
+            } else {
+                System.out.println("Chi nhanh ID not found or cboSoPhong is null");
             }
             
         } catch (Exception e) {
+            System.err.println("Error in onChiNhanhSelected: " + e.getMessage());
             XDialog.alert("Lỗi khi tải danh sách phòng: " + e.getMessage());
             e.printStackTrace();
         }
