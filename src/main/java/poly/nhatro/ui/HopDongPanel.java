@@ -40,6 +40,7 @@ public class HopDongPanel extends javax.swing.JPanel {
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // Date format for text fields
 
     private int currentIndex = -1; // To keep track of selected row
+    private int currentHopDongId = -1; // To keep track of current contract ID when editing
 
     // Custom added variables for models
     private DefaultTableModel modelActive;
@@ -104,18 +105,9 @@ public class HopDongPanel extends javax.swing.JPanel {
      * Setup listeners for automatic date calculation
      */
     private void setupDateCalculationListeners() {
-        // Add document listener for txtTimKiem2 (Ngày bắt đầu)
-        txtTimKiem2.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                calculateEndDate();
-            }
-            @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                calculateEndDate();
-            }
-            @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+        // Add property change listener for dateBatDau (Ngày bắt đầu)
+        dateBatDau.addPropertyChangeListener("date", evt -> {
+            if (evt.getNewValue() != null) {
                 calculateEndDate();
             }
         });
@@ -142,11 +134,10 @@ public class HopDongPanel extends javax.swing.JPanel {
      */
     private void calculateAndSetEndDate() {
         try {
-            String startDateStr = txtTimKiem2.getText().trim();
+            Date startDate = dateBatDau.getDate();
             String durationStr = txtTimKiem1.getText().trim();
             
-            if (!startDateStr.isEmpty() && !durationStr.isEmpty()) {
-                Date startDate = sdf.parse(startDateStr);
+            if (startDate != null && !durationStr.isEmpty()) {
                 int duration = Integer.parseInt(durationStr);
                 
                 Date endDate = calculateEndDate(startDate, duration);
@@ -157,7 +148,7 @@ public class HopDongPanel extends javax.swing.JPanel {
                 // Clear end date if start date or duration is empty
                 dateKetThucHopDong.setDate(null);
             }
-        } catch (ParseException | NumberFormatException e) {
+        } catch (NumberFormatException e) {
             // Clear end date if parsing fails
             dateKetThucHopDong.setDate(null);
         }
@@ -430,8 +421,7 @@ public class HopDongPanel extends javax.swing.JPanel {
     private HopDong getForm() {
         try {
             // Mapping fields based on the provided UI layout and labels:
-            // txtTimKiem6: Mã hợp đồng (ID_HopDong)
-            // txtTimKiem2: Ngày tạo (ngayTao)
+            // dateBatDau: Ngày tạo (ngayTao)
             // txtTimKiem1: Thời hạn (thoiHan)
             // txtTimKiem3: Tiền cọc (tienCoc)
             // txtTimKiem4: Nước ban đầu (nuocBanDau)
@@ -439,7 +429,11 @@ public class HopDongPanel extends javax.swing.JPanel {
             // cboNguoiKiHopDong: Người kí hợp đồng (ID_NguoiDung)
             // cboSoPhong: Mã phòng (ID_Phong)
             
-            Date ngayTao = sdf.parse(txtTimKiem2.getText().trim());
+            Date ngayTao = dateBatDau.getDate();
+            if (ngayTao == null) {
+                throw new IllegalArgumentException("Vui lòng chọn ngày bắt đầu");
+            }
+            
             int thoiHan = Integer.parseInt(txtTimKiem1.getText().trim()); // Assuming txtTimKiem1 is for ThoiHan
             int tienCoc = Integer.parseInt(txtTimKiem3.getText().trim());
             int nuocBanDau = Integer.parseInt(txtTimKiem4.getText().trim());
@@ -490,9 +484,9 @@ public class HopDongPanel extends javax.swing.JPanel {
             }
 
             HopDong hopDong = new HopDong();
-            // If txtTimKiem6 has a value, it means we are updating, otherwise adding
-            if (!txtTimKiem6.getText().trim().isEmpty()) {
-                hopDong.setID_HopDong(Integer.parseInt(txtTimKiem6.getText().trim()));
+            // If currentHopDongId is set, it means we are updating, otherwise adding
+            if (currentHopDongId != -1) {
+                hopDong.setID_HopDong(currentHopDongId);
             }
             hopDong.setNgayTao(ngayTao);
             hopDong.setThoiHan(thoiHan);
@@ -513,8 +507,10 @@ public class HopDongPanel extends javax.swing.JPanel {
     }
 
     private void setForm(HopDong hd) {
-        txtTimKiem6.setText(String.valueOf(hd.getID_HopDong())); // Set ID_HopDong
-        txtTimKiem2.setText(sdf.format(hd.getNgayTao())); // Set Ngay tao
+        // Store the contract ID for editing
+        currentHopDongId = hd.getID_HopDong();
+        
+        dateBatDau.setDate(hd.getNgayTao()); // Set Ngay tao
         txtTimKiem1.setText(String.valueOf(hd.getThoiHan())); // Set Thoi han
         txtTimKiem3.setText(String.valueOf(hd.getTienCoc())); // Set Tien coc
         txtTimKiem4.setText(String.valueOf(hd.getNuocBanDau())); // Set Nuoc ban dau
@@ -587,8 +583,10 @@ public class HopDongPanel extends javax.swing.JPanel {
     }
 
     private void clearForm() {
-        txtTimKiem6.setText(""); // Clear ID_HopDong
-        txtTimKiem2.setText(sdf.format(new Date())); // Set current date for ngayTao
+        // Reset contract ID for new contract
+        currentHopDongId = -1;
+        
+        dateBatDau.setDate(new Date()); // Set current date for ngayTao
         txtTimKiem1.setText(""); // Clear Thoi han
         txtTimKiem3.setText(""); // Clear Tien coc
         txtTimKiem4.setText(""); // Clear Nuoc ban dau - will be auto-populated when room is selected
@@ -642,21 +640,21 @@ public class HopDongPanel extends javax.swing.JPanel {
             return;
         }
 
+        if (currentHopDongId == -1) {
+            JOptionPane.showMessageDialog(this, "Không có hợp đồng nào được chọn để cập nhật.", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         HopDong hd = getForm();
         if (hd == null) return;
 
         try {
-            // Get ID_HopDong from the text field, as it's the primary key for update
-            int ID_HopDong = Integer.parseInt(txtTimKiem6.getText().trim());
-            hd.setID_HopDong(ID_HopDong); // Ensure ID is set for update
-
+            // The ID is already set in getForm() method from currentHopDongId
             hopDongDAO.update(hd); // Changed to hopDongDAO
             JOptionPane.showMessageDialog(this, "Cập nhật hợp đồng thành công!");
             fillTableActiveContracts(); // Refresh tables
             fillTableExpiredContracts();
             clearForm(); // This will reload the user combo box with available users
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Mã hợp đồng không hợp lệ. Vui lòng chọn hợp đồng từ bảng.", "Lỗi", JOptionPane.ERROR_MESSAGE);
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(this, "Lỗi dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.WARNING_MESSAGE);
         } catch (Exception e) {
@@ -671,20 +669,22 @@ public class HopDongPanel extends javax.swing.JPanel {
             return;
         }
 
+        if (currentHopDongId == -1) {
+            JOptionPane.showMessageDialog(this, "Không có hợp đồng nào được chọn để xóa.", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa hợp đồng này?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
         if (confirm != JOptionPane.YES_OPTION) {
             return;
         }
 
         try {
-            int ID_HopDong = Integer.parseInt(txtTimKiem6.getText().trim()); // Get ID from text field
-            hopDongDAO.delete(ID_HopDong); // Changed to hopDongDAO
+            hopDongDAO.delete(currentHopDongId); // Use stored contract ID
             JOptionPane.showMessageDialog(this, "Xóa hợp đồng thành công!");
             fillTableActiveContracts(); // Refresh tables
             fillTableExpiredContracts();
             clearForm(); // This will reload the user combo box with available users
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Mã hợp đồng không hợp lệ. Vui lòng chọn hợp đồng từ bảng.", "Lỗi", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi xóa hợp đồng: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
@@ -711,9 +711,9 @@ public class HopDongPanel extends javax.swing.JPanel {
     
     // Helper to update button states
     private void updateStatus() {
-        // If txtTimKiem6 (ID_HopDong) is empty, it's a new record (add mode)
+        // If currentHopDongId is -1, it's a new record (add mode)
         // If it has a value, it's an existing record (edit/delete mode)
-        boolean isAdding = txtTimKiem6.getText().trim().isEmpty();
+        boolean isAdding = currentHopDongId == -1;
 
         btnThem.setEnabled(isAdding);
         btnSua.setEnabled(!isAdding);
@@ -832,7 +832,6 @@ public class HopDongPanel extends javax.swing.JPanel {
         txtTimKiem = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtTimKiem1 = new javax.swing.JTextField();
-        txtTimKiem2 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -842,7 +841,6 @@ public class HopDongPanel extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         txtTimKiem5 = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        txtTimKiem6 = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         txtTimKiem7 = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
@@ -850,6 +848,7 @@ public class HopDongPanel extends javax.swing.JPanel {
         cboSoPhong = new javax.swing.JComboBox<>();
         btnTimKiem = new javax.swing.JButton();
         dateKetThucHopDong = new com.toedter.calendar.JDateChooser();
+        dateBatDau = new com.toedter.calendar.JDateChooser();
         lblHopDong1 = new javax.swing.JLabel();
         lblHopDong2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -937,14 +936,9 @@ public class HopDongPanel extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtTimKiem2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtTimKiem6, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -987,8 +981,11 @@ public class HopDongPanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cboSoPhong, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(txtTimKiem5, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dateKetThucHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(169, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(dateKetThucHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(dateBatDau, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(109, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -999,16 +996,15 @@ public class HopDongPanel extends javax.swing.JPanel {
                     .addComponent(cboChiNhanh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9)
-                    .addComponent(txtTimKiem6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnTimKiem))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel3)
                         .addComponent(txtTimKiem1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtTimKiem2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel4))
-                    .addComponent(dateKetThucHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(dateKetThucHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dateBatDau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -1262,11 +1258,10 @@ public class HopDongPanel extends javax.swing.JPanel {
      */
     private void showEndDateInfo() {
         try {
-            String startDateStr = txtTimKiem2.getText().trim();
+            Date startDate = dateBatDau.getDate();
             String durationStr = txtTimKiem1.getText().trim();
             
-            if (!startDateStr.isEmpty() && !durationStr.isEmpty()) {
-                Date startDate = sdf.parse(startDateStr);
+            if (startDate != null && !durationStr.isEmpty()) {
                 int duration = Integer.parseInt(durationStr);
                 Date endDate = calculateEndDate(startDate, duration);
                 
@@ -1284,7 +1279,7 @@ public class HopDongPanel extends javax.swing.JPanel {
                 }
             } else {
                 JOptionPane.showMessageDialog(this, 
-                    "Vui lòng nhập ngày bắt đầu và thời hạn để tính ngày kết thúc.", 
+                    "Vui lòng chọn ngày bắt đầu và nhập thời hạn để tính ngày kết thúc.", 
                     "Thông tin", 
                     JOptionPane.WARNING_MESSAGE);
             }
@@ -1306,6 +1301,7 @@ public class HopDongPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> cboChiNhanh;
     private javax.swing.JComboBox<String> cboNguoiKiHopDong;
     private javax.swing.JComboBox<String> cboSoPhong;
+    private com.toedter.calendar.JDateChooser dateBatDau;
     private com.toedter.calendar.JDateChooser dateKetThucHopDong;
     private com.toedter.calendar.JCalendar jCalendar1;
     private javax.swing.JLabel jLabel1;
@@ -1329,11 +1325,9 @@ public class HopDongPanel extends javax.swing.JPanel {
     private javax.swing.JPanel pnlHopDong;
     private javax.swing.JTextField txtTimKiem;
     private javax.swing.JTextField txtTimKiem1;
-    private javax.swing.JTextField txtTimKiem2;
     private javax.swing.JTextField txtTimKiem3;
     private javax.swing.JTextField txtTimKiem4;
     private javax.swing.JTextField txtTimKiem5;
-    private javax.swing.JTextField txtTimKiem6;
     private javax.swing.JTextField txtTimKiem7;
     // End of variables declaration//GEN-END:variables
 }
