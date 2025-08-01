@@ -43,5 +43,12 @@ public interface HoaDonDAO extends CrudDao<HoaDon, Integer> {
      */
     List<Object[]> getDetailedBillingDataByStatus(String trangThai);
     
+    /**
+     * Lấy ID hợp đồng dựa trên ID phòng và ID người dùng
+     * @param phongId ID phòng
+     * @param nguoiDungId ID người dùng
+     * @return ID hợp đồng hoặc -1 nếu không tìm thấy
+     */
+    int getHopDongIdByPhongAndNguoiDung(int phongId, int nguoiDungId);
     
 };
