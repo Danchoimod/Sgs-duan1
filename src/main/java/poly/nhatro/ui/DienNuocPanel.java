@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package poly.nhatro.ui;
+
 import poly.nhatro.entity.DienNuoc;
 import poly.nhatro.dao.impl.DienNuocDAOImpl;
 import poly.nhatro.dao.DienNuocDAO;
@@ -39,6 +40,7 @@ import java.awt.Frame;
 import javax.swing.ImageIcon; // Thêm import cho ImageIcon
 
 public class DienNuocPanel extends javax.swing.JPanel implements dienNuocController {
+
     private DienNuocDAO dienNuocDao;
     private ChiNhanhDAO chiNhanhDao;
     private PhongDaoImpl phongDao; // Đảm bảo sử dụng PhongDaoImpl
@@ -46,8 +48,8 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     private Map<String, Integer> phongMap; // Thêm map để lưu trữ mã phòng và ID phòng
     private int currentIndex = -1;
     private List<DienNuoc> currentList;
-    // Định dạng ngày tháng theo yêu cầu: "Aug 1, 2025"
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy"); 
+// Định dạng ngày tháng theo yêu cầu: "Aug 1, 2025"
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
 
     public DienNuocPanel() {
         initComponents();
@@ -57,6 +59,8 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         this.chiNhanhMap = new HashMap<>();
         this.phongMap = new HashMap<>(); // Khởi tạo phongMap
         init();
+        txtSoDienCu.setEditable(false); // Vô hiệu hóa nhập liệu
+        txtSoNuocCu.setEditable(false); // Vô hiệu hóa nhập liệu
     }
 
     @Override
@@ -396,20 +400,20 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     }//GEN-LAST:event_tblDienNuocMouseClicked
 
     private void cboChiNhanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboChiNhanhActionPerformed
- loadPhongToComboBox();
-    filterAndFillTable();   
+        loadPhongToComboBox();
+        filterAndFillTable();
     }//GEN-LAST:event_cboChiNhanhActionPerformed
 
     private void txtThangNamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtThangNamActionPerformed
-       
+
     }//GEN-LAST:event_txtThangNamActionPerformed
 
     private void txtThangNamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtThangNamMouseClicked
         // TODO add your handling code here:
-          // TODO add your handling code here:
+        // TODO add your handling code here:
         JDateChooser dateChooser = new JDateChooser();
         dateChooser.setDateFormatString("MMM d, yyyy"); // Định dạng hiển thị trong JDateChooser
-        
+
         // Cố gắng phân tích ngày hiện có trong txtThangNam để đặt cho JDateChooser
         try {
             Date currentDate = dateFormat.parse(txtThangNam.getText());
@@ -419,10 +423,10 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             dateChooser.setDate(new Date());
         }
 
-        JDialog dialog = new JDialog((Frame)null, "Chọn ngày", true); // Tạo JDialog với modal là true
+        JDialog dialog = new JDialog((Frame) null, "Chọn ngày", true); // Tạo JDialog với modal là true
         dialog.getContentPane().add(dateChooser, BorderLayout.CENTER);
         dialog.pack();
-        dialog.setLocationRelativeTo(this); 
+        dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
 
         // Sau khi dialog đóng, lấy ngày đã chọn và cập nhật txtThangNam
@@ -432,7 +436,7 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     }//GEN-LAST:event_txtThangNamMouseClicked
 
     private void cboMaPhongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboMaPhongActionPerformed
-     
+
     }//GEN-LAST:event_cboMaPhongActionPerformed
 
 
@@ -480,11 +484,11 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             } else {
                 cboChiNhanh.setSelectedIndex(0);
             }
-            // Đặt mã phòng vào cboMaPhong
+// Đặt mã phòng vào cboMaPhong
             if (entity.getSoPhong() != null) {
-                 cboMaPhong.setSelectedItem(entity.getSoPhong()); // Sử dụng soPhong để chọn item
+                cboMaPhong.setSelectedItem(entity.getSoPhong()); // Sử dụng soPhong để chọn item
             } else {
-                 cboMaPhong.setSelectedIndex(0);
+                cboMaPhong.setSelectedIndex(0);
             }
             txtSoDienCu.setText(String.valueOf(entity.getSoDienCu()));
             txtSoDienMoi.setText(String.valueOf(entity.getSoDienMoi()));
@@ -501,19 +505,19 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     }
 
     public boolean validateForm() {
+// This validation will be handled differently for create and update actions
+// We'll keep a base validation here but specific checks will be done in create() and update()
         if (cboChiNhanh.getSelectedItem() == null || cboChiNhanh.getSelectedItem().equals("Tất cả")) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn một Chi nhánh hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             cboChiNhanh.requestFocusInWindow();
             return false;
         }
-        // Validate cboMaPhong
         if (cboMaPhong.getSelectedItem() == null || cboMaPhong.getSelectedItem().toString().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Mã phòng không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             cboMaPhong.requestFocusInWindow();
             return false;
         }
         try {
-            // Lấy ID phòng từ phongMap dựa trên mã phòng được chọn
             String selectedSoPhong = cboMaPhong.getSelectedItem().toString();
             Integer idPhong = phongMap.get(selectedSoPhong);
             if (idPhong == null) {
@@ -526,123 +530,17 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             e.printStackTrace();
             return false;
         }
-        
-        // Validate soDienCu
-        if (txtSoDienCu.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Số điện cũ không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtSoDienCu.requestFocusInWindow();
-            return false;
-        }
-        try {
-            int soDienCu = Integer.parseInt(txtSoDienCu.getText());
-            if (soDienCu < 0) {
-                JOptionPane.showMessageDialog(this, "Số điện cũ phải là số nguyên không âm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                txtSoDienCu.requestFocusInWindow();
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Số điện cũ phải là một số nguyên hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtSoDienCu.requestFocusInWindow();
-            return false;
-        }
-
-        // Validate soDienMoi
-        if (txtSoDienMoi.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Số điện mới không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtSoDienMoi.requestFocusInWindow();
-            return false;
-        }
-        try {
-            int soDienMoi = Integer.parseInt(txtSoDienMoi.getText());
-            if (soDienMoi < 0) {
-                JOptionPane.showMessageDialog(this, "Số điện mới phải là số nguyên không âm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                txtSoDienMoi.requestFocusInWindow();
-                return false;
-            }
-            // Thêm kiểm tra soDienMoi >= soDienCu
-            if (Integer.parseInt(txtSoDienCu.getText()) > soDienMoi) {
-                JOptionPane.showMessageDialog(this, "Số điện mới phải lớn hơn hoặc bằng số điện cũ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                txtSoDienMoi.requestFocusInWindow();
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Số điện mới phải là một số nguyên hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtSoDienMoi.requestFocusInWindow();
-            return false;
-        }
-
-        // Validate soNuocCu
-        if (txtSoNuocCu.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Số nước cũ không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtSoNuocCu.requestFocusInWindow();
-            return false;
-        }
-        try {
-            int soNuocCu = Integer.parseInt(txtSoNuocCu.getText());
-            if (soNuocCu < 0) {
-                JOptionPane.showMessageDialog(this, "Số nước cũ phải là số nguyên không âm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                txtSoNuocCu.requestFocusInWindow();
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Số nước cũ phải là một số nguyên hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtSoNuocCu.requestFocusInWindow();
-            return false;
-        }
-
-        // Validate soNuocMoi
-        if (txtSoNuocMoi.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Số nước mới không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtSoNuocMoi.requestFocusInWindow();
-            return false;
-        }
-        try {
-            int soNuocMoi = Integer.parseInt(txtSoNuocMoi.getText());
-            if (soNuocMoi < 0) {
-                JOptionPane.showMessageDialog(this, "Số nước mới phải là số nguyên không âm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                txtSoNuocMoi.requestFocusInWindow();
-                return false;
-            }
-            // Thêm kiểm tra soNuocMoi >= soNuocCu
-            if (Integer.parseInt(txtSoNuocCu.getText()) > soNuocMoi) {
-                JOptionPane.showMessageDialog(this, "Số nước mới phải lớn hơn hoặc bằng số nước cũ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                txtSoNuocMoi.requestFocusInWindow();
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Số nước mới phải là một số nguyên hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtSoNuocMoi.requestFocusInWindow();
-            return false;
-        }
-
-        // Validate thangNam
-        if (txtThangNam.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Tháng năm không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtThangNam.requestFocusInWindow();
-            return false;
-        }
-        try {
-            dateFormat.parse(txtThangNam.getText());
-        } catch (java.text.ParseException e) {
-            JOptionPane.showMessageDialog(this, "Tháng năm không hợp lệ. Vui lòng nhập theo định dạng YYYY-MM-DD.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtThangNam.requestFocusInWindow();
-            return false;
-        }
-
         return true;
     }
 
     @Override
     public DienNuoc getForm() {
-        if (!validateForm()) {
-            return null;
-        }
+// Phương thức này giờ sẽ chỉ lấy những dữ liệu cơ bản
         DienNuoc dienNuoc = new DienNuoc();
-        // Giữ lại ID_DienNuoc nếu đang ở chế độ sửa
+// Giữ lại ID_DienNuoc nếu đang ở chế độ sửa
         if (currentIndex >= 0 && currentIndex < currentList.size()) {
             dienNuoc.setIdDienNuoc(currentList.get(currentIndex).getIdDienNuoc());
         }
-
         String selectedSoPhong = cboMaPhong.getSelectedItem().toString();
         Integer idPhong = phongMap.get(selectedSoPhong); // Lấy ID phòng từ map
         if (idPhong == null) {
@@ -650,15 +548,17 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             return null;
         }
         dienNuoc.setIdPhong(idPhong);
-
         try {
-            dienNuoc.setSoDienCu(Integer.parseInt(txtSoDienCu.getText()));
-            dienNuoc.setSoDienMoi(Integer.parseInt(txtSoDienMoi.getText()));
-            dienNuoc.setSoNuocCu(Integer.parseInt(txtSoNuocCu.getText()));
-            dienNuoc.setSoNuocMoi(Integer.parseInt(txtSoNuocMoi.getText()));
+            if (txtDienNuoc.getText() != null && !txtDienNuoc.getText().isEmpty()) {
+                dienNuoc.setIdDienNuoc(Integer.parseInt(txtDienNuoc.getText()));
+            }
+            dienNuoc.setSoDienCu((int) Double.parseDouble(txtSoDienCu.getText()));
+            dienNuoc.setSoDienMoi((int) Double.parseDouble(txtSoDienMoi.getText()));
+            dienNuoc.setSoNuocCu((int) Double.parseDouble(txtSoNuocCu.getText()));
+            dienNuoc.setSoNuocMoi((int) Double.parseDouble(txtSoNuocMoi.getText()));
             dienNuoc.setThangNam(dateFormat.parse(txtThangNam.getText()));
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Số điện hoặc số nước không hợp lệ. Vui lòng nhập số nguyên.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Số điện hoặc số nước không hợp lệ. Vui lòng nhập số.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return null;
         } catch (java.text.ParseException e) {
             JOptionPane.showMessageDialog(this, "Tháng năm không hợp lệ. Vui lòng nhập theo định dạng YYYY-MM-DD.", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -676,76 +576,119 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         if (!validateForm()) {
             return;
         }
+// Thêm validation mới cho nút thêm
+        if (txtSoDienMoi.getText().isEmpty() || txtSoNuocMoi.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Số điện mới và Số nước mới không được để trống khi thêm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn thêm mới bản ghi này?", "Xác nhận thêm mới", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            DienNuoc newDienNuoc = getForm();
-            if (newDienNuoc == null) {
+            DienNuoc newDienNuoc = new DienNuoc();
+            String selectedSoPhong = cboMaPhong.getSelectedItem().toString();
+            Integer idPhong = phongMap.get(selectedSoPhong);
+            if (idPhong == null) {
+                JOptionPane.showMessageDialog(this, "Mã phòng không hợp lệ hoặc không tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            newDienNuoc.setIdPhong(idPhong);
             try {
-                // Kiểm tra xem đã tồn tại bản ghi điện nước cho phòng và tháng năm này chưa
-                DienNuoc existingDienNuoc = dienNuocDao.findByPhongThangNam(newDienNuoc.getIdPhong(), 
-                                                                              newDienNuoc.getThangNam().getMonth() + 1, // Calendar month is 0-indexed
-                                                                              newDienNuoc.getThangNam().getYear() + 1900); // Year is 1900-indexed
+                newDienNuoc.setSoDienCu((int) Double.parseDouble(txtSoDienMoi.getText()));
+                newDienNuoc.setSoNuocCu((int) Double.parseDouble(txtSoNuocMoi.getText()));
+                newDienNuoc.setSoDienMoi((int) 0.0);
+                newDienNuoc.setSoNuocMoi((int) 0.0);
+                newDienNuoc.setThangNam(dateFormat.parse(txtThangNam.getText()));
+// Kiểm tra trùng lặp bản ghi
+                DienNuoc existingDienNuoc = dienNuocDao.findByPhongThangNam(newDienNuoc.getIdPhong(),
+                        newDienNuoc.getThangNam().getMonth() + 1,
+                        newDienNuoc.getThangNam().getYear() + 1900);
                 if (existingDienNuoc != null) {
                     JOptionPane.showMessageDialog(this, "Đã tồn tại bản ghi điện nước cho phòng này trong tháng và năm đã chọn.", "Lỗi", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-
                 dienNuocDao.create(newDienNuoc);
                 JOptionPane.showMessageDialog(this, "Thêm mới thành công!");
                 filterAndFillTable(); // Cập nhật lại bảng sau khi thêm
                 clear();
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Số điện hoặc số nước không hợp lệ. Vui lòng nhập số.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            } catch (java.text.ParseException e) {
+                JOptionPane.showMessageDialog(this, "Tháng năm không hợp lệ. Vui lòng nhập đúng định dạng.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             } catch (RuntimeException e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi thêm mới: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Lỗi không xác định khi thêm mới: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
             }
         }
     }
 
-    @Override
-    public void update() {
-        if (currentIndex < 0) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn một bản ghi để cập nhật.");
-            return;
-        }
-        if (!validateForm()) {
-            return;
-        }
-        int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn cập nhật bản ghi này?", "Xác nhận cập nhật", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
-            DienNuoc updatedDienNuoc = getForm();
-            if (updatedDienNuoc == null) {
+  @Override
+public void update() {
+    if (currentIndex < 0) {
+        JOptionPane.showMessageDialog(this, "Vui lòng chọn một bản ghi để cập nhật.");
+        return;
+    }
+
+    String soDienMoiStr = txtSoDienMoi.getText().trim();
+    String soNuocMoiStr = txtSoNuocMoi.getText().trim();
+    String soDienCuStr = txtSoDienCu.getText().trim();
+    String soNuocCuStr = txtSoNuocCu.getText().trim();
+
+    // Thêm validation để kiểm tra các trường không được để trống
+    if (soDienMoiStr.isEmpty() || soNuocMoiStr.isEmpty() || soDienCuStr.isEmpty() || soNuocCuStr.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Số điện cũ, Số nước cũ, Số điện mới và Số nước mới không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Thêm kiểm tra ID_Phong từ cboMaPhong để tránh lỗi FOREIGN KEY
+    String selectedSoPhong = (String) cboMaPhong.getSelectedItem();
+    Integer idPhong = phongMap.get(selectedSoPhong);
+    if (idPhong == null) {
+        JOptionPane.showMessageDialog(this, "Mã phòng không hợp lệ hoặc không tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn cập nhật bản ghi này?", "Xác nhận cập nhật", JOptionPane.YES_NO_OPTION);
+    if (confirm == JOptionPane.YES_OPTION) {
+        try {
+            DienNuoc updatedDienNuoc = currentList.get(currentIndex);
+            
+            // Cập nhật ID_Phong mới nhất
+            updatedDienNuoc.setIdPhong(idPhong);
+            
+            // Cập nhật giá trị mới từ các trường văn bản
+            updatedDienNuoc.setSoDienMoi((int) Double.parseDouble(soDienMoiStr));
+            updatedDienNuoc.setSoNuocMoi((int) Double.parseDouble(soNuocMoiStr));
+            updatedDienNuoc.setSoDienCu((int) Double.parseDouble(soDienCuStr));
+            updatedDienNuoc.setSoNuocCu((int) Double.parseDouble(soNuocCuStr));
+            
+            // Cập nhật ngày tháng
+            if (txtThangNam.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Tháng năm không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            try {
-                updatedDienNuoc.setIdDienNuoc(currentList.get(currentIndex).getIdDienNuoc()); // Đảm bảo ID đúng
-                
-                // Kiểm tra trùng lặp tháng năm và phòng, nhưng bỏ qua bản ghi hiện tại đang sửa
-                DienNuoc existingDienNuoc = dienNuocDao.findByPhongThangNam(updatedDienNuoc.getIdPhong(), 
-                                                                              updatedDienNuoc.getThangNam().getMonth() + 1, 
-                                                                              updatedDienNuoc.getThangNam().getYear() + 1900);
-                if (existingDienNuoc != null && existingDienNuoc.getIdDienNuoc() != updatedDienNuoc.getIdDienNuoc()) {
-                    JOptionPane.showMessageDialog(this, "Đã tồn tại bản ghi điện nước cho phòng này trong tháng và năm đã chọn.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+            Date newThangNam = dateFormat.parse(txtThangNam.getText());
+            updatedDienNuoc.setThangNam(newThangNam);
 
-                dienNuocDao.update(updatedDienNuoc);
-                JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
-                filterAndFillTable(); // Cập nhật lại bảng sau khi sửa
-                clear();
-            } catch (RuntimeException e) {
-                JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Lỗi không xác định khi cập nhật: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+            // Kiểm tra trùng lặp tháng năm và phòng, nhưng bỏ qua bản ghi hiện tại đang sửa
+            DienNuoc existingDienNuoc = dienNuocDao.findByPhongThangNam(updatedDienNuoc.getIdPhong(), updatedDienNuoc.getThangNam().getMonth() + 1, updatedDienNuoc.getThangNam().getYear() + 1900);
+            if (existingDienNuoc != null && existingDienNuoc.getIdDienNuoc() != updatedDienNuoc.getIdDienNuoc()) {
+                JOptionPane.showMessageDialog(this, "Đã tồn tại bản ghi điện nước cho phòng này trong tháng và năm đã chọn.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
             }
+
+            dienNuocDao.update(updatedDienNuoc);
+            JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+            filterAndFillTable(); // Cập nhật lại bảng sau khi sửa
+            clear();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số điện hoặc số nước không hợp lệ. Vui lòng chỉ nhập số.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } catch (java.text.ParseException e) {
+            JOptionPane.showMessageDialog(this, "Tháng năm không hợp lệ. Vui lòng nhập đúng định dạng.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } catch (RuntimeException e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
+}
 
     @Override
     public void delete() {
@@ -803,9 +746,9 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
     @Override
     public void setEditable(boolean editable) {
         cboMaPhong.setEnabled(editable); // Điều khiển cboMaPhong
-        txtSoDienCu.setEditable(editable);
+        txtSoDienCu.setEditable(false);
         txtSoDienMoi.setEditable(editable);
-        txtSoNuocCu.setEditable(editable);
+        txtSoNuocCu.setEditable(false);
         txtSoNuocMoi.setEditable(editable);
         txtThangNam.setEditable(editable); // txtThangNam có thể chỉnh sửa
         cboChiNhanh.setEnabled(editable);
@@ -814,8 +757,8 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         btnXoa.setEnabled(editable);
         txtDienNuoc.setEditable(false); // Mã điện nước không cho sửa
     }
+// Phương thức mới để vừa lọc vừa điền dữ liệu vào bảng
 
-    // Phương thức mới để vừa lọc vừa điền dữ liệu vào bảng
     public void filterAndFillTable() {
         DefaultTableModel model = (DefaultTableModel) tblDienNuoc.getModel();
         model.setRowCount(0); // Xóa tất cả các hàng hiện có
@@ -829,32 +772,30 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                 if (idChiNhanh != null) {
                     filteredList = dienNuocDao.findByChiNhanhId(idChiNhanh); // Lọc theo ID chi nhánh
                 } else {
-                    // Trường hợp không tìm thấy ID chi nhánh (có thể xảy ra nếu dữ liệu bị lỗi)
+// Trường hợp không tìm thấy ID chi nhánh (có thể xảy ra nếu dữ liệu bị lỗi)
                     filteredList = new ArrayList<>(); // Trả về danh sách rỗng
                     JOptionPane.showMessageDialog(this, "Không tìm thấy ID cho chi nhánh đã chọn: " + selectedChiNhanhName, "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
             currentList = filteredList; // Cập nhật currentList
-
-            // --- BẮT ĐẦU ĐOẠN MÃ DEBUG ---
+// --- BẮT ĐẦU ĐOẠN MÃ DEBUG ---
             System.out.println("--- DEBUG: Kiểm tra giá trị ID_DienNuoc từ currentList sau khi lọc ---");
             if (currentList != null) {
                 for (DienNuoc dn : currentList) {
-                    System.out.println(" ID_DienNuoc: " + dn.getIdDienNuoc() + 
-                                       ", SoDienCu: " + dn.getSoDienCu() + 
-                                       ", SoDienMoi: " + dn.getSoDienMoi() +
-                                       ", SoNuocCu: " + dn.getSoNuocCu() + 
-                                       ", SoNuocMoi: " + dn.getSoNuocMoi() +
-                                       ", ThangNam: " + (dn.getThangNam() != null ? dateFormat.format(dn.getThangNam()) : "N/A") +
-                                       ", MaPhong: " + dn.getSoPhong() + 
-                                       ", TenChiNhanh: " + dn.getTenChiNhanh());
+                    System.out.println(" ID_DienNuoc: " + dn.getIdDienNuoc()
+                            + ", SoDienCu: " + dn.getSoDienCu()
+                            + ", SoDienMoi: " + dn.getSoDienMoi()
+                            + ", SoNuocCu: " + dn.getSoNuocCu()
+                            + ", SoNuocMoi: " + dn.getSoNuocMoi()
+                            + ", ThangNam: " + (dn.getThangNam() != null ? dateFormat.format(dn.getThangNam()) : "N/A")
+                            + ", MaPhong: " + dn.getSoPhong()
+                            + ", TenChiNhanh: " + dn.getTenChiNhanh());
                 }
             } else {
                 System.out.println(" currentList is null or empty.");
             }
             System.out.println("--- KẾT THÚC ĐOẠN MÃ DEBUG ---");
-
-            // Điền dữ liệu vào bảng từ currentList đã lọc
+// Điền dữ liệu vào bảng từ currentList đã lọc
             for (DienNuoc dn : currentList) {
                 Object[] row = {
                     dn.getTenChiNhanh(),
@@ -876,8 +817,8 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
             e.printStackTrace();
         }
     }
+// fillToTable giờ chỉ gọi filterAndFillTable()
 
-    // fillToTable giờ chỉ gọi filterAndFillTable()
     @Override
     public void fillToTable() {
         filterAndFillTable();
@@ -893,30 +834,30 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                 cboChiNhanh.addItem(cn.getTenChiNhanh());
                 chiNhanhMap.put(cn.getTenChiNhanh(), cn.getID_ChiNhanh());
             }
-            // Sau khi tải chi nhánh, tải phòng cho chi nhánh đầu tiên (hoặc "Tất cả")
+// Sau khi tải chi nhánh, tải phòng cho chi nhánh đầu tiên (hoặc "Tất cả")
             loadPhongToComboBox();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách chi nhánh: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
+// Phương thức mới để tải mã phòng vào cboMaPhong dựa trên chi nhánh được chọn
 
-    // Phương thức mới để tải mã phòng vào cboMaPhong dựa trên chi nhánh được chọn
     private void loadPhongToComboBox() {
         cboMaPhong.removeAllItems();
         phongMap.clear();
         String selectedChiNhanhName = (String) cboChiNhanh.getSelectedItem();
         System.out.println("DEBUG: Selected ChiNhanh: " + selectedChiNhanhName); // Debug
-        
         if (selectedChiNhanhName == null || selectedChiNhanhName.equals("Tất cả")) {
-            // Nếu chọn "Tất cả" chi nhánh, tải tất cả các phòng
+// Nếu chọn "Tất cả" chi nhánh, tải tất cả các phòng
             try {
                 List<Phong> phongs = phongDao.findAll(); // Sử dụng findAll từ CrudDao
                 System.out.println("DEBUG: Loading all rooms. Found " + phongs.size() + " rooms."); // Debug
                 for (Phong p : phongs) {
                     cboMaPhong.addItem(p.getSoPhong());
                     phongMap.put(p.getSoPhong(), p.getIdPhong());
-                    System.out.println("DEBUG: Added room (All): " + p.getSoPhong() + " (ID: " + p.getIdPhong()+ ", ChiNhanhID: " + p.getIdChiNhanh() + ")"); // Debug
+                    System.out.println("DEBUG: Added room (All): " + p.getSoPhong() + " (ID: " + p.getIdPhong() + ", ChiNhanhID: " + p.getIdChiNhanh() + ")");
+// Debug
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách phòng: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -932,7 +873,8 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
                     for (Phong p : phongs) {
                         cboMaPhong.addItem(p.getSoPhong());
                         phongMap.put(p.getSoPhong(), p.getIdPhong());
-                        System.out.println("DEBUG: Added room (Filtered): " + p.getSoPhong() + " (ID: " + p.getIdPhong()+ ", ChiNhanhID: " + p.getIdChiNhanh() + ")"); // Debug
+                        System.out.println("DEBUG: Added room (Filtered): " + p.getSoPhong() + " (ID: " + p.getIdPhong() + ", ChiNhanhID: " + p.getIdChiNhanh() + ")");
+// Debug
                     }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách phòng theo chi nhánh: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -964,7 +906,7 @@ public class DienNuocPanel extends javax.swing.JPanel implements dienNuocControl
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa " + selectedRows.length + " bản ghi đã chọn?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             try {
-                // Xóa từ dưới lên để tránh lỗi index khi xóa
+// Xóa từ dưới lên để tránh lỗi index khi xóa
                 for (int i = selectedRows.length - 1; i >= 0; i--) {
                     int modelRow = tblDienNuoc.convertRowIndexToModel(selectedRows[i]);
                     int dienNuocIdToDelete = currentList.get(modelRow).getIdDienNuoc();
