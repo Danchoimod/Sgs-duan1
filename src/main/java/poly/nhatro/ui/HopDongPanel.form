@@ -188,6 +188,7 @@
                                   <Component id="cboSoPhong" min="-2" pref="116" max="-2" attributes="0"/>
                               </Group>
                               <Component id="txtTimKiem5" min="-2" pref="130" max="-2" attributes="0"/>
+                              <Component id="dateKetThucHopDong" alignment="0" min="-2" pref="182" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -208,11 +209,14 @@
                       <Component id="btnTimKiem" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtTimKiem1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtTimKiem2" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="txtTimKiem1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="txtTimKiem2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="dateKetThucHopDong" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -386,6 +390,8 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTimKiemActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="com.toedter.calendar.JDateChooser" name="dateKetThucHopDong">
         </Component>
       </SubComponents>
     </Container>

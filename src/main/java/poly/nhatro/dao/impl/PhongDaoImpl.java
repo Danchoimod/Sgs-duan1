@@ -15,7 +15,7 @@ public class PhongDaoImpl implements PhongDao {
         String sql = "INSERT INTO PHONG(giaPhong, trangThai, soPhong, moTa, anhPhong, ID_ChiNhanh) VALUES(?,?,?,?,?,?)";
         XJdbc.executeUpdate(sql,
                 entity.getGiaPhong(),
-                entity.isTrangThai(),
+                entity.getTrangThai(),
                 entity.getSoPhong(),
                 entity.getMoTa(),
                 entity.getAnhPhong(),
@@ -28,7 +28,7 @@ public class PhongDaoImpl implements PhongDao {
         String sql = "UPDATE PHONG SET giaPhong=?, trangThai=?, soPhong=?, moTa=?, anhPhong=?, ID_ChiNhanh=? WHERE ID_Phong=?";
         XJdbc.executeUpdate(sql,
                 entity.getGiaPhong(),
-                entity.isTrangThai(),
+                entity.getTrangThai(),
                 entity.getSoPhong(),
                 entity.getMoTa(),
                 entity.getAnhPhong(),
@@ -67,6 +67,18 @@ public class PhongDaoImpl implements PhongDao {
         return select(sql, idChiNhanh);
     }
 
+    // Phương thức mới: Tìm phòng trống theo chi nhánh (trangThai = 'Trống')
+    public List<Phong> findAvailableByChiNhanh(Integer idChiNhanh) {
+        String sql = "SELECT * FROM PHONG WHERE ID_ChiNhanh=? AND trangThai=N'Trống'";
+        return select(sql, idChiNhanh);
+    }
+
+    // Phương thức mới: Tìm tất cả phòng trống
+    public List<Phong> findAllAvailable() {
+        String sql = "SELECT * FROM PHONG WHERE trangThai=N'Trống'";
+        return select(sql);
+    }
+
     // Phương thức mới: Đếm số lượng phòng
     public int countPhong() {
         String sql = "SELECT COUNT(*) FROM PHONG";
@@ -89,7 +101,7 @@ public class PhongDaoImpl implements PhongDao {
                 Phong phong = new Phong();
                 phong.setIdPhong(rs.getInt("ID_Phong"));
                 phong.setGiaPhong(rs.getBigDecimal("giaPhong"));
-                phong.setTrangThai(rs.getBoolean("trangThai"));
+                phong.setTrangThai(rs.getString("trangThai"));
                 phong.setSoPhong(rs.getString("soPhong"));
 
                 // Xử lý các trường có thể NULL

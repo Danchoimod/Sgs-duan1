@@ -27,4 +27,11 @@ public interface DienNuocDAO extends CrudDao<DienNuoc, Integer>{
      * @return The DienNuoc object if found, otherwise null.
      */
     DienNuoc findByPhongThangNam(Integer idPhong, int thang, int nam);
+    
+    /**
+     * Finds the latest DienNuoc record for a specific room.
+     * @param idPhong The ID of the room.
+     * @return The latest DienNuoc object if found, otherwise null.
+     */
+    DienNuoc findLatestByPhong(Integer idPhong);
 }

@@ -174,4 +174,22 @@ public class DienNuocDAOImpl implements DienNuocDAO, CrudDao<DienNuoc, Integer>{
             throw ex;
         }
     }
+
+    @Override
+    public DienNuoc findLatestByPhong(Integer idPhong) {
+        String sql = "SELECT TOP 1 dn.ID_DienNuoc AS idDienNuoc, dn.soDienCu, dn.soDienMoi, dn.soNuocCu, dn.soNuocMoi, dn.thangNam, dn.ID_Phong, " +
+                     "p.soPhong, p.giaPhong AS giaPhong, cn.tenChiNhanh, cn.giaDien AS giaDienChiNhanh, cn.giaNuoc AS giaNuocChiNhanh " +
+                     "FROM DienNuoc dn " +
+                     "JOIN Phong p ON dn.ID_Phong = p.ID_Phong " +
+                     "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
+                     "WHERE dn.ID_Phong = ? " +
+                     "ORDER BY dn.thangNam DESC";
+        try {
+            return XQuery.getSingleBean(DienNuoc.class, sql, idPhong);
+        } catch (RuntimeException ex) {
+            System.err.println("Lỗi khi tìm DienNuoc mới nhất theo Phòng: " + ex.getMessage());
+            // Return null instead of throwing exception if no record found
+            return null;
+        }
+    }
 }

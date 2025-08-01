@@ -54,4 +54,37 @@ public class EmailOTP {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Gửi email thông báo với tiêu đề và nội dung tùy chỉnh
+     */
+    public static void guiEmailThongBao(String emailNhan, String tieuDe, String noiDung) {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
+        Session session = Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(EMAIL_GUI, MAT_KHAU_EMAIL);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(EMAIL_GUI));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailNhan));
+            message.setSubject(tieuDe);
+            message.setText(noiDung);
+
+            Transport.send(message);
+            System.out.println("Đã gửi email thông báo thành công đến " + emailNhan);
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Không thể gửi email: " + e.getMessage());
+        }
+    }
 }

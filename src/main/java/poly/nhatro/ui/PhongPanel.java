@@ -768,8 +768,8 @@ public class PhongPanel extends javax.swing.JPanel {
             ChiNhanh chiNhanh = cacheChiNhanh.computeIfAbsent(phong.getIdChiNhanh(), id -> chiNhanhDAO.getById(id));
             String tenChiNhanh = chiNhanh != null ? chiNhanh.getTenChiNhanh() : "Không xác định";
 
-            // Chuyển trạng thái thành text
-            String trangThai = phong.isTrangThai() ? "Đã thuê" : "Còn trống";
+            // Hiển thị trạng thái như trong database
+            String trangThai = phong.getTrangThai();
 
             // Thêm dòng vào table
             model.addRow(new Object[]{
@@ -816,7 +816,14 @@ public class PhongPanel extends javax.swing.JPanel {
         Phong phong = new Phong();
         phong.setSoPhong(txtSoPhong.getText());
         phong.setGiaPhong(new BigDecimal(txtGia.getText()));
-        phong.setTrangThai(false); // Mặc định chưa cho thuê
+        
+        // Set trạng thái dựa trên radio button
+        if (rdoDaThue.isSelected()) {
+            phong.setTrangThai("Đang thuê");
+        } else {
+            phong.setTrangThai("Trống");
+        }
+        
         phong.setMoTa(txtMota.getText());
         phong.setAnhPhong(imagePath);
 
@@ -835,8 +842,8 @@ public class PhongPanel extends javax.swing.JPanel {
         txtMota.setText(phong.getMoTa());
         txtIdPhong.setText(String.valueOf(phong.getIdPhong())); // fill ID Phòng
 
-        rdoDaThue.setSelected(phong.isTrangThai());             // nếu đang thuê
-        rdoConTrong.setSelected(!phong.isTrangThai());          // nếu còn trống
+        rdoDaThue.setSelected("Đang thuê".equals(phong.getTrangThai()));    // nếu đang thuê
+        rdoConTrong.setSelected("Trống".equals(phong.getTrangThai()));  // nếu còn trống
         // Đặt chi nhánh
         ChiNhanh chiNhanh = new ChiNhanhDAOImpl().getById(phong.getIdChiNhanh());
         if (chiNhanh != null) {
