@@ -122,13 +122,13 @@ public class PhongPanel extends javax.swing.JPanel {
         jLabel1.setForeground(new java.awt.Color(0, 51, 255));
         jLabel1.setText("Thêm / Cập nhật phòng");
 
+        txtIdPhong.setEnabled(false);
+
         txtGia.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtGiaActionPerformed(evt);
             }
         });
-
-        jLabel2.setText("ID Phòng");
 
         jLabel3.setText("Giá phòng");
 
@@ -190,8 +190,8 @@ public class PhongPanel extends javax.swing.JPanel {
                 .addGap(19, 19, 19)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtIdPhong, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24)
+                .addComponent(txtIdPhong, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(64, 64, 64)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtGia, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)

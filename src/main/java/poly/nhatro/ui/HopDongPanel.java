@@ -297,18 +297,35 @@ public class HopDongPanel extends javax.swing.JPanel {
         try {
             List<HopDong> list = hopDongDAO.selectActiveContracts(); // Changed to hopDongDAO
             for (HopDong hd : list) {
-                Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan()); // Use local method
+                // Lấy tên người dùng
+                String tenNguoiKy = "N/A";
+                try {
+                    NguoiDung nguoiDung = nguoiDungDAO.findById(hd.getID_NguoiDung());
+                    if (nguoiDung != null) {
+                        tenNguoiKy = nguoiDung.getTenNguoiDung();
+                    }
+                } catch (Exception e) {
+                    System.err.println("Lỗi khi lấy tên người dùng ID " + hd.getID_NguoiDung() + ": " + e.getMessage());
+                }
+                
+                // Lấy số phòng
+                String soPhong = "N/A";
+                try {
+                    Phong phong = phongDAO.findById(hd.getID_Phong());
+                    if (phong != null) {
+                        soPhong = phong.getSoPhong();
+                    }
+                } catch (Exception e) {
+                    System.err.println("Lỗi khi lấy thông tin phòng ID " + hd.getID_Phong() + ": " + e.getMessage());
+                }
+                
                 Object[] row = {
                     hd.getID_HopDong(),
-                    sdf.format(hd.getNgayTao()),
-                    hd.getThoiHan(), // Thêm cột Thời hạn
-                    ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A",
-                    hd.getTienCoc(),
-                    hd.getNuocBanDau(),
-                    hd.getDienBanDau(),
-                    hd.getID_NguoiDung(), // Hiển thị ID Người Dùng
-                    hd.getID_Phong(), // Hiển thị ID Phòng
-                    "CÒN HẠN" // Status based on table
+                    tenNguoiKy, // Tên người ký
+                    soPhong, // Số phòng
+                    hd.getTienCoc(), // Tiền cọc
+                    hd.getDienBanDau(), // Điện ban đầu
+                    hd.getNuocBanDau() // Nước ban đầu
                 };
                 modelActive.addRow(row);
             }
@@ -323,18 +340,35 @@ public class HopDongPanel extends javax.swing.JPanel {
         try {
             List<HopDong> list = hopDongDAO.selectExpiredContracts(); // Changed to hopDongDAO
             for (HopDong hd : list) {
-                Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan()); // Use local method
+                // Lấy tên người dùng
+                String tenNguoiKy = "N/A";
+                try {
+                    NguoiDung nguoiDung = nguoiDungDAO.findById(hd.getID_NguoiDung());
+                    if (nguoiDung != null) {
+                        tenNguoiKy = nguoiDung.getTenNguoiDung();
+                    }
+                } catch (Exception e) {
+                    System.err.println("Lỗi khi lấy tên người dùng ID " + hd.getID_NguoiDung() + ": " + e.getMessage());
+                }
+                
+                // Lấy số phòng
+                String soPhong = "N/A";
+                try {
+                    Phong phong = phongDAO.findById(hd.getID_Phong());
+                    if (phong != null) {
+                        soPhong = phong.getSoPhong();
+                    }
+                } catch (Exception e) {
+                    System.err.println("Lỗi khi lấy thông tin phòng ID " + hd.getID_Phong() + ": " + e.getMessage());
+                }
+                
                 Object[] row = {
                     hd.getID_HopDong(),
-                    sdf.format(hd.getNgayTao()),
-                    hd.getThoiHan(), // Thêm cột Thời hạn
-                    ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A",
-                    hd.getTienCoc(),
-                    hd.getNuocBanDau(),
-                    hd.getDienBanDau(),
-                    hd.getID_NguoiDung(), // Hiển thị ID Người Dùng
-                    hd.getID_Phong(), // Hiển thị ID Phòng
-                    "HẾT HẠN" // Status based on table
+                    tenNguoiKy, // Tên người ký
+                    soPhong, // Số phòng
+                    hd.getTienCoc(), // Tiền cọc
+                    hd.getDienBanDau(), // Điện ban đầu
+                    hd.getNuocBanDau() // Nước ban đầu
                 };
                 modelExpired.addRow(row);
             }
@@ -363,18 +397,24 @@ public class HopDongPanel extends javax.swing.JPanel {
                 // Get room info to check chi nhanh
                 Phong phong = phongDAO.findById(hd.getID_Phong());
                 if (phong != null && phong.getIdChiNhanh() == chiNhanhId) {
-                    Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
+                    // Lấy tên người dùng
+                    String tenNguoiKy = "N/A";
+                    try {
+                        NguoiDung nguoiDung = nguoiDungDAO.findById(hd.getID_NguoiDung());
+                        if (nguoiDung != null) {
+                            tenNguoiKy = nguoiDung.getTenNguoiDung();
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Lỗi khi lấy tên người dùng ID " + hd.getID_NguoiDung() + ": " + e.getMessage());
+                    }
+                    
                     Object[] row = {
                         hd.getID_HopDong(),
-                        sdf.format(hd.getNgayTao()),
-                        hd.getThoiHan(),
-                        ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A",
-                        hd.getTienCoc(),
-                        hd.getNuocBanDau(),
-                        hd.getDienBanDau(),
-                        hd.getID_NguoiDung(),
-                        hd.getID_Phong(),
-                        "CÒN HẠN"
+                        tenNguoiKy, // Tên người ký
+                        phong.getSoPhong(), // Số phòng
+                        hd.getTienCoc(), // Tiền cọc
+                        hd.getDienBanDau(), // Điện ban đầu
+                        hd.getNuocBanDau() // Nước ban đầu
                     };
                     modelActive.addRow(row);
                 }
@@ -385,18 +425,24 @@ public class HopDongPanel extends javax.swing.JPanel {
                 // Get room info to check chi nhanh
                 Phong phong = phongDAO.findById(hd.getID_Phong());
                 if (phong != null && phong.getIdChiNhanh() == chiNhanhId) {
-                    Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
+                    // Lấy tên người dùng
+                    String tenNguoiKy = "N/A";
+                    try {
+                        NguoiDung nguoiDung = nguoiDungDAO.findById(hd.getID_NguoiDung());
+                        if (nguoiDung != null) {
+                            tenNguoiKy = nguoiDung.getTenNguoiDung();
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Lỗi khi lấy tên người dùng ID " + hd.getID_NguoiDung() + ": " + e.getMessage());
+                    }
+                    
                     Object[] row = {
                         hd.getID_HopDong(),
-                        sdf.format(hd.getNgayTao()),
-                        hd.getThoiHan(),
-                        ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A",
-                        hd.getTienCoc(),
-                        hd.getNuocBanDau(),
-                        hd.getDienBanDau(),
-                        hd.getID_NguoiDung(),
-                        hd.getID_Phong(),
-                        "HẾT HẠN"
+                        tenNguoiKy, // Tên người ký
+                        phong.getSoPhong(), // Số phòng
+                        hd.getTienCoc(), // Tiền cọc
+                        hd.getDienBanDau(), // Điện ban đầu
+                        hd.getNuocBanDau() // Nước ban đầu
                     };
                     modelExpired.addRow(row);
                 }
@@ -779,9 +825,10 @@ public class HopDongPanel extends javax.swing.JPanel {
             for (HopDong hd : searchResults) {
                 // Check if need to filter by chi nhanh
                 boolean includeContract = true;
+                Phong phong = null;
                 if (selectedChiNhanhId != -1) {
                     try {
-                        Phong phong = phongDAO.findById(hd.getID_Phong());
+                        phong = phongDAO.findById(hd.getID_Phong());
                         if (phong == null || phong.getIdChiNhanh() != selectedChiNhanhId) {
                             includeContract = false;
                         }
@@ -791,18 +838,36 @@ public class HopDongPanel extends javax.swing.JPanel {
                 }
                 
                 if (includeContract) {
+                    // Lấy thông tin phòng nếu chưa có
+                    if (phong == null) {
+                        try {
+                            phong = phongDAO.findById(hd.getID_Phong());
+                        } catch (Exception e) {
+                            System.err.println("Lỗi khi lấy thông tin phòng ID " + hd.getID_Phong() + ": " + e.getMessage());
+                        }
+                    }
+                    
+                    // Lấy tên người dùng
+                    String tenNguoiKy = "N/A";
+                    try {
+                        NguoiDung nguoiDung = nguoiDungDAO.findById(hd.getID_NguoiDung());
+                        if (nguoiDung != null) {
+                            tenNguoiKy = nguoiDung.getTenNguoiDung();
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Lỗi khi lấy tên người dùng ID " + hd.getID_NguoiDung() + ": " + e.getMessage());
+                    }
+                    
+                    String soPhong = phong != null ? phong.getSoPhong() : "N/A";
                     Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
+                    
                     Object[] row = {
                         hd.getID_HopDong(),
-                        sdf.format(hd.getNgayTao()),
-                        hd.getThoiHan(),
-                        ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A",
-                        hd.getTienCoc(),
-                        hd.getNuocBanDau(),
-                        hd.getDienBanDau(),
-                        hd.getID_NguoiDung(),
-                        hd.getID_Phong(),
-                        ngayKetThuc != null && ngayKetThuc.after(new Date()) ? "CÒN HẠN" : "HẾT HẠN"
+                        tenNguoiKy, // Tên người ký
+                        soPhong, // Số phòng
+                        hd.getTienCoc(), // Tiền cọc
+                        hd.getDienBanDau(), // Điện ban đầu
+                        hd.getNuocBanDau() // Nước ban đầu
                     };
                     if (ngayKetThuc != null && ngayKetThuc.after(new Date())) {
                         modelActive.addRow(row);
@@ -952,15 +1017,15 @@ public class HopDongPanel extends javax.swing.JPanel {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(dateKetThucHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(dateBatDau, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(9, 9, 9)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtTimKiem1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(dateBatDau, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dateKetThucHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -969,7 +1034,7 @@ public class HopDongPanel extends javax.swing.JPanel {
                         .addComponent(jLabel11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cboSoPhong, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(328, Short.MAX_VALUE))
+                .addContainerGap(334, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -981,20 +1046,25 @@ public class HopDongPanel extends javax.swing.JPanel {
                     .addComponent(txtTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnTimKiem))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtTimKiem1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4)
-                        .addComponent(jLabel2)
-                        .addComponent(jLabel3))
-                    .addComponent(dateKetThucHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dateBatDau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel11)
-                    .addComponent(cboNguoiKiHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cboSoPhong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtTimKiem1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(dateBatDau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel3))))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel11)
+                            .addComponent(cboNguoiKiHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cboSoPhong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(dateKetThucHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(22, 22, 22)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
