@@ -319,10 +319,15 @@ public class HopDongPanel extends javax.swing.JPanel {
                     System.err.println("Lỗi khi lấy thông tin phòng ID " + hd.getID_Phong() + ": " + e.getMessage());
                 }
                 
+                // Calculate end date
+                Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
+                
                 Object[] row = {
                     hd.getID_HopDong(),
                     tenNguoiKy, // Tên người ký
                     soPhong, // Số phòng
+                    sdf.format(hd.getNgayTao()), // Ngày bắt đầu
+                    ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A", // Ngày kết thúc
                     hd.getTienCoc(), // Tiền cọc
                     hd.getDienBanDau(), // Điện ban đầu
                     hd.getNuocBanDau() // Nước ban đầu
@@ -362,10 +367,15 @@ public class HopDongPanel extends javax.swing.JPanel {
                     System.err.println("Lỗi khi lấy thông tin phòng ID " + hd.getID_Phong() + ": " + e.getMessage());
                 }
                 
+                // Calculate end date
+                Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
+                
                 Object[] row = {
                     hd.getID_HopDong(),
                     tenNguoiKy, // Tên người ký
                     soPhong, // Số phòng
+                    sdf.format(hd.getNgayTao()), // Ngày bắt đầu
+                    ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A", // Ngày kết thúc
                     hd.getTienCoc(), // Tiền cọc
                     hd.getDienBanDau(), // Điện ban đầu
                     hd.getNuocBanDau() // Nước ban đầu
@@ -408,10 +418,15 @@ public class HopDongPanel extends javax.swing.JPanel {
                         System.err.println("Lỗi khi lấy tên người dùng ID " + hd.getID_NguoiDung() + ": " + e.getMessage());
                     }
                     
+                    // Calculate end date
+                    Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
+                    
                     Object[] row = {
                         hd.getID_HopDong(),
                         tenNguoiKy, // Tên người ký
                         phong.getSoPhong(), // Số phòng
+                        sdf.format(hd.getNgayTao()), // Ngày bắt đầu
+                        ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A", // Ngày kết thúc
                         hd.getTienCoc(), // Tiền cọc
                         hd.getDienBanDau(), // Điện ban đầu
                         hd.getNuocBanDau() // Nước ban đầu
@@ -436,10 +451,15 @@ public class HopDongPanel extends javax.swing.JPanel {
                         System.err.println("Lỗi khi lấy tên người dùng ID " + hd.getID_NguoiDung() + ": " + e.getMessage());
                     }
                     
+                    // Calculate end date
+                    Date ngayKetThuc = calculateEndDate(hd.getNgayTao(), hd.getThoiHan());
+                    
                     Object[] row = {
                         hd.getID_HopDong(),
                         tenNguoiKy, // Tên người ký
                         phong.getSoPhong(), // Số phòng
+                        sdf.format(hd.getNgayTao()), // Ngày bắt đầu
+                        ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A", // Ngày kết thúc
                         hd.getTienCoc(), // Tiền cọc
                         hd.getDienBanDau(), // Điện ban đầu
                         hd.getNuocBanDau() // Nước ban đầu
@@ -865,6 +885,8 @@ public class HopDongPanel extends javax.swing.JPanel {
                         hd.getID_HopDong(),
                         tenNguoiKy, // Tên người ký
                         soPhong, // Số phòng
+                        sdf.format(hd.getNgayTao()), // Ngày bắt đầu
+                        ngayKetThuc != null ? sdf.format(ngayKetThuc) : "N/A", // Ngày kết thúc
                         hd.getTienCoc(), // Tiền cọc
                         hd.getDienBanDau(), // Điện ban đầu
                         hd.getNuocBanDau() // Nước ban đầu
@@ -1084,17 +1106,17 @@ public class HopDongPanel extends javax.swing.JPanel {
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã hợp đồng", "Ngày tạo", "Thời hạn", "Tiền cọc", "Nước ban đầu", "Điện ban đầu", "Mã người dùng", "Mã phòng"
+                "Mã hợp đồng", "Tên người ký", "Số phòng", "Ngày bắt đầu", "Ngày kết thúc", "Tiền cọc", "Điện ban đầu", "Nước ban đầu"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -1114,17 +1136,17 @@ public class HopDongPanel extends javax.swing.JPanel {
 
         jTable3.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã hợp đồng", "Ngày tạo", "thời hạn", "Tiền cọc", "Nước ban đầu", "Điện ban đầu", "Mã người dùng", "Mã phòng"
+                "Mã hợp đồng", "Tên người ký", "Số phòng", "Ngày bắt đầu", "Ngày kết thúc", "Tiền cọc", "Điện ban đầu", "Nước ban đầu"
             }
         ) {
             boolean[] canEdit = new boolean [] {
