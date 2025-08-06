@@ -1127,9 +1127,38 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
                     fillToTable();
                     clear();
                     XDialog.alert("Xoá người thuê thành công!");
+                } catch(Exception e) {
+                // Xử lý lỗi ràng buộc khóa ngoại
+                String errorMessage = e.getMessage();
+                if (errorMessage.contains("REFERENCE constraint") && errorMessage.contains("HopDong")) {
+                    XDialog.alert("Không thể xóa người thuê này!\n\n" +
+                                 "Lý do: Người thuê đang có hợp đồng liên quan trong hệ thống.\n" +
+                                 "Vui lòng xóa tất cả hợp đồng của người thuê này trước khi xóa tài khoản.\n\n" +
+                                 "Hướng dẫn:\n" +
+                                 "1. Vào mục 'Quản lý hợp đồng'\n" +
+                                 "2. Tìm và xóa tất cả hợp đồng của người thuê này\n" +
+                                 "3. Sau đó quay lại xóa tài khoản người thuê");
+                } else if (errorMessage.contains("REFERENCE constraint") && errorMessage.contains("HoaDon")) {
+                    XDialog.alert("Không thể xóa người thuê này!\n\n" +
+                                 "Lý do: Người thuê đang có hóa đơn liên quan trong hệ thống.\n" +
+                                 "Vui lòng xóa tất cả hóa đơn của người thuê này trước khi xóa tài khoản.");
+                } else if (errorMessage.contains("REFERENCE constraint") && errorMessage.contains("GopY")) {
+                    XDialog.alert("Không thể xóa người thuê này!\n\n" +
+                                 "Lý do: Người thuê đang có góp ý liên quan trong hệ thống.\n" +
+                                 "Vui lòng xóa tất cả góp ý của người thuê này trước khi xóa tài khoản.");
+                } else if (errorMessage.contains("REFERENCE constraint") && errorMessage.contains("NguoiThue_HopDong")) {
+                    XDialog.alert("Không thể xóa người thuê này!\n\n" +
+                                 "Lý do: Người thuê đang được liên kết với hợp đồng trong hệ thống.\n" +
+                                 "Vui lòng xóa tất cả liên kết hợp đồng của người thuê này trước khi xóa tài khoản.");
+                } else if (errorMessage.contains("REFERENCE constraint")) {
+                    XDialog.alert("Không thể xóa người thuê này!\n\n" +
+                                 "Lý do: Người thuê đang có dữ liệu liên quan trong hệ thống.\n" +
+                                 "Vui lòng xóa tất cả dữ liệu liên quan trước khi xóa tài khoản người thuê.\n\n" +
+                                 "Chi tiết lỗi: " + errorMessage);
+                } else {
+                    XDialog.alert("Xoá người thuê thất bại!\n\nLỗi: " + errorMessage);
                 }
-            } catch (Exception e) {
-                XDialog.alert("Xoá người thuê thất bại: " + e.getMessage());
+
                 e.printStackTrace();
             }
         } else {
@@ -1262,12 +1291,49 @@ public class NguoiThuePanel extends javax.swing.JPanel implements NguoiThueContr
             }
 
             if (XDialog.confirm("Bạn thực sự muốn xóa " + idsToDelete.size() + " mục đã chọn?")) {
+                int successCount = 0;
+                int failedCount = 0;
+                StringBuilder failedIds = new StringBuilder();
+                
                 for (Integer id : idsToDelete) {
-                    dao.deleteById(id);
+                    try {
+                        dao.deleteById(id);
+                        successCount++;
+                    } catch (Exception e) {
+                        failedCount++;
+                        if (failedIds.length() > 0) {
+                            failedIds.append(", ");
+                        }
+                        failedIds.append(id);
+                        
+                        // Log chi tiết lỗi cho từng ID
+                        String errorMessage = e.getMessage();
+                        if (errorMessage.contains("REFERENCE constraint")) {
+                            System.err.println("Không thể xóa người thuê ID " + id + " do có dữ liệu liên quan");
+                        }
+                    }
                 }
+                
                 this.fillToTable();
                 this.clear();
-                XDialog.alert("Đã xóa " + idsToDelete.size() + " mục thành công!");
+                
+                // Hiển thị kết quả
+                if (failedCount == 0) {
+                    XDialog.alert("Đã xóa thành công tất cả " + successCount + " người thuê!");
+                } else if (successCount == 0) {
+                    XDialog.alert("Không thể xóa bất kỳ người thuê nào!\n\n" +
+                                 "Lý do: Tất cả người thuê đã chọn đều có dữ liệu liên quan trong hệ thống " +
+                                 "(hợp đồng, hóa đơn, góp ý...).\n\n" +
+                                 "Vui lòng xóa dữ liệu liên quan trước khi xóa tài khoản người thuê.\n\n" +
+                                 "ID không thể xóa: " + failedIds.toString());
+                } else {
+                    XDialog.alert("Kết quả xóa:\n" +
+                                 "✓ Đã xóa thành công: " + successCount + " người thuê\n" +
+                                 "✗ Không thể xóa: " + failedCount + " người thuê\n\n" +
+                                 "ID không thể xóa: " + failedIds.toString() + "\n\n" +
+                                 "Lý do: Các người thuê này có dữ liệu liên quan trong hệ thống.\n" +
+                                 "Vui lòng xóa dữ liệu liên quan trước khi xóa tài khoản.");
+                }
             }
         } catch (Exception e) {
             XDialog.alert("Lỗi khi xóa các mục đã chọn: " + e.getMessage());

@@ -5,8 +5,20 @@
 package poly.nhatro.ui;
 
 import poly.nhatro.entity.ChiNhanh;
+import poly.nhatro.entity.Phong;
+import poly.nhatro.entity.HopDong;
+import poly.nhatro.entity.HoaDon;
 import poly.nhatro.service.ChiNhanhService;
 import poly.nhatro.service.ChiNhanhServiceImpl;
+import poly.nhatro.dao.PhongDao;
+import poly.nhatro.dao.impl.PhongDaoImpl;
+import poly.nhatro.dao.HopDongDAO;
+import poly.nhatro.dao.impl.HopDongImpl;
+import poly.nhatro.dao.NguoiThueDAO;
+import poly.nhatro.dao.impl.NguoiThueDaoImpl;
+import poly.nhatro.dao.HoaDonDAO;
+import poly.nhatro.dao.impl.hoaDonDAOImpl;
+import poly.nhatro.util.XJdbc;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -18,6 +30,10 @@ import javax.swing.table.DefaultTableModel;
 public class ChiNhanhPanel extends javax.swing.JPanel {
 
     private ChiNhanhService chiNhanhService;
+    private PhongDao phongDao;
+    private HopDongDAO hopDongDAO;
+    private NguoiThueDAO nguoiThueDAO;
+    private HoaDonDAO hoaDonDAO;
     private DefaultTableModel tableModel;
 
     /**
@@ -26,6 +42,10 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
     public ChiNhanhPanel() {
         initComponents(); // Phải gọi trước để khởi tạo các thành phần Swing
         chiNhanhService = new ChiNhanhServiceImpl();
+        phongDao = new PhongDaoImpl();
+        hopDongDAO = new HopDongImpl();
+        nguoiThueDAO = new NguoiThueDaoImpl();
+        hoaDonDAO = new hoaDonDAOImpl();
         initTable();
         loadDataToTable();
         
@@ -129,15 +149,133 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
         }
 
         int id = (int) tblChiNhanh.getValueAt(row, 0);
-        int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa chi nhánh này?");
-        if (confirm == JOptionPane.YES_OPTION) {
-            if (chiNhanhService.delete(id)) {
-                JOptionPane.showMessageDialog(this, "Xóa thành công");
-                loadDataToTable();
-                clearForm();
-            } else {
-                JOptionPane.showMessageDialog(this, "Xóa thất bại");
+        String tenChiNhanh = (String) tblChiNhanh.getValueAt(row, 1);
+        
+        try {
+            // Lấy danh sách phòng trong chi nhánh
+            List<Phong> phongList = ((PhongDaoImpl) phongDao).findByChiNhanh(id);
+            
+            // Đếm tổng số hợp đồng
+            int totalHopDong = 0;
+            for (Phong phong : phongList) {
+                List<HopDong> hopDongList = hopDongDAO.selectByRoom(phong.getIdPhong());
+                totalHopDong += hopDongList.size();
             }
+            
+            // Hiển thị thông báo xác nhận với thông tin chi tiết
+            String message = "CẢNH BÁO: Xóa chi nhánh sẽ xóa TẤT CẢ dữ liệu liên quan!\n\n" +
+                           "Chi nhánh \"" + tenChiNhanh + "\" có:\n" +
+                           "• " + phongList.size() + " phòng\n" +
+                           "• " + totalHopDong + " hợp đồng\n" +
+                           "• Tất cả hóa đơn, điện nước, góp ý liên quan\n\n" +
+                           "Dữ liệu sẽ bị XÓA VĨNH VIỄN và KHÔNG THỂ KHÔI PHỤC!\n" +
+                           "Bạn có chắc chắn muốn tiếp tục?";
+            
+            int confirm = JOptionPane.showConfirmDialog(this, message, 
+                "Xác nhận xóa chi nhánh", 
+                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.WARNING_MESSAGE);
+                
+            if (confirm == JOptionPane.YES_OPTION) {
+                int deletedHopDong = 0;
+                int deletedPhong = 0;
+                
+                // Bước 1: Xóa tất cả hợp đồng và dữ liệu liên quan
+                for (Phong phong : phongList) {
+                    List<HopDong> hopDongList = hopDongDAO.selectByRoom(phong.getIdPhong());
+                    for (HopDong hopDong : hopDongList) {
+                        // Bước 1a: Xóa tất cả dữ liệu liên quan đến hợp đồng trước
+                        deleteAllDataByHopDongId(hopDong.getID_HopDong());
+                        
+                        // Bước 1b: Xóa quan hệ NguoiThue_HopDong trước
+                        deleteNguoiThueHopDongByHopDongId(hopDong.getID_HopDong());
+                        
+                        // Bước 1c: Xóa hợp đồng
+                        hopDongDAO.delete(hopDong.getID_HopDong());
+                        deletedHopDong++;
+                    }
+                    
+                    // Bước 2: Xóa phòng
+                    phongDao.deleteById(phong.getIdPhong());
+                    deletedPhong++;
+                }
+                
+                // Bước 3: Xóa tất cả góp ý thuộc chi nhánh này
+                deleteGopYByChiNhanhId(id);
+                
+                // Bước 4: Xóa chi nhánh
+                if (chiNhanhService.delete(id)) {
+                    String successMessage = "XÓA THÀNH CÔNG!\n\n" +
+                                          "Đã xóa:\n" +
+                                          "• 1 chi nhánh\n" +
+                                          "• " + deletedPhong + " phòng\n" +
+                                          "• " + deletedHopDong + " hợp đồng\n" +
+                                          "• Tất cả dữ liệu liên quan";
+                    
+                    JOptionPane.showMessageDialog(this, successMessage, "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                    loadDataToTable();
+                    clearForm();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Lỗi: Không thể xóa chi nhánh!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, 
+                "Lỗi khi xóa chi nhánh: " + e.getMessage(), 
+                "Lỗi", 
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Xóa tất cả dữ liệu liên quan đến hợp đồng theo ID_HopDong
+     */
+    private void deleteAllDataByHopDongId(int hopDongId) {
+        try {
+            // Xóa theo thứ tự ràng buộc khóa ngoại
+            
+            // 1. Xóa hóa đơn
+            String sqlHoaDon = "DELETE FROM HoaDon WHERE ID_HopDong = ?";
+            XJdbc.executeUpdate(sqlHoaDon, hopDongId);
+            
+            // 2. Xóa điện nước
+            String sqlDienNuoc = "DELETE FROM DienNuoc WHERE ID_HopDong = ?";
+            XJdbc.executeUpdate(sqlDienNuoc, hopDongId);
+            
+            // 3. Xóa góp ý
+            String sqlGopY = "DELETE FROM GopY WHERE ID_HopDong = ?";
+            XJdbc.executeUpdate(sqlGopY, hopDongId);
+            
+        } catch (Exception e) {
+            System.err.println("Lỗi khi xóa dữ liệu liên quan cho hợp đồng ID " + hopDongId + ": " + e.getMessage());
+            // Không throw exception để tiếp tục quá trình xóa
+        }
+    }
+
+    /**
+     * Xóa tất cả quan hệ NguoiThue_HopDong theo ID_HopDong
+     */
+    private void deleteNguoiThueHopDongByHopDongId(int hopDongId) {
+        try {
+            String sql = "DELETE FROM NguoiThue_HopDong WHERE ID_HopDong = ?";
+            XJdbc.executeUpdate(sql, hopDongId);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi xóa NguoiThue_HopDong cho hợp đồng ID " + hopDongId + ": " + e.getMessage());
+            // Không throw exception để tiếp tục quá trình xóa
+        }
+    }
+
+    /**
+     * Xóa tất cả góp ý thuộc chi nhánh theo ID_ChiNhanh
+     */
+    private void deleteGopYByChiNhanhId(int chiNhanhId) {
+        try {
+            String sql = "DELETE FROM GopY WHERE ID_ChiNhanh = ?";
+            XJdbc.executeUpdate(sql, chiNhanhId);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi xóa GopY cho chi nhánh ID " + chiNhanhId + ": " + e.getMessage());
+            // Không throw exception để tiếp tục quá trình xóa
         }
     }
 
@@ -145,6 +283,7 @@ public class ChiNhanhPanel extends javax.swing.JPanel {
         btnTenChiNhanh.setText("");
         txtGiaDien.setText("");
         txtGiaNuoc.setText("");
+        txtDiaChi.setText("");
     }
 
     private void showSelectedRow() {

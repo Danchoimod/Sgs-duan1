@@ -36,7 +36,6 @@ CREATE TABLE Phong
     ID_Phong INT IDENTITY(1,1) PRIMARY KEY,
     soPhong VARCHAR(10) UNIQUE NOT NULL,
     giaPhong INT NOT NULL,
-    loaiPhong VARCHAR(50) NOT NULL,
     moTa NVARCHAR(200),
     anhPhong VARCHAR(255) NOT NULL,
     trangThai NVARCHAR(50) NOT NULL,
@@ -135,9 +134,7 @@ VALUES
 INSERT INTO ChiNhanh
     (tenChiNhanh, diaChi, giaDien, giaNuoc)
 VALUES
-
 (N'Chi nhánh Quận 1', N'100 Đường Nguyễn Huệ, Quận 1', 3000, 15000),
-
     (N'Chi nhánh Quận 3', N'200 Đường Nam Kỳ Khởi Nghĩa, Quận 3', 3200, 16000),
     (N'Chi nhánh Quận 5', N'300 Đường Trần Hưng Đạo, Quận 5', 3100, 15500),
     (N'Chi nhánh Quận Bình Thạnh', N'400 Đường Điện Biên Phủ, Quận Bình Thạnh', 2900, 14500),
@@ -150,18 +147,18 @@ VALUES
 
 -- 3. Chèn dữ liệu vào bảng Phong (10 bản ghi) - Đã thêm cột giaPhong
 INSERT INTO Phong
-    (soPhong, giaPhong, loaiPhong, moTa, anhPhong, trangThai, ID_ChiNhanh)
+    (soPhong, giaPhong, moTa, anhPhong, trangThai, ID_ChiNhanh)
 VALUES
-    ('P101', 3000000, N'Phòng đơn', N'Phòng có ban công, thoáng mát', 'url_phong_101.jpg', N'Trống', 1),
-    ('P102', 5000000, N'Phòng đôi', N'Phòng rộng rãi, có điều hòa', 'url_phong_102.jpg', N'Đã thuê', 1),
-    ('P201', 3200000, N'Phòng đơn', N'Phòng yên tĩnh, cửa sổ hướng vườn', 'url_phong_201.jpg', N'Trống', 2),
-    ('P202', 5500000, N'Phòng đôi', N'Phòng có nội thất cơ bản', 'url_phong_202.jpg', N'Đã thuê', 2),
-    ('P301', 7000000, N'Phòng VIP', N'Phòng cao cấp, đầy đủ tiện nghi', 'url_phong_301.jpg', N'Trống', 3),
-    ('P302', 3500000, N'Phòng đơn', N'Phòng nhỏ gọn, giá phải chăng', 'url_phong_302.jpg', N'Đã thuê', 3),
-    ('P401', 4800000, N'Phòng đôi', N'Phòng sáng sủa, có tủ quần áo', 'url_phong_401.jpg', N'Trống', 4),
-    ('P402', 3100000, N'Phòng đơn', N'Phòng có quạt trần', 'url_phong_402.jpg', N'Đã thuê', 4),
-    ('P501', 8000000, N'Phòng VIP', N'Phòng có view đẹp', 'url_phong_501.jpg', N'Trống', 5),
-    ('P502', 5200000, N'Phòng đôi', N'Phòng có máy giặt riêng', 'url_phong_502.jpg', N'Đã thuê', 5);
+    ('P101', 3000000, N'Phòng có ban công, thoáng mát', 'url_phong_101.jpg', N'Trống', 1),
+    ('P102', 5000000, N'Phòng rộng rãi, có điều hòa', 'url_phong_102.jpg', N'Đã thuê', 1),
+    ('P201', 3200000, N'Phòng yên tĩnh, cửa sổ hướng vườn', 'url_phong_201.jpg', N'Trống', 2),
+    ('P202', 5500000, N'Phòng có nội thất cơ bản', 'url_phong_202.jpg', N'Đã thuê', 2),
+    ('P301', 7000000, N'Phòng cao cấp, đầy đủ tiện nghi', 'url_phong_301.jpg', N'Trống', 3),
+    ('P302', 3500000, N'Phòng nhỏ gọn, giá phải chăng', 'url_phong_302.jpg', N'Đã thuê', 3),
+    ('P401', 4800000, N'Phòng sáng sủa, có tủ quần áo', 'url_phong_401.jpg', N'Trống', 4),
+    ('P402', 3100000, N'Phòng có quạt trần', 'url_phong_402.jpg', N'Đã thuê', 4),
+    ('P501', 8000000, N'Phòng có view đẹp', 'url_phong_501.jpg', N'Trống', 5),
+    ('P502', 5200000, N'Phòng có máy giặt riêng', 'url_phong_502.jpg', N'Đã thuê', 5);
 
 INSERT INTO DienNuoc
     (soDienCu, soDienMoi, soNuocCu, soNuocMoi, thangNam, ID_Phong)
@@ -181,9 +178,7 @@ VALUES
     -- Pham Thi D (ID 4) thuê P202 (ID 4)
     ('2024-03-10 09:00:00', 12, 4500000, 12, 120, 5, 6),
     -- Hoang Van E (ID 5) thuê P302 (ID 6)
-
 ('2024-04-05 14:00:00', 6, 2500000, 8, 80, 6, 8),
-
     -- Nguyen Thi F (ID 6) thuê P402 (ID 8)
     ('2024-05-20 16:00:00', 12, 6000000, 15, 150, 7, 10),
     -- Tran Van G (ID 7) thuê P502 (ID 10)
@@ -264,7 +259,6 @@ VALUES
     (N'Vị trí thuận tiện đi lại.', 8, 1),
     (N'Cần thêm chỗ để xe.', 9, 2),
     (N'An ninh tốt.', 1, 3),
-
 (N'Đồ đạc trong phòng hơi cũ.', 2, 4),
     (N'Hài lòng với trải nghiệm ở đây.', 4, 5);
 
