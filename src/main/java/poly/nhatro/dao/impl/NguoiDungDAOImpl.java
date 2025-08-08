@@ -81,17 +81,28 @@ public class NguoiDungDAOImpl implements NguoiDungDAO {
 
     @Override
     public List<NguoiDung> findAvailableForContract() {
-        // Tìm những người dùng chưa có hợp đồng đang hoạt động
-        // Một hợp đồng được coi là đang hoạt động nếu ngày hiện tại <= ngày tạo + thời hạn (tháng)
-        String sql = "SELECT DISTINCT nd.* FROM NguoiDung nd " +
-                    "WHERE nd.trangThai = N'Hoạt động' " +
-                    "AND nd.ID_NguoiDung NOT IN (" +
-                        "SELECT DISTINCT hd.ID_NguoiDung " +
-                        "FROM HopDong hd " +
-                        "WHERE DATEADD(MONTH, hd.thoiHan, hd.ngayTao) >= GETDATE() " +
-                        "AND ISNULL(hd.trangThai, 0) = 0" +
-                    ") " +
-                    "ORDER BY nd.tenNguoiDung";
+        // Trả về người dùng KHÔNG có hợp đồng đang hoạt động
+        // (có thể có hợp đồng hết hạn hoặc đã bị xóa)
+        String sql = """
+                SELECT DISTINCT nd.* 
+                FROM NguoiDung nd 
+                WHERE nd.trangThai = N'Hoạt động' 
+                AND nd.vaiTro = N'Người thuê'
+                AND NOT EXISTS ( 
+                    SELECT 1 FROM HopDong hd 
+                    WHERE hd.ID_NguoiDung = nd.ID_NguoiDung 
+                      AND hd.trangThai = 0 
+                      AND DATEADD(MONTH, hd.thoiHan, hd.ngayTao) >= GETDATE()
+                ) 
+                AND NOT EXISTS ( 
+                    SELECT 1 FROM NguoiThue_HopDong nthd 
+                    INNER JOIN HopDong hd ON nthd.ID_HopDong = hd.ID_HopDong
+                    WHERE nthd.ID_NguoiDung = nd.ID_NguoiDung 
+                      AND hd.trangThai = 0 
+                      AND DATEADD(MONTH, hd.thoiHan, hd.ngayTao) >= GETDATE()
+                ) 
+                ORDER BY nd.tenNguoiDung
+                """;
         return select(sql);
     }
 

@@ -537,20 +537,23 @@ public class DoanhthuPanel extends javax.swing.JPanel {
         BigDecimal totalRevenue = BigDecimal.ZERO; 
 
         for (DoanhThu dt : list) {
-            Object[] row = {
-                dt.getIdHoaDon(),
-                dt.getTenPhong(), 
-                dt.getTienDien(),
-                dt.getTienNuoc(),
-                dt.getTienPhong(),
-                dt.getNgayThanhToan() != null ? XDate.format(dt.getNgayThanhToan(), XDate.PATTERN_SHORT) : "",
-                dt.getTrangThaiThanhToan(), 
-                dt.getTongTien()
-            };
-            model.addRow(row);
+            // Chỉ hiển thị các đơn đã thanh toán
+            if ("Đã thanh toán".equals(dt.getTrangThaiThanhToan())) {
+                Object[] row = {
+                    dt.getIdHoaDon(),
+                    dt.getTenPhong(), 
+                    dt.getTienDien(),
+                    dt.getTienNuoc(),
+                    dt.getTienPhong(),
+                    dt.getNgayThanhToan() != null ? XDate.format(dt.getNgayThanhToan(), XDate.PATTERN_SHORT) : "",
+                    dt.getTrangThaiThanhToan(), 
+                    dt.getTongTien()
+                };
+                model.addRow(row);
 
-            if ("Đã thanh toán".equals(dt.getTrangThaiThanhToan()) && dt.getTongTien() != null) {
-                totalRevenue = totalRevenue.add(dt.getTongTien());
+                if (dt.getTongTien() != null) {
+                    totalRevenue = totalRevenue.add(dt.getTongTien());
+                }
             }
         }
         txtTongDoanhThu.setText(String.format("%,.0f", totalRevenue));

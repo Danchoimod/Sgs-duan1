@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import poly.nhatro.dao.CrudDao;
 import poly.nhatro.dao.HoaDonDAO;
 import poly.nhatro.entity.HoaDon;
 import poly.nhatro.util.*;
@@ -13,7 +12,7 @@ import poly.nhatro.util.*;
  *
  * @author tranthithuyngan
  */
-public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
+public class hoaDonDAOImpl implements HoaDonDAO {
     String createSql = "INSERT INTO HoaDon(trangThai, ngayTao, ID_NguoiDung, ID_Phong, ID_HopDong, ID_ChiNhanh) VALUES(?, ?, ?, ?, ?, ?)";
     String updateSql = "UPDATE HoaDon SET trangThai = ?, ngayTao = ?, ID_NguoiDung = ?, ID_Phong = ?, ID_HopDong = ?, ID_ChiNhanh = ? WHERE ID_HoaDon = ?";
     String deleteSql = "DELETE FROM HoaDon WHERE ID_HoaDon = ?";
@@ -92,6 +91,10 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
 
     @Override
     public void update(HoaDon entity) {
+        // Prevent updating into a duplicate invoice (same room/contract/month)
+        if (existsDuplicateForMonth(entity.getID_Phong(), entity.getID_HopDong(), entity.getNgayTao(), entity.getID_HoaDon())) {
+            throw new RuntimeException("Không thể cập nhật: Hóa đơn trùng tháng cho phòng và hợp đồng này đã tồn tại.");
+        }
         XJdbc.executeUpdate(updateSql, 
             entity.getTrangThai(),
             entity.getNgayTao(),
@@ -106,6 +109,10 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
     
     @Override
     public HoaDon create(HoaDon entity) {
+        // Prevent creating duplicate invoice (same room/contract/month)
+        if (existsDuplicateForMonth(entity.getID_Phong(), entity.getID_HopDong(), entity.getNgayTao(), null)) {
+            throw new RuntimeException("Không thể tạo: Đã tồn tại hóa đơn cho phòng và hợp đồng này trong tháng/năm của ngày tạo.");
+        }
         XJdbc.executeUpdate(createSql,
                 entity.getTrangThai(),
                 entity.getNgayTao(),
@@ -157,30 +164,34 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
     
     @Override
     public List<Object[]> getDetailedBillingData() {
-        String sql = "SELECT " +
-                "hdon.ID_HoaDon, " +
-                "cn.tenChiNhanh, " +
-                "p.soPhong, " +
-                "nd.tenNguoiDung, " +
-                "dn.soDienCu, " +
-                "dn.soDienMoi, " +
-                "dn.soNuocCu, " +
-                "dn.soNuocMoi, " +
-                "(dn.soDienMoi - dn.soDienCu) AS soDien, " +
-                "(dn.soNuocMoi - dn.soNuocCu) AS soNuoc, " +
-                "(dn.soDienMoi - dn.soDienCu) * cn.giaDien AS tienDien, " +
-                "(dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc AS tienNuoc, " +
-                "p.giaPhong AS tienPhong, " +
-                "((dn.soDienMoi - dn.soDienCu) * cn.giaDien + " +
-                " (dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc + " +
-                " p.giaPhong) AS tongTien, " +
-                "hdon.trangThai AS trangThaiThanhToan " +
-                "FROM HopDong hd " +
-                "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
-                "JOIN Phong p ON hd.ID_Phong = p.ID_Phong " +
-                "JOIN DienNuoc dn ON p.ID_Phong = dn.ID_Phong " +
-                "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
-                "JOIN HoaDon hdon ON hd.ID_HopDong = hdon.ID_HopDong";
+    String sql = "SELECT " +
+        "hdon.ID_HoaDon, " +
+        "cn.tenChiNhanh, " +
+        "p.soPhong, " +
+        "nd.tenNguoiDung, " +
+        "COALESCE(dn.soDienCu, 0) AS soDienCu, " +
+        "COALESCE(dn.soDienMoi, 0) AS soDienMoi, " +
+        "COALESCE(dn.soNuocCu, 0) AS soNuocCu, " +
+        "COALESCE(dn.soNuocMoi, 0) AS soNuocMoi, " +
+        "(COALESCE(dn.soDienMoi, 0) - COALESCE(dn.soDienCu, 0)) AS soDien, " +
+        "(COALESCE(dn.soNuocMoi, 0) - COALESCE(dn.soNuocCu, 0)) AS soNuoc, " +
+        "(COALESCE(dn.soDienMoi, 0) - COALESCE(dn.soDienCu, 0)) * cn.giaDien AS tienDien, " +
+        "(COALESCE(dn.soNuocMoi, 0) - COALESCE(dn.soNuocCu, 0)) * cn.giaNuoc AS tienNuoc, " +
+        "p.giaPhong AS tienPhong, " +
+        "((COALESCE(dn.soDienMoi, 0) - COALESCE(dn.soDienCu, 0)) * cn.giaDien + " +
+        " (COALESCE(dn.soNuocMoi, 0) - COALESCE(dn.soNuocCu, 0)) * cn.giaNuoc + " +
+        " p.giaPhong) AS tongTien, " +
+        "hdon.trangThai AS trangThaiThanhToan " +
+        "FROM HoaDon hdon " +
+        "JOIN HopDong hd ON hdon.ID_HopDong = hd.ID_HopDong " +
+        "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
+        "JOIN Phong p ON hd.ID_Phong = p.ID_Phong " +
+        "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
+        "OUTER APPLY ( " +
+        "    SELECT TOP 1 dn.* FROM DienNuoc dn " +
+        "    WHERE dn.ID_Phong = p.ID_Phong " +
+        "    ORDER BY dn.thangNam DESC, dn.ID_DienNuoc DESC " +
+        ") dn";
         
         List<Object[]> resultList = new ArrayList<>();
         try (ResultSet rs = XJdbc.executeQuery(sql)) {
@@ -240,24 +251,32 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
     
     @Override
     public Object[] getRoomDetailData(int phongId) {
-        String sql = "SELECT " +
-                "nd.tenNguoiDung, " +
-                "dn.soDienCu, dn.soDienMoi, " +
-                "dn.soNuocCu, dn.soNuocMoi, " +
-                "(dn.soDienMoi - dn.soDienCu) AS soDien, " +
-                "(dn.soNuocMoi - dn.soNuocCu) AS soNuoc, " +
-                "(dn.soDienMoi - dn.soDienCu) * cn.giaDien AS tienDien, " +
-                "(dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc AS tienNuoc, " +
-                "p.giaPhong AS tienPhong, " +
-                "((dn.soDienMoi - dn.soDienCu) * cn.giaDien + " +
-                " (dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc + " +
-                " p.giaPhong) AS tongTien " +
-                "FROM Phong p " +
-                "JOIN HopDong hd ON p.ID_Phong = hd.ID_Phong " +
-                "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
-                "JOIN DienNuoc dn ON p.ID_Phong = dn.ID_Phong " +
-                "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
-                "WHERE p.ID_Phong = ?";
+    String sql = "SELECT " +
+        "nd.tenNguoiDung, " +
+        "COALESCE(dn.soDienCu, 0) AS soDienCu, COALESCE(dn.soDienMoi, 0) AS soDienMoi, " +
+        "COALESCE(dn.soNuocCu, 0) AS soNuocCu, COALESCE(dn.soNuocMoi, 0) AS soNuocMoi, " +
+        "(COALESCE(dn.soDienMoi, 0) - COALESCE(dn.soDienCu, 0)) AS soDien, " +
+        "(COALESCE(dn.soNuocMoi, 0) - COALESCE(dn.soNuocCu, 0)) AS soNuoc, " +
+        "(COALESCE(dn.soDienMoi, 0) - COALESCE(dn.soDienCu, 0)) * cn.giaDien AS tienDien, " +
+        "(COALESCE(dn.soNuocMoi, 0) - COALESCE(dn.soNuocCu, 0)) * cn.giaNuoc AS tienNuoc, " +
+        "p.giaPhong AS tienPhong, " +
+        "((COALESCE(dn.soDienMoi, 0) - COALESCE(dn.soDienCu, 0)) * cn.giaDien + " +
+        " (COALESCE(dn.soNuocMoi, 0) - COALESCE(dn.soNuocCu, 0)) * cn.giaNuoc + " +
+        " p.giaPhong) AS tongTien " +
+        "FROM Phong p " +
+        "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
+        "OUTER APPLY ( " +
+        "    SELECT TOP 1 dn.* FROM DienNuoc dn " +
+        "    WHERE dn.ID_Phong = p.ID_Phong " +
+        "    ORDER BY dn.thangNam DESC, dn.ID_DienNuoc DESC " +
+        ") dn " +
+        "OUTER APPLY ( " +
+        "    SELECT TOP 1 hd.* FROM HopDong hd " +
+        "    WHERE hd.ID_Phong = p.ID_Phong AND ISNULL(hd.trangThai, 0) = 0 " +
+        "    ORDER BY hd.ngayTao DESC, hd.ID_HopDong DESC " +
+        ") hd " +
+        "LEFT JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
+        "WHERE p.ID_Phong = ?";
         
         try (ResultSet rs = XJdbc.executeQuery(sql, phongId)) {
             if (rs.next()) {
@@ -283,31 +302,35 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
     
     @Override
     public List<Object[]> getDetailedBillingDataByStatus(String trangThai) {
-        String sql = "SELECT " +
-                "hdon.ID_HoaDon, " +
-                "cn.tenChiNhanh, " +
-                "p.soPhong, " +
-                "nd.tenNguoiDung, " +
-                "dn.soDienCu, " +
-                "dn.soDienMoi, " +
-                "dn.soNuocCu, " +
-                "dn.soNuocMoi, " +
-                "(dn.soDienMoi - dn.soDienCu) AS soDien, " +
-                "(dn.soNuocMoi - dn.soNuocCu) AS soNuoc, " +
-                "(dn.soDienMoi - dn.soDienCu) * cn.giaDien AS tienDien, " +
-                "(dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc AS tienNuoc, " +
-                "p.giaPhong AS tienPhong, " +
-                "((dn.soDienMoi - dn.soDienCu) * cn.giaDien + " +
-                " (dn.soNuocMoi - dn.soNuocCu) * cn.giaNuoc + " +
-                " p.giaPhong) AS tongTien, " +
-                "hdon.trangThai AS trangThaiThanhToan " +
-                "FROM HopDong hd " +
-                "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
-                "JOIN Phong p ON hd.ID_Phong = p.ID_Phong " +
-                "JOIN DienNuoc dn ON p.ID_Phong = dn.ID_Phong " +
-                "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
-                "JOIN HoaDon hdon ON hd.ID_HopDong = hdon.ID_HopDong " +
-                "WHERE hdon.trangThai = ?";
+    String sql = "SELECT " +
+        "hdon.ID_HoaDon, " +
+        "cn.tenChiNhanh, " +
+        "p.soPhong, " +
+        "nd.tenNguoiDung, " +
+        "COALESCE(dn.soDienCu, 0) AS soDienCu, " +
+        "COALESCE(dn.soDienMoi, 0) AS soDienMoi, " +
+        "COALESCE(dn.soNuocCu, 0) AS soNuocCu, " +
+        "COALESCE(dn.soNuocMoi, 0) AS soNuocMoi, " +
+        "(COALESCE(dn.soDienMoi, 0) - COALESCE(dn.soDienCu, 0)) AS soDien, " +
+        "(COALESCE(dn.soNuocMoi, 0) - COALESCE(dn.soNuocCu, 0)) AS soNuoc, " +
+        "(COALESCE(dn.soDienMoi, 0) - COALESCE(dn.soDienCu, 0)) * cn.giaDien AS tienDien, " +
+        "(COALESCE(dn.soNuocMoi, 0) - COALESCE(dn.soNuocCu, 0)) * cn.giaNuoc AS tienNuoc, " +
+        "p.giaPhong AS tienPhong, " +
+        "((COALESCE(dn.soDienMoi, 0) - COALESCE(dn.soDienCu, 0)) * cn.giaDien + " +
+        " (COALESCE(dn.soNuocMoi, 0) - COALESCE(dn.soNuocCu, 0)) * cn.giaNuoc + " +
+        " p.giaPhong) AS tongTien, " +
+        "hdon.trangThai AS trangThaiThanhToan " +
+        "FROM HoaDon hdon " +
+        "JOIN HopDong hd ON hdon.ID_HopDong = hd.ID_HopDong " +
+        "JOIN NguoiDung nd ON hd.ID_NguoiDung = nd.ID_NguoiDung " +
+        "JOIN Phong p ON hd.ID_Phong = p.ID_Phong " +
+        "JOIN ChiNhanh cn ON p.ID_ChiNhanh = cn.ID_ChiNhanh " +
+        "OUTER APPLY ( " +
+        "    SELECT TOP 1 dn.* FROM DienNuoc dn " +
+        "    WHERE dn.ID_Phong = p.ID_Phong " +
+        "    ORDER BY dn.thangNam DESC, dn.ID_DienNuoc DESC " +
+        ") dn " +
+        "WHERE hdon.trangThai = ?";
         
         List<Object[]> resultList = new ArrayList<>();
         try (ResultSet rs = XJdbc.executeQuery(sql, trangThai)) {
@@ -348,6 +371,25 @@ public class hoaDonDAOImpl implements HoaDonDAO, CrudDao<HoaDon, Integer> {
             e.printStackTrace();
         }
         return -1; // Không tìm thấy
+    }
+    
+    // Helper: check if an invoice already exists for the same room + contract within the same month/year
+    private boolean existsDuplicateForMonth(int phongId, int hopDongId, java.util.Date ngayTao, Integer excludeHoaDonId) {
+        if (ngayTao == null) return false; // nothing to check
+        String baseSql = "SELECT COUNT(1) AS cnt FROM HoaDon WHERE ID_Phong = ? AND ID_HopDong = ? " +
+                         "AND MONTH(ngayTao) = MONTH(?) AND YEAR(ngayTao) = YEAR(?)";
+        boolean hasExclude = excludeHoaDonId != null && excludeHoaDonId > 0;
+        String sql = hasExclude ? baseSql + " AND ID_HoaDon <> ?" : baseSql;
+        try (ResultSet rs = hasExclude
+                ? XJdbc.executeQuery(sql, phongId, hopDongId, new java.sql.Timestamp(ngayTao.getTime()), new java.sql.Timestamp(ngayTao.getTime()), excludeHoaDonId)
+                : XJdbc.executeQuery(sql, phongId, hopDongId, new java.sql.Timestamp(ngayTao.getTime()), new java.sql.Timestamp(ngayTao.getTime()))) {
+            if (rs.next()) {
+                return rs.getInt("cnt") > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi kiểm tra trùng hóa đơn: " + e.getMessage(), e);
+        }
+        return false;
     }
     
 }

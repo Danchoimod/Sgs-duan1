@@ -78,6 +78,22 @@ public class HopDongPanel extends javax.swing.JPanel {
             }
         });
 
+        // Add mouse listener to refresh combo box when clicked
+        cboChiNhanh.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                refreshChiNhanhComboBox();
+            }
+        });
+
+        // Add mouse listener to refresh user combo box when clicked
+        cboNguoiKiHopDong.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                refreshNguoiDungComboBox();
+            }
+        });
+
         // Add event listener for phong selection to auto-populate meter readings
         cboSoPhong.addItemListener(new ItemListener() {
             @Override
@@ -179,6 +195,46 @@ public class HopDongPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách chi nhánh: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Refresh chi nhanh combo box to reload current data from database
+     */
+    private void refreshChiNhanhComboBox() {
+        String currentSelection = (String) cboChiNhanh.getSelectedItem();
+        fillChiNhanhComboBox();
+        
+        // Try to restore previous selection if it still exists
+        if (currentSelection != null) {
+            for (int i = 0; i < cboChiNhanh.getItemCount(); i++) {
+                if (cboChiNhanh.getItemAt(i).equals(currentSelection)) {
+                    cboChiNhanh.setSelectedIndex(i);
+                    return;
+                }
+            }
+        }
+        // If previous selection no longer exists, select "Tất cả"
+        cboChiNhanh.setSelectedIndex(0);
+    }
+
+    /**
+     * Refresh nguoi dung combo box to reload current available users from database
+     */
+    private void refreshNguoiDungComboBox() {
+        String currentSelection = (String) cboNguoiKiHopDong.getSelectedItem();
+        fillNguoiDungComboBox();
+        
+        // Try to restore previous selection if it still exists
+        if (currentSelection != null && !currentSelection.equals("-- Chọn người dùng --")) {
+            for (int i = 0; i < cboNguoiKiHopDong.getItemCount(); i++) {
+                if (cboNguoiKiHopDong.getItemAt(i).equals(currentSelection)) {
+                    cboNguoiKiHopDong.setSelectedIndex(i);
+                    return;
+                }
+            }
+        }
+        // If previous selection no longer exists, select default
+        cboNguoiKiHopDong.setSelectedIndex(0);
     }
 
     private void fillNguoiDungComboBox() {
@@ -692,6 +748,9 @@ public class HopDongPanel extends javax.swing.JPanel {
             fillTableActiveContracts(); // Refresh tables
             fillTableExpiredContracts();
             clearForm(); // This will reload the user combo box with available users
+            
+            // Refresh other panels (PhongPanel)
+            refreshOtherPanels();
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(this, "Lỗi dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.WARNING_MESSAGE);
         } catch (Exception e) {
@@ -721,6 +780,9 @@ public class HopDongPanel extends javax.swing.JPanel {
             fillTableActiveContracts(); // Refresh tables
             fillTableExpiredContracts();
             clearForm(); // This will reload the user combo box with available users
+            
+            // Refresh other panels (PhongPanel)
+            refreshOtherPanels();
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(this, "Lỗi dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.WARNING_MESSAGE);
         } catch (Exception e) {
@@ -746,12 +808,17 @@ public class HopDongPanel extends javax.swing.JPanel {
         }
 
         try {
-            // Chuyển trạng thái sang 1 (soft delete)
-            hopDongDAO.softDelete(currentHopDongId);
+            // Chuyển trạng thái sang 1 (soft delete) bằng cách sử dụng SQL trực tiếp
+            String sql = "UPDATE HopDong SET trangThai = 1 WHERE ID_HopDong = ?";
+            poly.nhatro.util.XJdbc.executeUpdate(sql, currentHopDongId);
+            
             JOptionPane.showMessageDialog(this, "Đã chuyển trạng thái hợp đồng sang đã xóa/hết hạn!");
             fillTableActiveContracts(); // Refresh tables
             fillTableExpiredContracts();
             clearForm(); // This will reload the user combo box with available users
+            
+            // Refresh other panels (PhongPanel)
+            refreshOtherPanels();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi xóa hợp đồng: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
@@ -1369,6 +1436,31 @@ public class HopDongPanel extends javax.swing.JPanel {
                 "Lỗi khi tính toán ngày kết thúc: " + e.getMessage(), 
                 "Lỗi", 
                 JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+    /**
+     * Find MainFrame parent and refresh PhongPanel data
+     */
+    private void refreshOtherPanels() {
+        try {
+            // Traverse up the component hierarchy to find MainFrame
+            java.awt.Container parent = this.getParent();
+            while (parent != null && !(parent instanceof MainFrame)) {
+                parent = parent.getParent();
+            }
+            
+            if (parent instanceof MainFrame) {
+                MainFrame mainFrame = (MainFrame) parent;
+                mainFrame.refreshPhongPanelData();
+                System.out.println("HopDongPanel: Successfully refreshed other panels");
+            } else {
+                System.out.println("HopDongPanel: MainFrame not found in parent hierarchy");
+            }
+        } catch (Exception e) {
+            System.err.println("HopDongPanel: Error refreshing other panels - " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

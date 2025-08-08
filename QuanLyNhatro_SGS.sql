@@ -16,8 +16,8 @@ CREATE TABLE NguoiDung
     namSinh DATE not null,
     diaChi NVARCHAR(255),
     cccdCmnn VARCHAR(20) UNIQUE NOT NULL,
-    anhTruocCccd VARCHAR(255) NOT NULL,
-    anhSauCccd VARCHAR(255) NOT NULL,
+    anhTruocCccd VARCHAR(255) NULL,
+    anhSauCccd VARCHAR(255) NULL,
     vaiTro NVARCHAR(50) NOT NULL,
     trangThai NVARCHAR(50) NOT NULL,
 );
@@ -53,6 +53,7 @@ CREATE TABLE HopDong
     dienBanDau INT NOT NULL,
     ID_NguoiDung INT NOT NULL,
     ID_Phong INT NOT NULL,
+    trangThai BIT DEFAULT 0,
     FOREIGN KEY (ID_NguoiDung) REFERENCES NguoiDung(ID_NguoiDung),
     FOREIGN KEY (ID_Phong) REFERENCES Phong(ID_Phong)
 );
@@ -76,7 +77,7 @@ CREATE TABLE NguoiThue_HopDong
     ID_HopDong INT NOT NULL,
     ID_NguoiDung INT NOT NULL,
     FOREIGN KEY (ID_HopDong) REFERENCES HopDong(ID_HopDong),
-    FOREIGN KEY (ID_Nguoidung) REFERENCES NguoiDung(ID_Nguoidung)
+    FOREIGN KEY (ID_NguoiDung) REFERENCES NguoiDung(ID_NguoiDung)
 )
 
 CREATE TABLE HoaDon
@@ -295,3 +296,131 @@ FROM OTP;
 SELECT *
 FROM NguoiThue_HopDong;
 SELECT * FROM DienNuoc
+
+-- Trigger tự động cập nhật trạng thái hợp đồng hết hạn
+GO
+CREATE TRIGGER trg_UpdateExpiredContracts
+ON HopDong
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    -- Cập nhật trạng thái = 1 cho các hợp đồng đã hết hạn
+    UPDATE HopDong 
+    SET trangThai = 1 
+    WHERE DATEADD(MONTH, thoiHan, ngayTao) < GETDATE() 
+      AND trangThai = 0;
+END
+GO
+
+-- Stored procedure để cập nhật trạng thái hợp đồng hết hạn
+CREATE PROCEDURE sp_UpdateExpiredContracts
+AS
+BEGIN
+    UPDATE HopDong 
+    SET trangThai = 1 
+    WHERE DATEADD(MONTH, thoiHan, ngayTao) < GETDATE() 
+      AND trangThai = 0;
+      
+    PRINT 'Đã cập nhật trạng thái các hợp đồng hết hạn';
+END
+GO
+
+-- Trigger tự động cập nhật trạng thái phòng khi có hợp đồng mới
+CREATE TRIGGER trg_UpdateRoomStatus_AfterContract
+ON HopDong
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    -- Cập nhật trạng thái phòng dựa trên hợp đồng hiện tại
+    UPDATE Phong 
+    SET trangThai = CASE 
+        WHEN EXISTS (
+            SELECT 1 FROM HopDong hd 
+            WHERE hd.ID_Phong = Phong.ID_Phong 
+              AND hd.trangThai = 0 
+              AND DATEADD(MONTH, hd.thoiHan, hd.ngayTao) >= GETDATE()
+        ) THEN N'Đã thuê'
+        ELSE N'Trống'
+    END
+    WHERE Phong.ID_Phong IN (
+        SELECT DISTINCT ID_Phong FROM INSERTED
+        UNION
+        SELECT DISTINCT ID_Phong FROM DELETED
+    );
+END
+GO
+
+-- Trigger tự động cập nhật trạng thái phòng khi cập nhật bảng NguoiThue_HopDong
+CREATE TRIGGER trg_UpdateRoomStatus_AfterTenant
+ON NguoiThue_HopDong
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    -- Cập nhật trạng thái phòng dựa trên việc có người thuê hay không
+    UPDATE Phong 
+    SET trangThai = CASE 
+        WHEN EXISTS (
+            SELECT 1 
+            FROM HopDong hd 
+            INNER JOIN NguoiThue_HopDong nthd ON hd.ID_HopDong = nthd.ID_HopDong
+            INNER JOIN NguoiDung nd ON nthd.ID_NguoiDung = nd.ID_NguoiDung
+            WHERE hd.ID_Phong = Phong.ID_Phong 
+              AND hd.trangThai = 0 
+              AND DATEADD(MONTH, hd.thoiHan, hd.ngayTao) >= GETDATE()
+              AND ISNULL(nd.trangThai, '') <> N'Đã xóa'
+        ) THEN N'Đã thuê'
+        ELSE N'Trống'
+    END
+    WHERE Phong.ID_Phong IN (
+        SELECT DISTINCT hd.ID_Phong 
+        FROM HopDong hd 
+        WHERE hd.ID_HopDong IN (
+            SELECT ID_HopDong FROM INSERTED
+            UNION
+            SELECT ID_HopDong FROM DELETED
+        )
+    );
+END
+GO
+
+-- Stored procedure để cập nhật trạng thái tất cả phòng
+CREATE PROCEDURE sp_UpdateAllRoomStatus
+AS
+BEGIN
+    UPDATE Phong 
+    SET trangThai = CASE 
+        WHEN EXISTS (
+            SELECT 1 
+            FROM HopDong hd 
+            INNER JOIN NguoiThue_HopDong nthd ON hd.ID_HopDong = nthd.ID_HopDong
+            INNER JOIN NguoiDung nd ON nthd.ID_NguoiDung = nd.ID_NguoiDung
+            WHERE hd.ID_Phong = Phong.ID_Phong 
+              AND hd.trangThai = 0 
+              AND DATEADD(MONTH, hd.thoiHan, hd.ngayTao) >= GETDATE()
+              AND ISNULL(nd.trangThai, '') <> N'Đã xóa'
+        ) THEN N'Đã thuê'
+        ELSE N'Trống'
+    END;
+      
+    PRINT 'Đã cập nhật trạng thái tất cả phòng';
+END
+GO
+
+-- Trigger tự động thêm chủ hợp đồng vào NguoiThue_HopDong khi tạo hợp đồng mới
+CREATE TRIGGER trg_AutoAddTenantContract
+ON HopDong
+AFTER INSERT
+AS
+BEGIN
+    -- Tự động thêm chủ hợp đồng vào bảng NguoiThue_HopDong
+    INSERT INTO NguoiThue_HopDong (ID_HopDong, ID_NguoiDung)
+    SELECT ID_HopDong, ID_NguoiDung
+    FROM INSERTED
+    WHERE NOT EXISTS (
+        SELECT 1 FROM NguoiThue_HopDong NTHD 
+        WHERE NTHD.ID_HopDong = INSERTED.ID_HopDong 
+          AND NTHD.ID_NguoiDung = INSERTED.ID_NguoiDung
+    );
+END
+GO
+

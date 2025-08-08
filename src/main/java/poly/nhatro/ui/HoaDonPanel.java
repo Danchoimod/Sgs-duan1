@@ -650,6 +650,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
     private void btnLamMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLamMoiActionPerformed
         // TODO add your handling code here:
         this.clear();
+        btnTaoHoaDon.setEnabled(true);
     }//GEN-LAST:event_btnLamMoiActionPerformed
 
     private void btnXuatHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXuatHoaDonActionPerformed
@@ -695,6 +696,7 @@ public class HoaDonPanel extends javax.swing.JPanel implements HoaDonController 
         if (evt.getClickCount() == 1) { 
             edit();
         }
+        btnTaoHoaDon.setEnabled(false);
     }//GEN-LAST:event_tblHoaDonMouseClicked
 
     private void cboChiNhanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboChiNhanhActionPerformed

@@ -194,8 +194,8 @@ public class DoanhThuImpl implements DoanhThuDao {
     @Override
     public List<DoanhThu> getByDateRange(Date tuNgay, Date denNgay) {
         List<DoanhThu> list = new ArrayList<>();
-        // Tạo query mới với WHERE clause riêng biệt
-        String sql = QUERY_FULL.replace("WHERE hdon.trangThai IS NOT NULL", 
+        // Dùng QUERY_SIMPLE (LEFT JOIN) để không làm mất bản ghi khi thiếu dòng Điện/Nước phù hợp
+        String sql = QUERY_SIMPLE.replace("WHERE hdon.trangThai IS NOT NULL",
             "WHERE hdon.trangThai IS NOT NULL AND hdon.ngayTao BETWEEN ? AND ?");
         
         try {
@@ -204,7 +204,7 @@ public class DoanhThuImpl implements DoanhThuDao {
             
             try (ResultSet rs = XJdbc.executeQuery(sql, start, end)) {
                 while (rs.next()) {
-                    list.add(mapFullResult(rs));
+                    list.add(mapSimpleResult(rs));
                 }
             }
         } catch (SQLException e) {

@@ -39,11 +39,19 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
     private Timer expandTimer;
     private Timer collapseTimer;
     public Boolean navOpen = false;
+    
+    // Panel references for cross-panel communication
+    private HopDongPanel hopDongPanel;
+    private PhongPanel phongPanel;
+    
+    // Static instance for global access
+    private static MainFrame instance;
 
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
+        instance = this; // Set static instance
         init();
         initComponents();
         ToolTipManager.sharedInstance().setInitialDelay(0);
@@ -738,8 +746,8 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
         DoanhthuPanel doanhthuPanel = new DoanhthuPanel();
         HoaDonPanel hoaDonPanel = new HoaDonPanel();
         hoaDonPanel.init(); // Khởi tạo và load dữ liệu
-        HopDongPanel hopDongPanel = new HopDongPanel();
-        PhongPanel phongPanel = new PhongPanel();
+        hopDongPanel = new HopDongPanel(); // Use field
+        phongPanel = new PhongPanel(); // Use field
 
         this.mainPanel.add(Constrants.HOME_PANEL, homePanel);
         this.mainPanel.add(Constrants.NGUOITHUE_PANEL, NguoithuePanel);
@@ -753,6 +761,17 @@ public class MainFrame extends javax.swing.JFrame implements MainController {
         this.cardLayout.show(this.mainPanel, Constrants.HOME_PANEL);
 
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+    }
+    
+    /**
+     * Refresh PhongPanel data when contract data changes
+     * Called from HopDongPanel when contracts are added/updated/deleted
+     */
+    public void refreshPhongPanelData() {
+        if (phongPanel != null) {
+            System.out.println("MainFrame: Refreshing PhongPanel data...");
+            phongPanel.refreshAllData();
+        }
     }
 
     private void init() {

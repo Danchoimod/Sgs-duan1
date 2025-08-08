@@ -86,6 +86,7 @@ public class PhongPanel extends javax.swing.JPanel {
         btnClear = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblPhong = new javax.swing.JTable();
+        btnRefesh = new javax.swing.JButton();
         mainPanel = new javax.swing.JPanel();
         pnlSoLuongO = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -293,6 +294,13 @@ public class PhongPanel extends javax.swing.JPanel {
         });
         jScrollPane3.setViewportView(tblPhong);
 
+        btnRefesh.setText("làm mới");
+        btnRefesh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefeshActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -315,7 +323,9 @@ public class PhongPanel extends javax.swing.JPanel {
                         .addComponent(btnXoa)
                         .addGap(18, 18, 18)
                         .addComponent(btnClear)
-                        .addContainerGap(214, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnRefesh)
+                        .addContainerGap(123, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -334,7 +344,8 @@ public class PhongPanel extends javax.swing.JPanel {
                             .addComponent(btnThem)
                             .addComponent(btnSua)
                             .addComponent(btnXoa)
-                            .addComponent(btnClear)))
+                            .addComponent(btnClear)
+                            .addComponent(btnRefesh)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel1)))
@@ -378,9 +389,9 @@ public class PhongPanel extends javax.swing.JPanel {
         pnlSoLuongO.setLayout(pnlSoLuongOLayout);
         pnlSoLuongOLayout.setHorizontalGroup(
             pnlSoLuongOLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 453, Short.MAX_VALUE)
+            .addGap(0, 454, Short.MAX_VALUE)
             .addGroup(pnlSoLuongOLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE))
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE))
         );
         pnlSoLuongOLayout.setVerticalGroup(
             pnlSoLuongOLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -468,7 +479,7 @@ public class PhongPanel extends javax.swing.JPanel {
                             .addComponent(btnQuayLai)
                             .addComponent(cbxTenNguoiO, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(23, 23, 23))))
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
         );
         pnlNguoiOLayout.setVerticalGroup(
             pnlNguoiOLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -673,6 +684,13 @@ public class PhongPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnLamMoiActionPerformed
 
+    private void btnRefeshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefeshActionPerformed
+        // TODO add your handling code here:
+        System.out.println("=== REFRESH BUTTON CLICKED ===");
+        refreshAllData();
+        System.out.println("=== REFRESH COMPLETED ===");
+    }//GEN-LAST:event_btnRefeshActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
@@ -681,6 +699,7 @@ public class PhongPanel extends javax.swing.JPanel {
     private javax.swing.JButton btnFix;
     private javax.swing.JButton btnLamMoi;
     private javax.swing.JButton btnQuayLai;
+    private javax.swing.JButton btnRefesh;
     private javax.swing.JButton btnSua;
     private javax.swing.JButton btnThem;
     private javax.swing.JButton btnXoa;
@@ -1008,6 +1027,29 @@ public class PhongPanel extends javax.swing.JPanel {
         List<Object[]> danhSachDangO = nguoiThueDAO.layDanhSachNguoiDangO(maPhong, cn.getID_ChiNhanh());
         for (Object[] row : danhSachDangO) {
             model.addRow(row); // Chỉ có tên người dùng
+        }
+    }
+    
+    /**
+     * Phương thức public để refresh toàn bộ dữ liệu PhongPanel
+     * Được gọi từ các panel khác khi có thay đổi dữ liệu
+     */
+    public void refreshAllData() {
+        System.out.println("PhongPanel: Refreshing all data...");
+        try {
+            // Refresh combo box chi nhánh
+            fillChiNhanh();
+            
+            // Refresh bảng phòng
+            fillTable();
+            
+            // Refresh bảng số lượng người ở
+            hienThiSoLuongNguoiOTheoChiNhanh();
+            
+            System.out.println("PhongPanel: All data refreshed successfully");
+        } catch (Exception e) {
+            System.err.println("PhongPanel: Error refreshing data - " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

@@ -67,15 +67,21 @@ public class PhongDaoImpl implements PhongDao {
         return select(sql, idChiNhanh);
     }
 
-    // Phương thức mới: Tìm phòng trống theo chi nhánh (trangThai = 'Trống')
+    // Phòng trống theo chi nhánh: không có hợp đồng đang hoạt động và trạng thái phòng là 'Trống'
     public List<Phong> findAvailableByChiNhanh(Integer idChiNhanh) {
-        String sql = "SELECT * FROM PHONG WHERE ID_ChiNhanh=? AND trangThai=N'Trống'";
+        String sql =
+            "SELECT p.* FROM PHONG p " +
+            "LEFT JOIN HopDong hd ON hd.ID_Phong = p.ID_Phong AND ISNULL(hd.trangThai, 0) = 0 " +
+            "WHERE p.ID_ChiNhanh = ? AND p.trangThai = N'Trống' AND hd.ID_HopDong IS NULL";
         return select(sql, idChiNhanh);
     }
 
-    // Phương thức mới: Tìm tất cả phòng trống
+    // Tất cả phòng trống: không có hợp đồng đang hoạt động và trạng thái phòng là 'Trống'
     public List<Phong> findAllAvailable() {
-        String sql = "SELECT * FROM PHONG WHERE trangThai=N'Trống'";
+        String sql =
+            "SELECT p.* FROM PHONG p " +
+            "LEFT JOIN HopDong hd ON hd.ID_Phong = p.ID_Phong AND ISNULL(hd.trangThai, 0) = 0 " +
+            "WHERE p.trangThai = N'Trống' AND hd.ID_HopDong IS NULL";
         return select(sql);
     }
 
