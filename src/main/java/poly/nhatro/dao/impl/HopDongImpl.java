@@ -9,8 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Date;
-import java.util.Calendar; // For date calculations
+// Removed unused date imports
 
 public class HopDongImpl implements HopDongDAO {
 
@@ -25,6 +24,7 @@ public class HopDongImpl implements HopDongDAO {
         hopDong.setDienBanDau(rs.getInt("dienBanDau"));
         hopDong.setID_NguoiDung(rs.getInt("ID_NguoiDung"));
         hopDong.setID_Phong(rs.getInt("ID_Phong"));
+    try { hopDong.setTrangThai(rs.getBoolean("trangThai")); } catch (SQLException ignore) {}
         return hopDong;
     }
 
@@ -45,7 +45,7 @@ public class HopDongImpl implements HopDongDAO {
 
     @Override
     public HopDong insert(HopDong hopDong) {
-        String sql = "INSERT INTO HopDong (ngayTao, thoiHan, tienCoc, nuocBanDau, dienBanDau, ID_NguoiDung, ID_Phong) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO HopDong (ngayTao, thoiHan, tienCoc, nuocBanDau, dienBanDau, ID_NguoiDung, ID_Phong) VALUES (?, ?, ?, ?, ?, ?, ?)";
         XJdbc.executeUpdate(sql, // Using XJdbc.executeUpdate
                 hopDong.getNgayTao(),
                 hopDong.getThoiHan(),
@@ -78,8 +78,27 @@ public class HopDongImpl implements HopDongDAO {
 
     @Override
     public void delete(int ID_HopDong) {
+        // Hard delete (kept for legacy) – prefer softDelete
         String sql = "DELETE FROM HopDong WHERE ID_HopDong=?";
-        XJdbc.executeUpdate(sql, ID_HopDong); // Using XJdbc.executeUpdate
+        XJdbc.executeUpdate(sql, ID_HopDong);
+    }
+
+    @Override
+    public void softDelete(int ID_HopDong) {
+        String sql = "UPDATE HopDong SET trangThai = 1 WHERE ID_HopDong = ?";
+        XJdbc.executeUpdate(sql, ID_HopDong);
+    }
+
+    @Override
+    public void markExpired(int ID_HopDong) {
+        String sql = "UPDATE HopDong SET trangThai = 1 WHERE ID_HopDong = ?";
+        XJdbc.executeUpdate(sql, ID_HopDong);
+    }
+
+    @Override
+    public void markAllExpired() {
+        String sql = "UPDATE HopDong SET trangThai = 1 WHERE DATEADD(month, thoiHan, ngayTao) <= GETDATE()";
+        XJdbc.executeUpdate(sql);
     }
 
     @Override
@@ -98,14 +117,14 @@ public class HopDongImpl implements HopDongDAO {
     @Override
     public List<HopDong> selectActiveContracts() {
         // Contracts are active if their end date (ngayTao + thoiHan months) is in the future
-        String sql = "SELECT * FROM HopDong WHERE DATEADD(month, thoiHan, ngayTao) > GETDATE()";
+    String sql = "SELECT * FROM HopDong WHERE DATEADD(month, thoiHan, ngayTao) > GETDATE() AND ISNULL(trangThai, 0) = 0";
         return select(sql);
     }
 
     @Override
     public List<HopDong> selectExpiredContracts() {
-        // Contracts are expired if their end date (ngayTao + thoiHan months) is in the past
-        String sql = "SELECT * FROM HopDong WHERE DATEADD(month, thoiHan, ngayTao) <= GETDATE()";
+    // Expired or manually marked status = 1
+    String sql = "SELECT * FROM HopDong WHERE DATEADD(month, thoiHan, ngayTao) <= GETDATE() OR ISNULL(trangThai, 0) = 1";
         return select(sql);
     }
 
@@ -121,19 +140,19 @@ public class HopDongImpl implements HopDongDAO {
 
     @Override
     public List<HopDong> selectByChiNhanh(int ID_ChiNhanh) {
-        String sql = "SELECT hd.* FROM HopDong hd JOIN Phong p ON hd.ID_Phong = p.ID_Phong WHERE p.ID_ChiNhanh = ?";
+    String sql = "SELECT hd.* FROM HopDong hd JOIN Phong p ON hd.ID_Phong = p.ID_Phong WHERE p.ID_ChiNhanh = ?";
         return select(sql, ID_ChiNhanh);
     }
 
     @Override
     public List<HopDong> selectByNguoiKiHopDong(int ID_NguoiDung) {
-        String sql = "SELECT * FROM HopDong WHERE ID_NguoiDung = ?";
+    String sql = "SELECT * FROM HopDong WHERE ID_NguoiDung = ?";
         return select(sql, ID_NguoiDung);
     }
 
     @Override
     public List<HopDong> selectByRoom(int ID_Phong) {
-        String sql = "SELECT * FROM HopDong WHERE ID_Phong = ?";
+    String sql = "SELECT * FROM HopDong WHERE ID_Phong = ?";
         return select(sql, ID_Phong);
     }
 

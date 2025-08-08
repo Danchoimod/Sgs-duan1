@@ -65,6 +65,8 @@ public class HopDongPanel extends javax.swing.JPanel {
         fillChiNhanhComboBox();
         fillNguoiDungComboBox();
         fillPhongComboBox();
+    // Cập nhật trạng thái hết hạn trước khi hiển thị
+    try { hopDongDAO.markAllExpired(); } catch (Exception ignore) {}
         
         // Add event listener for chi nhanh selection
         cboChiNhanh.addItemListener(new ItemListener() {
@@ -744,8 +746,9 @@ public class HopDongPanel extends javax.swing.JPanel {
         }
 
         try {
-            hopDongDAO.delete(currentHopDongId); // Use stored contract ID
-            JOptionPane.showMessageDialog(this, "Xóa hợp đồng thành công!");
+            // Chuyển trạng thái sang 1 (soft delete)
+            hopDongDAO.softDelete(currentHopDongId);
+            JOptionPane.showMessageDialog(this, "Đã chuyển trạng thái hợp đồng sang đã xóa/hết hạn!");
             fillTableActiveContracts(); // Refresh tables
             fillTableExpiredContracts();
             clearForm(); // This will reload the user combo box with available users

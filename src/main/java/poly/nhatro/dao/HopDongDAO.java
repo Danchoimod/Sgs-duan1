@@ -24,6 +24,12 @@ public interface HopDongDAO {
      * @param ID_HopDong The ID of the contract to delete.
      */
     void delete(int ID_HopDong);
+    // Soft delete: chuyển trạng thái sang 1
+    void softDelete(int ID_HopDong);
+    // Đánh dấu hết hạn theo ID
+    void markExpired(int ID_HopDong);
+    // Đánh dấu tất cả hợp đồng đã hết hạn (ngày kết thúc <= hiện tại) sang trạng thái 1
+    void markAllExpired();
 
     /**
      * Retrieves a contract by its ID.

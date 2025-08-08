@@ -12,13 +12,13 @@ public class NguoiDungDAOImpl implements NguoiDungDAO {
 
     @Override
     public List<NguoiDung> findAll() {
-        String sql = "SELECT * FROM NguoiDung ORDER BY tenNguoiDung";
+        String sql = "SELECT * FROM NguoiDung WHERE ISNULL(trangThai, '') <> N'Đã xóa' ORDER BY tenNguoiDung";
         return select(sql);
     }
 
     @Override
     public NguoiDung findById(int id) {
-        String sql = "SELECT * FROM NguoiDung WHERE ID_NguoiDung = ?";
+        String sql = "SELECT * FROM NguoiDung WHERE ID_NguoiDung = ? AND ISNULL(trangThai, '') <> N'Đã xóa'";
         List<NguoiDung> list = select(sql, id);
         return list.size() > 0 ? list.get(0) : null;
     }
@@ -62,13 +62,14 @@ public class NguoiDungDAOImpl implements NguoiDungDAO {
 
     @Override
     public void delete(int id) {
-        String sql = "DELETE FROM NguoiDung WHERE ID_NguoiDung = ?";
+        // Soft delete
+        String sql = "UPDATE NguoiDung SET trangThai = N'Đã xóa' WHERE ID_NguoiDung = ?";
         XJdbc.executeUpdate(sql, id);
     }
 
     @Override
     public List<NguoiDung> findByVaiTro(String vaiTro) {
-        String sql = "SELECT * FROM NguoiDung WHERE vaiTro = ? ORDER BY tenNguoiDung";
+        String sql = "SELECT * FROM NguoiDung WHERE vaiTro = ? AND ISNULL(trangThai, '') <> N'Đã xóa' ORDER BY tenNguoiDung";
         return select(sql, vaiTro);
     }
 
@@ -87,7 +88,8 @@ public class NguoiDungDAOImpl implements NguoiDungDAO {
                     "AND nd.ID_NguoiDung NOT IN (" +
                         "SELECT DISTINCT hd.ID_NguoiDung " +
                         "FROM HopDong hd " +
-                        "WHERE DATEADD(MONTH, hd.thoiHan, hd.ngayTao) >= GETDATE()" +
+                        "WHERE DATEADD(MONTH, hd.thoiHan, hd.ngayTao) >= GETDATE() " +
+                        "AND ISNULL(hd.trangThai, 0) = 0" +
                     ") " +
                     "ORDER BY nd.tenNguoiDung";
         return select(sql);

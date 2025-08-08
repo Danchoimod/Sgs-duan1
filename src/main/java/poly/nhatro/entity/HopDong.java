@@ -11,6 +11,8 @@ public class HopDong {
     private int dienBanDau; // Corresponds to dienBanDau INT NOT NULL
     private int ID_NguoiDung; // Corresponds to ID_NguoiDung INT NOT NULL
     private int ID_Phong; // Corresponds to ID_Phong INT NOT NULL
+    // trangThai: 0 = còn hiệu lực, 1 = hết hạn/đã xóa (soft delete)
+    private boolean trangThai;
 
     // Constructors
 
@@ -104,6 +106,14 @@ public class HopDong {
         this.ID_Phong = ID_Phong;
     }
 
+    public boolean getTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(boolean trangThai) {
+        this.trangThai = trangThai;
+    }
+
     // Optional: Override toString() for easy debugging
     @Override
     public String toString() {
@@ -116,6 +126,7 @@ public class HopDong {
                ", dienBanDau=" + dienBanDau +
                ", ID_NguoiDung=" + ID_NguoiDung +
                ", ID_Phong=" + ID_Phong +
+               ", trangThai=" + trangThai +
                '}';
     }
 }

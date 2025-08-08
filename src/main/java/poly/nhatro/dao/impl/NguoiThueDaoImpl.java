@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.table.DefaultTableModel;
-import poly.nhatro.dao.CrudDao;
 import poly.nhatro.dao.NguoiThueDAO;
 import poly.nhatro.entity.NguoiThue;
 import poly.nhatro.util.XQuery;
@@ -17,13 +15,15 @@ import poly.nhatro.util.XJdbc;
  *
  * @author tranthuyngan
  */
-public class NguoiThueDaoImpl implements NguoiThueDAO, CrudDao<NguoiThue, Integer> {
+public class NguoiThueDaoImpl implements NguoiThueDAO {
 
     
     String createSql = "INSERT INTO NguoiDung(tenNguoiDung, soDienThoai, email, matKhau, namSinh, diaChi, cccdCmnn, anhTruocCccd, anhSauCccd, vaiTro, trangThai) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     String updateSql = "UPDATE NguoiDung SET tenNguoiDung = ?, soDienThoai = ?, email = ?, matKhau = ?, namSinh = ?, diaChi = ?, cccdCmnn = ?, anhTruocCccd = ?, anhSauCccd = ?, vaiTro = ?, trangThai = ? WHERE ID_NguoiDung = ?";
-    String deleteSql = "DELETE FROM NguoiDung WHERE ID_NguoiDung = ?";
-    String findAllSql = "SELECT * FROM NguoiDung";
+    // Soft delete: cập nhật trạng thái thay vì xóa bản ghi
+    String deleteSql = "UPDATE NguoiDung SET trangThai = N'Đã xóa' WHERE ID_NguoiDung = ?";
+    // Mặc định không lấy các bản ghi đã xóa mềm
+    String findAllSql = "SELECT * FROM NguoiDung WHERE ISNULL(trangThai, '') <> N'Đã xóa'";
     String findByIdSql = "SELECT * FROM NguoiDung WHERE ID_NguoiDung = ?";
 
     @Override
@@ -134,18 +134,19 @@ public class NguoiThueDaoImpl implements NguoiThueDAO, CrudDao<NguoiThue, Intege
     public List<Object[]> layDanhSachNguoiChuaO(String soPhong, int idChiNhanh) {
         List<Object[]> list = new ArrayList<>();
         // Câu lệnh SQL này đã được kiểm tra và hoạt động chính xác
-        String sql = """
-        SELECT ND.tenNguoiDung
-        FROM NguoiDung ND
-        WHERE ND.vaiTro = N'Người thuê'
-        AND ND.ID_NguoiDung NOT IN (
-            SELECT NTHD.ID_NguoiDung
-            FROM NguoiThue_HopDong NTHD
-            JOIN HopDong HD ON NTHD.ID_HopDong = HD.ID_HopDong
-            JOIN Phong P ON HD.ID_Phong = P.ID_Phong
-            WHERE P.soPhong = ? AND P.ID_ChiNhanh = ?
-        )
-    """;
+                String sql = """
+                SELECT ND.tenNguoiDung
+                FROM NguoiDung ND
+                WHERE ND.vaiTro = N'Người thuê'
+                    AND ISNULL(ND.trangThai, '') <> N'Đã xóa'
+                    AND ND.ID_NguoiDung NOT IN (
+                            SELECT NTHD.ID_NguoiDung
+                            FROM NguoiThue_HopDong NTHD
+                            JOIN HopDong HD ON NTHD.ID_HopDong = HD.ID_HopDong
+                            JOIN Phong P ON HD.ID_Phong = P.ID_Phong
+                            WHERE P.soPhong = ? AND P.ID_ChiNhanh = ?
+                    )
+        """;
         try (ResultSet rs = XJdbc.executeQuery(sql, soPhong, idChiNhanh)) {
             while (rs.next()) {
                 list.add(new Object[]{rs.getString(1)});
@@ -159,14 +160,15 @@ public class NguoiThueDaoImpl implements NguoiThueDAO, CrudDao<NguoiThue, Intege
     @Override
     public List<Object[]> layDanhSachNguoiDangO(String soPhong, int idChiNhanh) {
         List<Object[]> list = new ArrayList<>();
-        String sql = """
-            SELECT ND.tenNguoiDung
-            FROM NguoiDung ND
-            JOIN NguoiThue_HopDong NTHD ON ND.ID_NguoiDung = NTHD.ID_NguoiDung
-            JOIN HopDong HD ON HD.ID_HopDong = NTHD.ID_HopDong
-            JOIN Phong P ON P.ID_Phong = HD.ID_Phong
-            WHERE P.soPhong = ? AND P.ID_ChiNhanh = ?
-        """;
+                String sql = """
+                        SELECT ND.tenNguoiDung
+                        FROM NguoiDung ND
+                        JOIN NguoiThue_HopDong NTHD ON ND.ID_NguoiDung = NTHD.ID_NguoiDung
+                        JOIN HopDong HD ON HD.ID_HopDong = NTHD.ID_HopDong
+                        JOIN Phong P ON P.ID_Phong = HD.ID_Phong
+                        WHERE P.soPhong = ? AND P.ID_ChiNhanh = ?
+                            AND ISNULL(ND.trangThai, '') <> N'Đã xóa'
+                """;
 
         try (ResultSet rs = XJdbc.executeQuery(sql, soPhong, idChiNhanh)) {
             while (rs.next()) {
@@ -233,7 +235,7 @@ public class NguoiThueDaoImpl implements NguoiThueDAO, CrudDao<NguoiThue, Intege
 
     @Override
     public int timIdTheoTen(String tenNguoi) {
-        String sql = "SELECT ID_NguoiDung FROM NGUOIDUNG WHERE TenNguoiDung = ?";
+    String sql = "SELECT ID_NguoiDung FROM NGUOIDUNG WHERE TenNguoiDung = ? AND ISNULL(trangThai, '') <> N'Đã xóa'";
         try (Connection conn = XJdbc.openConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, tenNguoi);
@@ -274,6 +276,35 @@ public class NguoiThueDaoImpl implements NguoiThueDAO, CrudDao<NguoiThue, Intege
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public boolean hasAnyContract(int idNguoiDung) {
+                // Chỉ chặn xóa nếu người dùng đang có HỢP ĐỒNG ĐANG HOẠT ĐỘNG (trangThai = 0)
+                // 1) Là người ký hợp đồng chính và hợp đồng đó đang active
+                // 2) Hoặc là người ở chung thuộc một hợp đồng đang active
+                String sql = """
+                        SELECT 1
+                        WHERE EXISTS (
+                                            SELECT 1 FROM HopDong hd
+                                            WHERE hd.ID_NguoiDung = ?
+                                                AND ISNULL(hd.trangThai, 0) = 0
+                                    )
+                             OR EXISTS (
+                                            SELECT 1
+                                            FROM NguoiThue_HopDong nthd
+                                            JOIN HopDong hd2 ON hd2.ID_HopDong = nthd.ID_HopDong
+                                            WHERE nthd.ID_NguoiDung = ?
+                                                AND ISNULL(hd2.trangThai, 0) = 0
+                                    )
+                """;
+        try (ResultSet rs = XJdbc.executeQuery(sql, idNguoiDung, idNguoiDung)) {
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // An toàn: nếu lỗi, coi như có hợp đồng để tránh xóa nhầm
+            return true;
+        }
     }
 
 }
