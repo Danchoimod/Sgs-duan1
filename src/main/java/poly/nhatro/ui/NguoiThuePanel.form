@@ -53,7 +53,7 @@
                   <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="pnlMain" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="18" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -280,6 +280,9 @@
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JTextField" name="txtMatKhau">
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txtMatKhauMouseClicked"/>
+                  </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new poly.nhatro.util.RoundedPasswordField(20);"/>
                   </AuxValues>

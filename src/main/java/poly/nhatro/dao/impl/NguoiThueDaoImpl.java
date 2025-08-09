@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.table.DefaultTableModel;
-import poly.nhatro.dao.CrudDao;
 import poly.nhatro.dao.NguoiThueDAO;
 import poly.nhatro.entity.NguoiThue;
 import poly.nhatro.util.XQuery;
@@ -17,7 +15,7 @@ import poly.nhatro.util.XJdbc;
  *
  * @author tranthuyngan
  */
-public class NguoiThueDaoImpl implements NguoiThueDAO, CrudDao<NguoiThue, Integer> {
+public class NguoiThueDaoImpl implements NguoiThueDAO {
 
     
     String createSql = "INSERT INTO NguoiDung(tenNguoiDung, soDienThoai, email, matKhau, namSinh, diaChi, cccdCmnn, anhTruocCccd, anhSauCccd, vaiTro, trangThai) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -269,6 +267,30 @@ public class NguoiThueDaoImpl implements NguoiThueDAO, CrudDao<NguoiThue, Intege
 
                 // So sánh hai ID
                 return idNguoiDuocChon == idNguoiKyHopDong;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hasAnyContract(int nguoiThueId) {
+        // Kiểm tra 2 trường hợp:
+        // 1) Người thuê là người ký hợp đồng: HopDong.ID_NguoiDung = nguoiThueId
+        // 2) Người thuê là người ở chung: tồn tại bản ghi trong NguoiThue_HopDong với ID_NguoiDung = nguoiThueId
+
+        final String sql = """
+            SELECT CASE WHEN EXISTS (
+                        SELECT 1 FROM HopDong WHERE ID_NguoiDung = ?
+                    ) OR EXISTS (
+                        SELECT 1 FROM NguoiThue_HopDong WHERE ID_NguoiDung = ?
+                    ) THEN 1 ELSE 0 END AS HasAny
+        """;
+
+        try (ResultSet rs = XJdbc.executeQuery(sql, nguoiThueId, nguoiThueId)) {
+            if (rs.next()) {
+                return rs.getInt(1) == 1;
             }
         } catch (SQLException e) {
             e.printStackTrace();

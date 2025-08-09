@@ -27,4 +27,11 @@ public interface NguoiThueDAO extends CrudDao<NguoiThue, Integer> {
     int timIdTheoTen(String tenNguoi);
     
     boolean laNguoiKyHopDong(String tenNguoi, String maPhong);
+
+    /**
+     * Kiểm tra người thuê có bất kỳ hợp đồng liên quan nào không (là người ký hoặc người ở chung)
+     * @param nguoiThueId ID người thuê (ID_NguoiDung)
+     * @return true nếu tồn tại liên kết ở bảng HopDong hoặc NguoiThue_HopDong
+     */
+    boolean hasAnyContract(int nguoiThueId);
 }
